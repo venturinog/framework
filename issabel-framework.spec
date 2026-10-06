@@ -11,7 +11,7 @@ Source0: issabel-%{modname}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
 Requires(pre): /usr/sbin/chkconfig, /etc/sudoers, sudo
-Requires(pre): php, php-gd, php-pear, php-xml, php-mysql, php-pdo, php-imap, php-soap
+Requires(pre): php, php-gd, php-xml, php-mysql, php-pdo, php-imap, php-soap
 Requires(pre): httpd, mariadb-server, ntp, mod_ssl
 Requires(pre): perl
 Requires: issabel-firstboot >= 5.0.0-2
