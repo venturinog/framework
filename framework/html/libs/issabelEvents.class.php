@@ -54,11 +54,12 @@ class Events {
                     return false;
             }
             reset($this->timers);
-            $firstevent = each($this->timers);
-            if ($firstevent === false) {
+            // each() was removed in PHP 8; the timers are kept in ksort() order,
+            // so the key left by reset() is the earliest pending timestamp.
+            $time = key($this->timers);
+            if ($time === null) {
                     return false;
             }
-            $time = $firstevent["key"];
             $nextEvent = $time - time();
             if ($nextEvent < 1) {
                     return 1;
