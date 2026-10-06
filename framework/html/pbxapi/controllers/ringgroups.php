@@ -145,11 +145,11 @@ class ringgroups extends rest {
         $amidb = array();
 
         if(isset($input['change_callerid'])) {
-            $amidb[] = "RINGGROUP/$ringgroup:changecid:${input['change_callerid']}";
+            $amidb[] = "RINGGROUP/$ringgroup:changecid:{$input['change_callerid']}";
         }
 
         if(isset($input['fixed_callerid'])) {
-            $amidb[] = "RINGGROUP/$ringgroup:fixedcid:${input['fixed_callerid']}";
+            $amidb[] = "RINGGROUP/$ringgroup:fixedcid:{$input['fixed_callerid']}";
         }
 
         foreach($amidb as &$valor) {
@@ -180,8 +180,8 @@ class ringgroups extends rest {
 
         if($ringgroup<>'') {
             $amidb = array(
-                "RINGGROUP/$ringgroup:changecid:${input['change_callerid']}",
-                "RINGGROUP/$ringgroup:fixedcid:${input['fixed_callerid']}",
+                "RINGGROUP/$ringgroup:changecid:{$input['change_callerid']}",
+                "RINGGROUP/$ringgroup:fixedcid:{$input['fixed_callerid']}",
             );
         } else {
             $amidb = array();

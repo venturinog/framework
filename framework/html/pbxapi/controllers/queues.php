@@ -340,7 +340,7 @@ class queues extends rest {
             }
         }
 
-        $amidb[] = "QPENALTY/$EXTEN:dynmemberonly:${post['restrict_dynamic_agents']}";
+        $amidb[] = "QPENALTY/$EXTEN:dynmemberonly:{$post['restrict_dynamic_agents']}";
 
         if($method=='INSERT') {
 

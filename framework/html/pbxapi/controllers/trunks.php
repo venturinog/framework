@@ -167,7 +167,7 @@ class trunks extends rest {
         $amidb = array();
 
         if(isset($input['dial_options'])) {
-            $amidb[] = "TRUNK/$trunkid:dialopts:${input['dial_options']}";
+            $amidb[] = "TRUNK/$trunkid:dialopts:{$input['dial_options']}";
         }
 
         foreach($amidb as &$valor) {
@@ -207,7 +207,7 @@ class trunks extends rest {
         $amidb = array();
 
         if(isset($input['dial_options'])) {
-            $amidb[] = "TRUNK/$trunkid:dialopts:${input['dial_options']}";
+            $amidb[] = "TRUNK/$trunkid:dialopts:{$input['dial_options']}";
         }
 
         foreach($amidb as &$valor) {

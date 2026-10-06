@@ -143,7 +143,7 @@ class asteriskmanager
         return $parameters;
     }
 
-    function connect($server=NULL, $username=NULL, $secret=NULL, $events='off', &$errors)
+    function connect($server=NULL, $username=NULL, $secret=NULL, $events='off', &$errors=NULL)
     {
         // use config if not specified
         if(is_null($server))   $server = $this->config['asmanager']['server'];
