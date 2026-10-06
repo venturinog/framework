@@ -27,7 +27,10 @@
 
 $f3=require('lib/base.php');
 $f3->set('AUTOLOAD','models/; controllers/');
-$f3->set('DEBUG',255);
+// A non-zero DEBUG makes F3 include the full stack trace (absolute paths and
+// function arguments) in every JSON error response. Keep it off by default and
+// enable it explicitly with ISSABEL_DEBUG=1 when debugging a live system.
+$f3->set('DEBUG',(int)getenv('ISSABEL_DEBUG'));
 
 if(!is_file("/etc/issabel.conf")) {
     throw new RuntimeException('/etc/issabel.conf not found');

@@ -39,16 +39,30 @@ class authorize {
             die();
         }
 
-        list (,$jwt) = preg_split("/ /",$headers['Authorization']);
+        // Expect exactly "Bearer <token>". Splitting on a single space broke on a
+        // missing token, on extra spaces and on other schemes, leaving $jwt
+        // undefined or empty and turning a 403 into a 500.
+        $parts = preg_split('/\s+/', trim($headers['Authorization']));
+        if (count($parts) !== 2 || strcasecmp($parts[0], 'Bearer') !== 0 || $parts[1] === '') {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Unauthorized', true, 403);
+            die();
+        }
+        $jwt = $parts[1];
+
         $key = $f3->get('JWT_KEY');
+
+        // Do not inherit a loosened expiry window from elsewhere in the request.
+        JWT::$leeway = 0;
 
         try {
             $data = JWT::decode($jwt, $key, array('HS256'));
         }catch(Exception $e) {
 
+            // An expired token is rejected like any other invalid one. It used
+            // to be re-decoded with a 720000 second (200 hour) leeway, which
+            // defeated the one hour expiry outright.
             if($e->getMessage()=="Expired token") {
-                JWT::$leeway = 720000;
-                $decoded = JWT::decode($jwt, $key, array('HS256'));
+                header('Content-Type: application/json');
                 echo "{\"status\": \"expired\"}";
             } else {
                 header($_SERVER['SERVER_PROTOCOL'] . ' 403 Unauthorized', true, 403);

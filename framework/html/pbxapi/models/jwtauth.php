@@ -52,7 +52,14 @@ class jwtauth {
 
         if(is_file("/etc/issabel.conf")) {
             $data      = parse_conf("/etc/issabel.conf");
-            $this->pwd = $data['amiadminpwd'];
+            if (isset($data['amiadminpwd'])) {
+                $this->pwd = $data['amiadminpwd'];
+            }
+        }
+        // Leaving $this->pwd NULL would make the password check in post() pass
+        // for any request that omits the password field, so fail closed instead.
+        if ($this->pwd === NULL || $this->pwd === '') {
+            throw new RuntimeException('Missing or empty amiadminpwd in /etc/issabel.conf');
         }
 
     }
@@ -65,6 +72,19 @@ class jwtauth {
             $result[trim($partes[0])]=trim($partes[1]);
         }
         return $result;
+    }
+
+    // JWT::decode() returns stdClass, not array, and so does every nested
+    // object, so the identity has to be normalised before it is reused.
+    private function tokenIdentity($payload) {
+        if (!isset($payload->data))
+            return array();
+        $data = $payload->data;
+        if (is_array($data))
+            return $data;
+        if (is_object($data))
+            return get_object_vars($data);
+        return array();
     }
 
     function get($f3) {
@@ -92,52 +112,88 @@ class jwtauth {
             //
             $key = $f3->get('JWT_KEY');
 
+            // Never let a previous call in this request loosen expiry checks.
+            JWT::$leeway = 0;
+
+            //
+            // The refresh token is the authentication factor here, so it has to be
+            // validated strictly: any failure rejects the request. Previously only
+            // "Expired token" was handled and every other error fell through,
+            // which made this check skippable by sending any garbage token.
+            //
+            $rnt = $f3->get('GET.refresh_token');
+            if (empty($rnt)) {
+                header('Content-Type: application/json');
+                echo "{\"status\":\"unauthorized\"}";
+                die();
+            }
+
             try {
 
-                $rnt  = $f3->get('GET.refresh_token');
-                $jwt  = $f3->get('GET.access_token');
-                $data = JWT::decode($rnt, $key, array('HS256'));
+                $refresh = JWT::decode($rnt, $key, array('HS256'));
 
             }catch(Exception $e) {
 
-                if($e->getMessage()=="Expired token") {
+                header('Content-Type: application/json');
+                if ($e->getMessage() == 'Expired token') {
+                    echo "{\"status\":\"expired\",\"type\":\"refresh\"}";
+                } else {
+                    echo "{\"status\":\"unauthorized\"}";
+                }
+                die();
+            }
 
-                    echo "{\"status\": \"expired\", \"type\": \"refresh\"}";
+            //
+            // Refresh token is valid, so mint a new pair. The identity comes from
+            // the refresh token itself. Tokens issued before this fix carry no
+            // identity, so fall back to the access token, also validated with no
+            // leeway.
+            //
+            $identity = $this->tokenIdentity($refresh);
+
+            if (!$identity) {
+                $jwt = $f3->get('GET.access_token');
+                if (empty($jwt)) {
+                    header('Content-Type: application/json');
+                    echo "{\"status\":\"unauthorized\"}";
                     die();
                 }
+                try {
+                    $access = JWT::decode($jwt, $key, array('HS256'));
+                }catch(Exception $e) {
+                    header('Content-Type: application/json');
+                    echo "{\"status\":\"unauthorized\"}";
+                    die();
+                }
+                $identity = $this->tokenIdentity($access);
             }
 
-            // refresh token is ok, extract payload from expired token to generate a new one with new expiration
             //
-            try {
-                JWT::$leeway = 720000;
-                $data = JWT::decode($jwt, $key, array('HS256'));
+            // Generate a new access token with a new expiration. The refresh
+            // token outlives it by a factor of 24 and now carries the identity
+            // too, so later refreshes need nothing else.
+            //
+            $time = time();
+            $exp  = $f3->get('JWT_EXPIRES');
 
-                $time = time();
-                $exp  = $f3->get('JWT_EXPIRES');
+            $token = array(
+                'iat'  => $time,
+                'exp'  => $time + $exp,
+                'data' => $identity
+            );
 
-                $token = array(
-                    'iat'  => $time,
-                    'exp'  => $time + $exp,
-                    'data' => $data->data
-                );
+            $tokenrefresh = array(
+                'iat'  => $time,
+                'exp'  => $time + ( $exp * 24 ),
+                'data' => $identity
+            );
 
-                $tokenrefresh = array(
-                    'iat' => $time,
-                    'exp' => $time + ( $exp * 24 ),
-                    'data' => [ ]
-                );
+            $jwt        = JWT::encode($token, $key);
+            $jwtrefresh = JWT::encode($tokenrefresh, $key);
 
-                $jwt        = JWT::encode($token, $key);
-                $jwtrefresh = JWT::encode($tokenrefresh, $key);
-
-                echo "{\"access_token\":\"$jwt\",\"expires_in\":$exp,\"refresh_token\":\"$jwtrefresh\",\"token_type\":\"Bearer\",\"status\":\"authorized\"}";
-                die();
-
-            } catch(Exception $e) {
-                echo "{\"status\": \"unauthorized\"}";
-            }
-
+            header('Content-Type: application/json');
+            echo "{\"access_token\":\"$jwt\",\"expires_in\":$exp,\"refresh_token\":\"$jwtrefresh\",\"token_type\":\"Bearer\",\"status\":\"authorized\"}";
+            die();
         }
     }
 
@@ -156,12 +212,13 @@ class jwtauth {
             $user = isset($input['username'])?$input['username']:$f3->get('POST.username');
         }
         $password    = isset($input['password'])?$input['password']: $f3->get('POST.password');
-        $md5password = md5($password);
 
         //  $result = $this->db->exec('SELECT * FROM acl_user WHERE name = :name AND md5_password = :md5password',array(':name'=>$user,':md5password'=>$md5password));
         //  if($this->db->count() > 0) {
 
-        if($user=='admin' && $password==$this->pwd) {
+        // hash_equals() instead of == so a magic-hash password such as
+        // "0e123456..." cannot be matched with a loose "0".
+        if($user==='admin' && is_string($password) && hash_equals($this->pwd,$password)) {
 
             $time = time();
             $key  = $f3->get('JWT_KEY');
@@ -175,10 +232,14 @@ class jwtauth {
                 ]
             );
 
+            // The refresh token carries the identity too, so a refresh needs
+            // nothing but a valid refresh token.
             $tokenrefresh = array(
-                'iat' => $time,
-                'exp' => $time + ( $exp * 2 ),
-                'data' => [ ]
+                'iat'  => $time,
+                'exp'  => $time + ( $exp * 24 ),
+                'data' => [
+                    'name' => $user
+                ]
             );
 
             $jwt = JWT::encode($token, $key);
