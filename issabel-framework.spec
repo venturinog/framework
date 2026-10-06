@@ -1,8 +1,8 @@
 %define modname framework
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
-Version: 5.0.0
-Release: 5
+Version: 6.0.0
+Release: 1
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -10,14 +10,14 @@ Source0: issabel-%{modname}-%{version}.tar.gz
 #Patch0:  baserepo-40.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
-Requires(pre): /sbin/chkconfig, /etc/sudoers, sudo
+Requires(pre): /usr/sbin/chkconfig, /etc/sudoers, sudo
 Requires(pre): php, php-gd, php-pear, php-xml, php-mysql, php-pdo, php-imap, php-soap
 Requires(pre): httpd, mariadb-server, ntp, mod_ssl
 Requires(pre): perl
 Requires: issabel-firstboot >= 5.0.0-2
 
 #Requires: issabelPBX
-Requires(pre): /sbin/pidof
+Requires(pre): /usr/sbin/pidof
 Requires: liberation-sans-fonts
 Obsoletes: elastix-additionals
 Conflicts: elastix-system <= 4.0.0-8
@@ -204,14 +204,14 @@ fi
 # At this point the asterisk group must already exist
 if ! grep -q asterisk: /etc/passwd ; then
     echo -e "Adding new user asterisk..."
-    /usr/sbin/useradd -r -g asterisk -c "Asterisk PBX" -s /bin/bash -d %{_localstatedir}/lib/asterisk asterisk
+    /usr/sbin/useradd -r -g asterisk -c "Asterisk PBX" -s /usr/bin/bash -d %{_localstatedir}/lib/asterisk asterisk
 fi
 
 # No modificamos nada, el usuario lo crean los paquetes asterisk
-# /usr/sbin/usermod -c "Asterisk VoIP PBX" -g asterisk -s /bin/bash -d /var/lib/asterisk asterisk
+# /usr/sbin/usermod -c "Asterisk VoIP PBX" -g asterisk -s /usr/bin/bash -d /var/lib/asterisk asterisk
 
 # TODO: TAREA DE POST-INSTALACIÓN
-#useradd -d /var/ftp -M -s /sbin/nologin ftpuser
+#useradd -d /var/ftp -M -s /usr/sbin/nologin ftpuser
 #(echo asterisk2007; sleep 2; echo asterisk2007) | passwd ftpuser
 
 %post
@@ -264,20 +264,20 @@ if [ $1 -eq 1 ]; then #install
     else
 	issabel-dbprocess "update"  "$pathModule/setup/db" "$verifyVersion"
     fi
-    /sbin/service httpd status > /dev/null 2>&1
+    /usr/sbin/service httpd status > /dev/null 2>&1
     if [ "$?" == "0" ]; then
     	echo "Restarting apache..."
-    	/sbin/service httpd restart > /dev/null 2>&1
+    	/usr/sbin/service httpd restart > /dev/null 2>&1
     fi
 elif [ $1 -eq 2 ]; then #update
     issabel-dbprocess "update"  "$pathModule/setup/db" "$preversion"
-    /sbin/service httpd status > /dev/null 2>&1
+    /usr/sbin/service httpd status > /dev/null 2>&1
     if [ "$?" == "0" ]; then
     	# Para versiones menores a 2.2.0-15 se debe reiniciar el apache debido a cambios en issabel.conf
     	compareVersion "$preversion" "2.2.0-15"
     	if [ "$?" == "9" ]; then
         	echo "Restarting apache..."
-        	/sbin/service httpd restart > /dev/null 2>&1
+        	/usr/sbin/service httpd restart > /dev/null 2>&1
     	fi
     fi
 fi
@@ -306,13 +306,13 @@ rm -rf /var/www/html/var/templates_c/*
 # Patch issabel.ini to work around %config(noreplace) in previous versions
 sed --in-place "s,/tmp,/var/lib/php/session-asterisk,g" /etc/php.d/issabel.ini
 if [ $1 -eq 1 ]; then #install
-    /sbin/service httpd status > /dev/null 2>&1
+    /usr/sbin/service httpd status > /dev/null 2>&1
     if [ "$?" == "0" ]; then
         echo "Restarting apache..."
-        /sbin/service httpd restart > /dev/null 2>&1
+        /usr/sbin/service httpd restart > /dev/null 2>&1
     fi
 elif [ $1 -eq 2 ]; then #update
-    /sbin/service httpd status > /dev/null 2>&1
+    /usr/sbin/service httpd status > /dev/null 2>&1
     if [ "$?" == "0" ]; then
         # Para versiones menores a 2.4.0-11 se debe reiniciar el apache debido a cambios en issabel.ini
         # respecto a los archivos de sessiones, por ello tambien hay que reubicarlos
@@ -332,7 +332,7 @@ elif [ $1 -eq 2 ]; then #update
             done
 
             echo "Restarting apache..."
-            /sbin/service httpd restart > /dev/null 2>&1
+            /usr/sbin/service httpd restart > /dev/null 2>&1
         fi
     fi
 fi
