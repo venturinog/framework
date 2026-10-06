@@ -1,7 +1,7 @@
 <?php
 
 /**
-*	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
+*	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 *
 *	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 *
@@ -44,11 +44,11 @@ class Bcrypt extends Prefab {
 	**/
 	function hash($pw,$salt=NULL,$cost=self::COST) {
 		if ($cost<4 || $cost>31)
-			user_error(self::E_CostArg,E_USER_ERROR);
+            throw new \Exception(self::E_CostArg);
 		$len=22;
 		if ($salt) {
 			if (!preg_match('/^[[:alnum:]\.\/]{'.$len.',}$/',$salt))
-				user_error(self::E_SaltArg,E_USER_ERROR);
+                throw new \Exception(self::E_SaltArg);
 		}
 		else {
 			$raw=16;
@@ -56,7 +56,7 @@ class Bcrypt extends Prefab {
 			if (!$iv && extension_loaded('openssl'))
 				$iv=openssl_random_pseudo_bytes($raw);
 			if (!$iv)
-				for ($i=0;$i<$raw;$i++)
+				for ($i=0;$i<$raw;++$i)
 					$iv.=chr(mt_rand(0,255));
 			$salt=str_replace('+','.',base64_encode($iv));
 		}
@@ -88,7 +88,7 @@ class Bcrypt extends Prefab {
 		if ($len!=strlen($hash) || $len<14)
 			return FALSE;
 		$out=0;
-		for ($i=0;$i<$len;$i++)
+		for ($i=0;$i<$len;++$i)
 			$out|=(ord($val[$i])^ord($hash[$i]));
 		return $out===0;
 	}

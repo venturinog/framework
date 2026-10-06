@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -21,6 +21,9 @@
 */
 
 namespace DB\Jig;
+
+use ReturnTypeWillChange;
+use SessionAdapter;
 
 //! Jig-managed session handler
 class Session extends Mapper {
@@ -43,15 +46,17 @@ class Session extends Mapper {
 	*	@param $path string
 	*	@param $name string
 	**/
-	function open($path,$name) {
-		return TRUE;
-	}
+    function open(string $path, string $name): bool
+    {
+        return TRUE;
+    }
 
 	/**
 	*	Close session
 	*	@return TRUE
 	**/
-	function close() {
+	function close(): bool
+    {
 		$this->reset();
 		$this->sid=NULL;
 		return TRUE;
@@ -59,10 +64,12 @@ class Session extends Mapper {
 
 	/**
 	*	Return session data in serialized format
-	*	@return string
+	*	@return string|false
 	*	@param $id string
 	**/
-	function read($id) {
+    #[ReturnTypeWillChange]
+	function read($id)
+    {
 		$this->load(['@session_id=?',$this->sid=$id]);
 		if ($this->dry())
 			return '';
@@ -87,7 +94,8 @@ class Session extends Mapper {
 	*	@param $id string
 	*	@param $data string
 	**/
-	function write($id,$data) {
+    function write(string $id, string $data): bool
+    {
 		$this->set('session_id',$id);
 		$this->set('data',$data);
 		$this->set('ip',$this->_ip);
@@ -102,19 +110,19 @@ class Session extends Mapper {
 	*	@return TRUE
 	*	@param $id string
 	**/
-	function destroy($id) {
+	function destroy($id): bool
+    {
 		$this->erase(['@session_id=?',$id]);
 		return TRUE;
 	}
 
 	/**
 	*	Garbage collector
-	*	@return TRUE
-	*	@param $max int
 	**/
-	function cleanup($max) {
-		$this->erase(['@stamp+?<?',$max,time()]);
-		return TRUE;
+    #[ReturnTypeWillChange]
+    function gc(int $max_lifetime): int
+    {
+		return (int) $this->erase(['@stamp+?<?',$max_lifetime,time()]);
 	}
 
 	/**
@@ -169,18 +177,27 @@ class Session extends Mapper {
 	function __construct(\DB\Jig $db,$file='sessions',$onsuspect=NULL,$key=NULL) {
 		parent::__construct($db,$file);
 		$this->onsuspect=$onsuspect;
-		session_set_save_handler(
-			[$this,'open'],
-			[$this,'close'],
-			[$this,'read'],
-			[$this,'write'],
-			[$this,'destroy'],
-			[$this,'cleanup']
-		);
+        if (version_compare(PHP_VERSION, '8.4.0')>=0) {
+            // TODO: remove this when php7 support is dropped
+            session_set_save_handler(new SessionAdapter($this));
+        } else {
+            session_set_save_handler(
+                [$this,'open'],
+                [$this,'close'],
+                [$this,'read'],
+                [$this,'write'],
+                [$this,'destroy'],
+                [$this,'gc']
+            );
+        }
 		register_shutdown_function('session_commit');
 		$fw=\Base::instance();
 		$headers=$fw->HEADERS;
-		$this->_csrf=$fw->SEED.'.'.$fw->hash(mt_rand());
+		$this->_csrf=$fw->hash($fw->SEED.
+			extension_loaded('openssl')?
+				implode(unpack('L',openssl_random_pseudo_bytes(4))):
+				mt_rand()
+			);
 		if ($key)
 			$fw->$key=$this->_csrf;
 		$this->_agent=isset($headers['User-Agent'])?$headers['User-Agent']:'';

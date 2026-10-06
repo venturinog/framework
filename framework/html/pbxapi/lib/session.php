@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -21,7 +21,7 @@
 */
 
 //! Cache-based session handler
-class Session {
+class Session extends Magic {
 
 	protected
 		//! Session ID
@@ -35,7 +35,9 @@ class Session {
 		//! Suspect callback
 		$onsuspect,
 		//! Cache instance
-		$_cache;
+		$_cache,
+		//! Session meta data
+		$_data=[];
 
 	/**
 	*	Open session
@@ -43,7 +45,8 @@ class Session {
 	*	@param $path string
 	*	@param $name string
 	**/
-	function open($path,$name) {
+	function open(string $path, string $name): bool
+    {
 		return TRUE;
 	}
 
@@ -51,20 +54,25 @@ class Session {
 	*	Close session
 	*	@return TRUE
 	**/
-	function close() {
+	function close(): bool
+    {
 		$this->sid=NULL;
+		$this->_data=[];
 		return TRUE;
 	}
 
 	/**
 	*	Return session data in serialized format
-	*	@return string
+	*	@return false|string
 	*	@param $id string
 	**/
-	function read($id) {
+	#[ReturnTypeWillChange]
+    function read(string $id)
+    {
 		$this->sid=$id;
 		if (!$data=$this->_cache->get($id.'.@'))
 			return '';
+		$this->_data = $data;
 		if ($data['ip']!=$this->_ip || $data['agent']!=$this->_agent) {
 			$fw=Base::instance();
 			if (!isset($this->onsuspect) ||
@@ -81,11 +89,9 @@ class Session {
 
 	/**
 	*	Write session data
-	*	@return TRUE
-	*	@param $id string
-	*	@param $data string
-	**/
-	function write($id,$data) {
+	*/
+	function write(string $id, string $data): bool
+    {
 		$fw=Base::instance();
 		$jar=$fw->JAR;
 		$this->_cache->set($id.'.@',
@@ -95,28 +101,27 @@ class Session {
 				'agent'=>$this->_agent,
 				'stamp'=>time()
 			],
-			$jar['expire']?($jar['expire']-time()):0
+			$jar['expire']
 		);
 		return TRUE;
 	}
 
 	/**
 	*	Destroy session
-	*	@return TRUE
-	*	@param $id string
-	**/
-	function destroy($id) {
+	*/
+	function destroy(string $id): bool
+    {
 		$this->_cache->clear($id.'.@');
 		return TRUE;
 	}
 
 	/**
 	*	Garbage collector
-	*	@return TRUE
-	*	@param $max int
 	**/
-	function cleanup($max) {
-		$this->_cache->reset('.@',$max);
+    #[ReturnTypeWillChange]
+    function gc(int $max_lifetime)
+    {
+		$this->_cache->reset('.@',$max_lifetime);
 		return TRUE;
 	}
 
@@ -171,22 +176,56 @@ class Session {
 	function __construct($onsuspect=NULL,$key=NULL,$cache=null) {
 		$this->onsuspect=$onsuspect;
 		$this->_cache=$cache?:Cache::instance();
-		session_set_save_handler(
-			[$this,'open'],
-			[$this,'close'],
-			[$this,'read'],
-			[$this,'write'],
-			[$this,'destroy'],
-			[$this,'cleanup']
-		);
+        if (version_compare(PHP_VERSION, '8.4.0')>=0) {
+            // TODO: remove this when php7 support is dropped
+            session_set_save_handler(new SessionAdapter($this));
+        } else {
+            session_set_save_handler(
+                [$this,'open'],
+                [$this,'close'],
+                [$this,'read'],
+                [$this,'write'],
+                [$this,'destroy'],
+                [$this,'gc']
+            );
+        }
 		register_shutdown_function('session_commit');
 		$fw=\Base::instance();
 		$headers=$fw->HEADERS;
-		$this->_csrf=$fw->SEED.'.'.$fw->hash(mt_rand());
+		$this->_csrf=$fw->hash($fw->SEED.
+			extension_loaded('openssl')?
+				implode(unpack('L',openssl_random_pseudo_bytes(4))):
+				mt_rand()
+			);
 		if ($key)
 			$fw->$key=$this->_csrf;
 		$this->_agent=isset($headers['User-Agent'])?$headers['User-Agent']:'';
 		$this->_ip=$fw->IP;
 	}
 
+	/**
+	 * check latest meta data existence
+	 * @param string $key
+	 * @return bool
+	 */
+	function exists($key) {
+		return isset($this->_data[$key]);
+	}
+
+	/**
+	 * get meta data from latest session
+	 * @param string $key
+	 * @return mixed
+	 */
+	function &get($key) {
+		return $this->_data[$key];
+	}
+
+	function set($key,$val) {
+		trigger_error('Unable to set data on previous session');
+	}
+
+	function clear($key) {
+		trigger_error('Unable to clear data on previous session');
+	}
 }

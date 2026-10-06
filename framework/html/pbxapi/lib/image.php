@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -62,7 +62,7 @@ class Image {
 			$color=hexdec($color);
 		$hex=str_pad($hex=dechex($color),$color<4096?3:6,'0',STR_PAD_LEFT);
 		if (($len=strlen($hex))>6)
-			user_error(sprintf(self::E_Color,'0x'.$hex),E_USER_ERROR);
+            throw new \Exception(sprintf(self::E_Color,'0x'.$hex));
 		$color=str_split($hex,$len/3);
 		foreach ($color as &$hue) {
 			$hue=hexdec(str_repeat($hue,6/$len));
@@ -179,7 +179,9 @@ class Image {
 		imagefill($tmp,0,0,IMG_COLOR_TRANSPARENT);
 		imagecopyresampled($tmp,$this->data,
 			0,0,$width-1,0,$width,$height,-$width,$height);
-		imagedestroy($this->data);
+		if (version_compare(PHP_VERSION, '8.5.0')<0)
+			// TODO: remove this when php7 support is dropped
+			imagedestroy($this->data);
 		$this->data=$tmp;
 		return $this->save();
 	}
@@ -195,7 +197,9 @@ class Image {
 		imagefill($tmp,0,0,IMG_COLOR_TRANSPARENT);
 		imagecopyresampled($tmp,$this->data,
 			0,0,0,$height-1,$width,$height,$width,-$height);
-		imagedestroy($this->data);
+		if (version_compare(PHP_VERSION, '8.5.0')<0)
+			// TODO: remove this when php7 support is dropped
+			imagedestroy($this->data);
 		$this->data=$tmp;
 		return $this->save();
 	}
@@ -214,7 +218,9 @@ class Image {
 		imagefill($tmp,0,0,IMG_COLOR_TRANSPARENT);
 		imagecopyresampled($tmp,$this->data,
 			0,0,$x1,$y1,$width,$height,$width,$height);
-		imagedestroy($this->data);
+		if (version_compare(PHP_VERSION, '8.5.0')<0)
+			// TODO: remove this when php7 support is dropped
+			imagedestroy($this->data);
 		$this->data=$tmp;
 		return $this->save();
 	}
@@ -258,18 +264,20 @@ class Image {
 			if ($width/$ratio<=$height) {
 				$cropw=round($origh*$width/$height);
 				imagecopyresampled($tmp,$this->data,
-					0,0,($origw-$cropw)/2,0,$width,$height,$cropw,$origh);
+					0,0,round(($origw-$cropw)/2),0,$width,$height,$cropw,$origh);
 			}
 			else {
 				$croph=round($origw*$height/$width);
 				imagecopyresampled($tmp,$this->data,
-					0,0,0,($origh-$croph)/2,$width,$height,$origw,$croph);
+					0,0,0,round(($origh-$croph)/2),$width,$height,$origw,$croph);
 			}
 		}
 		else
 			imagecopyresampled($tmp,$this->data,
 				0,0,0,0,$width,$height,$origw,$origh);
-		imagedestroy($this->data);
+		if (version_compare(PHP_VERSION, '8.5.0')<0)
+			// TODO: remove this when php7 support is dropped
+			imagedestroy($this->data);
 		$this->data=$tmp;
 		return $this->save();
 	}
@@ -309,13 +317,13 @@ class Image {
 		if ($align & self::POS_Left)
 			$posx=0;
 		if ($align & self::POS_Center)
-			$posx=($imgw-$ovrw)/2;
+			$posx=round(($imgw-$ovrw)/2);
 		if ($align & self::POS_Right)
 			$posx=$imgw-$ovrw;
 		if ($align & self::POS_Top)
 			$posy=0;
 		if ($align & self::POS_Middle)
-			$posy=($imgh-$ovrh)/2;
+			$posy=round(($imgh-$ovrh)/2);
 		if ($align & self::POS_Bottom)
 			$posy=$imgh-$ovrh;
 		if (empty($posx))
@@ -367,21 +375,27 @@ class Image {
 		imagefill($this->data,0,0,IMG_COLOR_TRANSPARENT);
 		$ctr=count($sprites);
 		$dim=$blocks*floor($size/$blocks)*2/$blocks;
-		for ($j=0,$y=ceil($blocks/2);$j<$y;$j++)
-			for ($i=$j,$x=$blocks-1-$j;$i<$x;$i++) {
+		for ($j=0,$y=ceil($blocks/2);$j<$y;++$j)
+			for ($i=$j,$x=$blocks-1-$j;$i<$x;++$i) {
 				$sprite=imagecreatetruecolor($dim,$dim);
 				imagefill($sprite,0,0,IMG_COLOR_TRANSPARENT);
 				$block=$sprites[hexdec($hash[($j*$blocks+$i)*2])%$ctr];
-				for ($k=0,$pts=count($block);$k<$pts;$k++)
+				for ($k=0,$pts=count($block);$k<$pts;++$k)
 					$block[$k]*=$dim;
-				imagefilledpolygon($sprite,$block,$pts/2,$fg);
-				for ($k=0;$k<4;$k++) {
+				if (version_compare(PHP_VERSION, '8.1.0') >= 0) {
+					imagefilledpolygon($sprite,$block,$fg);
+				} else {
+					imagefilledpolygon($sprite,$block,$pts/2,$fg);
+				}
+				for ($k=0;$k<4;++$k) {
 					imagecopyresampled($this->data,$sprite,
-						$i*$dim/2,$j*$dim/2,0,0,$dim/2,$dim/2,$dim,$dim);
+						round($i*$dim/2),round($j*$dim/2),0,0,round($dim/2),round($dim/2),$dim,$dim);
 					$this->data=imagerotate($this->data,90,
 						imagecolorallocatealpha($this->data,0,0,0,127));
 				}
-				imagedestroy($sprite);
+				if (version_compare(PHP_VERSION, '8.5.0')<0)
+					// TODO: remove this when php7 support is dropped
+					imagedestroy($sprite);
 			}
 		imagesavealpha($this->data,TRUE);
 		return $this->save();
@@ -401,22 +415,20 @@ class Image {
 	function captcha($font,$size=24,$len=5,
 		$key=NULL,$path='',$fg=0xFFFFFF,$bg=0x000000) {
 		if ((!$ssl=extension_loaded('openssl')) && ($len<4 || $len>13)) {
-			user_error(sprintf(self::E_Length,$len),E_USER_ERROR);
-			return FALSE;
+            throw new \Exception(sprintf(self::E_Length,$len));
 		}
 		if (!function_exists('imagettftext')) {
-			user_error(self::E_TTF,E_USER_ERROR);
-			return FALSE;
+            throw new \Exception(self::E_TTF);
 		}
 		$fw=Base::instance();
 		foreach ($fw->split($path?:$fw->UI.';./') as $dir)
-			if (is_file($path=$dir.$font)) {
+			if (is_file($path=realpath($dir.$font))) {
 				$seed=strtoupper(substr(
 					$ssl?bin2hex(openssl_random_pseudo_bytes($len)):uniqid(),
 					-$len));
 				$block=$size*3;
 				$tmp=[];
-				for ($i=0,$width=0,$height=0;$i<$len;$i++) {
+				for ($i=0,$width=0,$height=0;$i<$len;++$i) {
 					// Process at 2x magnification
 					$box=imagettfbbox($size*2,0,$path,$seed[$i]);
 					$w=$box[2]-$box[0];
@@ -424,35 +436,36 @@ class Image {
 					$char=imagecreatetruecolor($block,$block);
 					imagefill($char,0,0,$bg);
 					imagettftext($char,$size*2,0,
-						($block-$w)/2,$block-($block-$h)/2,
+						round(($block-$w)/2),round($block-($block-$h)/2),
 						$fg,$path,$seed[$i]);
 					$char=imagerotate($char,mt_rand(-30,30),
 						imagecolorallocatealpha($char,0,0,0,127));
 					// Reduce to normal size
 					$tmp[$i]=imagecreatetruecolor(
-						($w=imagesx($char))/2,($h=imagesy($char))/2);
+						round(($w=imagesx($char))/2),round(($h=imagesy($char))/2));
 					imagefill($tmp[$i],0,0,IMG_COLOR_TRANSPARENT);
 					imagecopyresampled($tmp[$i],
-						$char,0,0,0,0,$w/2,$h/2,$w,$h);
-					imagedestroy($char);
+						$char,0,0,0,0,round($w/2),round($h/2),$w,$h);
+					if (version_compare(PHP_VERSION, '8.5.0')<0)
+						imagedestroy($char);
 					$width+=$i+1<$len?$block/2:$w/2;
 					$height=max($height,$h/2);
 				}
-				$this->data=imagecreatetruecolor($width,$height);
+				$this->data=imagecreatetruecolor(round($width),round($height));
 				imagefill($this->data,0,0,IMG_COLOR_TRANSPARENT);
-				for ($i=0;$i<$len;$i++) {
+				for ($i=0;$i<$len;++$i) {
 					imagecopy($this->data,$tmp[$i],
-						$i*$block/2,($height-imagesy($tmp[$i]))/2,0,0,
+						round($i*$block/2),round(($height-imagesy($tmp[$i]))/2),0,0,
 						imagesx($tmp[$i]),imagesy($tmp[$i]));
-					imagedestroy($tmp[$i]);
+					if (version_compare(PHP_VERSION, '8.5.0')<0)
+						imagedestroy($tmp[$i]);
 				}
 				imagesavealpha($this->data,TRUE);
 				if ($key)
 					$fw->$key=$seed;
 				return $this->save();
 			}
-		user_error(self::E_Font,E_USER_ERROR);
-		return FALSE;
+        throw new \Exception(self::E_Font);
 	}
 
 	/**
@@ -520,7 +533,7 @@ class Image {
 		if ($this->flag) {
 			if (!is_dir($dir=$fw->TEMP))
 				mkdir($dir,Base::MODE,TRUE);
-			$this->count++;
+			++$this->count;
 			$fw->write($dir.'/'.$fw->SEED.'.'.
 				$fw->hash($this->file).'-'.$this->count.'.png',
 				$this->dump());
@@ -537,7 +550,8 @@ class Image {
 		$fw=Base::instance();
 		if ($this->flag && is_file($file=($path=$fw->TEMP.
 			$fw->SEED.'.'.$fw->hash($this->file).'-').$state.'.png')) {
-			if (is_resource($this->data))
+			if (version_compare(PHP_VERSION, '8.5.0')<0 && isset($this->data))
+				// TODO: remove this when php7 support is dropped
 				imagedestroy($this->data);
 			$this->data=imagecreatefromstring($fw->read($file));
 			imagesavealpha($this->data,TRUE);
@@ -593,7 +607,7 @@ class Image {
 			foreach ($fw->split($path,FALSE) as $dir)
 				if (is_file($dir.$file))
 					return $this->load($fw->read($dir.$file));
-			user_error(self::E_File,E_USER_ERROR);
+            throw new \Exception(self::E_File);
 		}
 	}
 
@@ -602,8 +616,10 @@ class Image {
 	*	@return NULL
 	**/
 	function __destruct() {
-		if (is_resource($this->data)) {
-			imagedestroy($this->data);
+		if (isset($this->data)) {
+			if (version_compare(PHP_VERSION, '8.5.0')<0)
+				// TODO: remove this when php7 support is dropped
+				imagedestroy($this->data);
 			$fw=Base::instance();
 			$path=$fw->TEMP.$fw->SEED.'.'.$fw->hash($this->file);
 			if ($glob=@glob($path.'*.png',GLOB_NOSORT))

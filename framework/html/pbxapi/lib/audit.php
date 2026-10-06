@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2017 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -27,7 +27,8 @@ class Audit extends Prefab {
 	const
 		UA_Mobile='android|blackberry|phone|ipod|palm|windows\s+ce',
 		UA_Desktop='bsd|linux|os\s+[x9]|solaris|windows',
-		UA_Bot='bot|crawl|slurp|spider';
+		UA_AI='gpt|claude|mistral|oai|google-extended|perplexity|anthropic|cohere|duckassist|amazonbot|bingbot|-ai|ai-',
+		UA_Bot='bot|crawl|slurp|spider|agent|omgili|external';
 	//@}
 
 	/**
@@ -36,7 +37,8 @@ class Audit extends Prefab {
 	*	@param $str string
 	**/
 	function url($str) {
-		return is_string(filter_var($str,FILTER_VALIDATE_URL));
+		return is_string(filter_var($str,FILTER_VALIDATE_URL))
+			&& !preg_match('/^(javascript|php):\/\/.*$/i', $str);
 	}
 
 	/**
@@ -76,8 +78,8 @@ class Audit extends Prefab {
 	*	@param $addr string
 	**/
 	function isprivate($addr) {
-		return !(bool)filter_var($addr,FILTER_VALIDATE_IP,
-			FILTER_FLAG_IPV4|FILTER_FLAG_IPV6|FILTER_FLAG_NO_PRIV_RANGE);
+		return (bool)filter_var($addr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)
+			&& !(bool)filter_var($addr, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE);
 	}
 
 	/**
@@ -136,6 +138,27 @@ class Audit extends Prefab {
 	}
 
 	/**
+	*	Return TRUE if user agent is an AI
+	*	@return bool
+	*	@param $agent string
+	**/
+	function isai($agent=NULL) {
+		if (!isset($agent))
+			$agent=Base::instance()->AGENT;
+		return (bool)preg_match('/('.self::UA_AI.')/i',$agent);
+	}
+
+
+	/**
+	*	Return TRUE if user agent is a Web bot or an AI
+	*	@return bool
+	*	@param $agent string
+	**/
+	function isbotorai($agent=NULL) {
+		return $this->isbot($agent) || $this->isai($agent);
+	}
+
+	/**
 	*	Return TRUE if specified ID has a valid (Luhn) Mod-10 check digit
 	*	@return bool
 	*	@param $id string
@@ -145,7 +168,7 @@ class Audit extends Prefab {
 			return FALSE;
 		$id=strrev($id);
 		$sum=0;
-		for ($i=0,$l=strlen($id);$i<$l;$i++)
+		for ($i=0,$l=strlen($id);$i<$l;++$i)
 			$sum+=$id[$i]+$i%2*(($id[$i]>4)*-4+$id[$i]%5);
 		return !($sum%10);
 	}
@@ -187,5 +210,15 @@ class Audit extends Prefab {
 			6*(bool)(preg_match(
 				'/[A-Z].*?[0-9[:punct:]]|[0-9[:punct:]].*?[A-Z]/',$str));
 	}
+
+    /**
+     *	Return TRUE if string is a valid MAC address including EUI-64 format
+     *	@return bool
+     *	@param $addr string
+     **/
+    function mac($addr) {
+        return (bool)filter_var($addr,FILTER_VALIDATE_MAC)
+            || preg_match('/^([0-9a-f]{2}:){3}ff:fe(:[0-9a-f]{2}){3}$/i', $addr);
+    }
 
 }
