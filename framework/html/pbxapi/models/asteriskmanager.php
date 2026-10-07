@@ -186,7 +186,7 @@ class asteriskmanager
         // login
         $res = $this->send_request('login', array('Username'=>$username, 'Secret'=>$secret, 'Events'=>$events));
         if($res['Response']=='Error') {
-            $errors[]=array('status'=>'500','source'=>'Asterisk Manager','detail'=>$res['Message'],'verbose'=>"$server,$username,$secret");
+            $errors[]=array('status'=>'500','source'=>'Asterisk Manager','detail'=>$res['Message'],'verbose'=>"$server,$username");
             return false;
         }
 
