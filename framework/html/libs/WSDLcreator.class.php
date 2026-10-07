@@ -167,7 +167,7 @@ class WSDLcreator
      * @param  string   $targetNamespace   URN of namespace target WSDL.
      * @param  string   $soapAddress       Address location WSDL functions implementation.
      */
-    public function __construct($nameWSDL, $targetNamespace="http://cloud.issabel.org/webservices", $soapAddress)
+    public function __construct($nameWSDL, $targetNamespace, $soapAddress)
     {
         /*
             PRIMITIVE DATA TYPES
