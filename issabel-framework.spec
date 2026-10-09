@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 1
+Release: 4
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -11,8 +11,8 @@ Source0: issabel-%{modname}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
 Requires(pre): /usr/sbin/chkconfig, /etc/sudoers, sudo
-Requires(pre): php, php-gd, php-xml, php-mysql, php-pdo, php-imap, php-soap
-Requires(pre): httpd, mariadb-server, ntp, mod_ssl
+Requires(pre): php, php-gd, php-xml, php-mysqlnd, php-pdo, php-soap
+Requires(pre): httpd, mariadb-server, chrony, mod_ssl
 Requires(pre): perl
 Requires: issabel-firstboot >= 5.0.0-2
 
@@ -35,10 +35,9 @@ Conflicts: kernel-module-dahdi-xen
 Conflicts: kernel-module-rhino-xen
 Conflicts: kernel-module-wanpipe-xen
 Obsoletes: elastix <= 2.2.0-17
-Requires: php-Smarty
-Requires: php-jpgraph
-Requires: php-tcpdf
-Requires: php-PHPMailer
+Requires: php-smarty4
+Requires: issabel-php-tcpdf
+Requires: issabel-php-phpmailer
 Obsoletes: elastix-framework
 Provides: elastix-framework
 
@@ -428,3 +427,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/tenant
 
 %changelog
+* Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-4
+- Require the unversioned PHP packages (php-*, 8.3 on EL10) instead of the
+  versioned php8.4-*, which conflict with the PHP 8.3 in the netinstall base.
