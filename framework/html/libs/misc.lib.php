@@ -914,8 +914,24 @@ function getSmarty($mainTheme, $basedir = '/var/www/html')
             require_once('Smarty/SmartyBC.class.php');
             $smartyClass = 'SmartyBC';
         }
-    } else if(file_exists('$basedir/libs/smarty/libs/Smarty.class.php'))
+    } else if(file_exists("$basedir/libs/smarty/libs/Smarty.class.php"))
         require_once("$basedir/libs/smarty/libs/Smarty.class.php");
+    else if(file_exists('/usr/share/php/smarty4/Smarty.class.php')) {
+        /* php-smarty4 de EPEL (Rocky Linux 10) instala en /usr/share/php/smarty4/
+         * y no incluye SmartyBC. Se define aqui el alias get_template_vars, que
+         * el resto de la GUI usa y que Smarty 4 renombro a getTemplateVars. */
+        require_once('/usr/share/php/smarty4/Smarty.class.php');
+        if (!class_exists('SmartyBC', false)) {
+            class SmartyBC extends Smarty
+            {
+                public function get_template_vars($name = null)
+                {
+                    return $this->getTemplateVars($name);
+                }
+            }
+        }
+        $smartyClass = 'SmartyBC';
+    }
     else{
         global $arrConf;
         $basedir = $arrConf['basePath'];
