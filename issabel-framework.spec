@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 4
+Release: 5
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -427,6 +427,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/tenant
 
 %changelog
+* Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-5
+- getSmarty(): prefer /usr/share/php/smarty4/ (EPEL php-smarty4) over the old
+  /usr/share/php/Smarty/ (php-Smarty 3), which creates dynamic properties and
+  triggers PHP 8.2+ deprecations.
+- Theme index.tpl and userlist edit_userExtension.tpl: default HEADER_MODULES
+  to '' so rendering without a module loaded no longer warns.
 * Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-4
 - Require the unversioned PHP packages (php-*, 8.3 on EL10) instead of the
   versioned php8.4-*, which conflict with the PHP 8.3 in the netinstall base.

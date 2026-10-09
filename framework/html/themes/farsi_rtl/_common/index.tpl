@@ -31,7 +31,7 @@
         <script type='text/javascript' src="libs/js/iframe.js"></script>
 
         {$HEADER}
-    {$HEADER_MODULES}
+    {$HEADER_MODULES|default:''}
     <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/rtl.css">
     </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" class="mainBody page-body" {$BODYPARAMS}>

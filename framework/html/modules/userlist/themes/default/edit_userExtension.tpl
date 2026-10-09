@@ -8,7 +8,7 @@
         {$HEADER_LIBS_JQUERY}
         <script type="text/javascript" src="{$path}libs/js/base.js"></script>
         {$HEADER}
-        {$HEADER_MODULES}
+        {$HEADER_MODULES|default:''}
     </head>
     <body>
     {if $THEMENAME eq "elastixneo"}
