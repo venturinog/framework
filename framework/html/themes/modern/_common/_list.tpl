@@ -6,22 +6,22 @@
         {foreach from=$arrActions key=k item=accion name=actions}
             {if $accion.type eq 'link'}
                 <a href="{$accion.task}" class="iss-grid__action" {if !empty($accion.onclick)} onclick="{$accion.onclick}" {/if}>
-                    <button type="button" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-secondary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor};" {/if}>
+                    <button type="button" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor}; color:#fff;" {/if}>
                        {if !empty($accion.iconclass)}<i class="{$accion.iconclass}"></i> {elseif !empty($accion.icon)}<img border="0" src="{$accion.icon}" align="absmiddle" />{/if}{$accion.alt}
                     </button>
                 </a>
             {elseif $accion.type eq 'button'}
-                <button type="button" name="{$accion.task}" value="{$accion.alt}" {if !empty($accion.onclick)} onclick="{$accion.onclick}" {/if} class="btn btn-sm btn-outline-secondary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor};" {/if}>
+                <button type="button" name="{$accion.task}" value="{$accion.alt}" {if !empty($accion.onclick)} onclick="{$accion.onclick}" {/if} class="btn btn-sm btn-outline-primary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor}; color:#fff;" {/if}>
                    {if !empty($accion.iconclass)}<i class="{$accion.iconclass}"></i> {elseif !empty($accion.icon)}<img border="0" src="{$accion.icon}" align="absmiddle" />{/if}{$accion.alt}
                 </button>
             {elseif $accion.type eq 'submit'}
-                <button type="submit" name="{$accion.task}" value="{$accion.alt}" {if !empty($accion.onclick)} onclick="{$accion.onclick}" {/if} class="btn btn-sm btn-outline-secondary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor};" {/if}>
+                <button type="submit" name="{$accion.task}" value="{$accion.alt}" {if !empty($accion.onclick)} onclick="{$accion.onclick}" {/if} class="btn btn-sm btn-outline-primary" {if !empty($accion.ocolor)} style="background-color:#{$accion.ocolor}; border:1px solid #{$accion.ocolor}; color:#fff;" {/if}>
                    {if !empty($accion.iconclass)}<i class="{$accion.iconclass}"></i> {elseif !empty($accion.icon)}<img border="0" src="{$accion.icon}" align="absmiddle" />{/if}{$accion.alt}
                 </button>
             {elseif $accion.type eq 'text'}
                 <div class="input-group input-group-sm iss-grid__text">
                     <input type="text" id="{$accion.name}" name="{$accion.name}" value="{$accion.value}" class="form-control" {if !empty($accion.onkeypress)} onkeypress="{$accion.onkeypress}" {/if} />
-                    <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-outline-secondary"><i class="ti ti-search"></i></button>
+                    <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-outline-primary"><i class="ti ti-search"></i></button>
                 </div>
             {elseif $accion.type eq 'combo'}
                 <div class="iss-grid__combo">
@@ -33,7 +33,7 @@
                         {/if}
                     </select>
                     {if !empty($accion.task)}
-                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-secondary"><i class="ti ti-search"></i></button>
+                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary"><i class="ti ti-search"></i></button>
                     {/if}
                 </div>
             {elseif $accion.type eq 'html'}
@@ -42,19 +42,19 @@
         {/foreach}
 
         {if !empty($contentFilter)}
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="neo-table-button-filter-left">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="neo-table-button-filter-left">
                 <i class="ti ti-filter"></i> {if $AS_OPTION}{$MORE_OPTIONS}{else}{$FILTER_GRID_SHOW}{/if}
             </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="neo-table-filter-button-arrow">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="neo-table-filter-button-arrow">
                <i class="ti ti-chevron-down"></i>
             </button>
         {/if}
 
         {if $enableExport==true}
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="export_button">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="export_button">
                 <i class="ti ti-download"></i> {$DOWNLOAD_GRID}
             </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="neo-table-button-download-right">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="neo-table-button-download-right">
                <i class="ti ti-chevron-down"></i>
             </button>
 

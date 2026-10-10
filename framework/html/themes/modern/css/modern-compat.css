@@ -85,3 +85,21 @@
 .progress-bar-info { background-color: #206bc4; }
 .progress-bar-warning { background-color: #f59f00; }
 .progress-bar-danger { background-color: #d63939; }
+
+/* Botones de grilla legacy (Neon) — módulos con su propio tpl de grilla */
+.neo-table-toolbar-button, .neo-table-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--iss-border);
+  background: var(--iss-surface);
+  color: var(--iss-text);
+  font-size: 13px;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.neo-table-toolbar-button:hover, .neo-table-action:hover { background: var(--iss-surface-2); color: var(--iss-text); }
+/* Los botones con color de fondo (ocolor) van con texto blanco */
+.neo-table-toolbar-button[style*="background"], .neo-table-action[style*="background"] { color: #fff; }
