@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 7
+Release: 8
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-8
+- Migrate paloSantoForm widgets to Bootstrap 5 (radio, select, datetimepicker and
+  checkbox) and drop the deprecated theme cases from paloSantoNavigation.
+
 * Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-7
 - Add the "modern" GUI theme (Bootstrap 5 + Tabler) and make it the default via
   load_theme(); deprecate tenant/farsi_rtl as non-selectable themes while keeping

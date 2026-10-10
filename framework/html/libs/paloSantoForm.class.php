@@ -316,7 +316,10 @@ class paloForm
         $cntRadio = 1;
         foreach($arrVars['INPUT_EXTRA_PARAM'] as $radioValue => $radioLabel) {
             $listaRadio[] = sprintf(
-                '<input type="radio" id="%s" name="%s" value="%s" %s /><label for="%s">%s</label>',
+                '<div class="form-check">'.
+                '<input class="form-check-input" type="radio" id="%s" name="%s" value="%s" %s />'.
+                '<label class="form-check-label" for="%s">%s</label>'.
+                '</div>',
                 $varName_escaped.$cntRadio,
                 $varName_escaped,
                 htmlentities($radioValue, ENT_COMPAT, 'UTF-8'),
@@ -449,7 +452,7 @@ class paloForm
             }
 
             $strInput = sprintf(
-                '<select name="%s" id="%s" %s %s %s>%s</select>',
+                '<select name="%s" id="%s" class="form-select" %s %s %s>%s</select>',
                 $sNombreSelect,
                 $sNombreSelect,
                 $sAttrMultiple,
@@ -553,9 +556,9 @@ class paloForm
         if ($datewidget == 'datetimepicker' && isset($arrVars['INPUT_EXTRA_PARAM']['TIMELIB']) &&
             $arrVars['INPUT_EXTRA_PARAM']['TIMELIB'] == 'bootstrap-datetimepicker') {
             $strInput = <<<DATETIME_PICKER_FIELD
-<div class="input-append date form_datetime" nowrap>
-    <input size="16" type="text" name="{$varName_escaped}" value="{$varValue_escaped}" class="datepicker-input" readonly>
-    <span class="add-on datepicker-button"><i class="fa fa-calendar"></i></span>
+<div class="input-group date form_datetime" nowrap>
+    <input size="16" type="text" name="{$varName_escaped}" value="{$varValue_escaped}" class="form-control datepicker-input" readonly>
+    <span class="input-group-text datepicker-button"><i class="ti ti-calendar"></i></span>
 </div>
 <script type="text/javascript">
 $(function() {
@@ -565,8 +568,7 @@ $(function() {
 DATETIME_PICKER_FIELD;
         } else {
             $strInput = <<<DATETIME_PICKER_FIELD
-<input type="text" name="{$varName_escaped}" value="{$varValue_escaped}"
-    style="width: 10em; color: #840; background-color: #fafafa; border: 1px solid #999999; text-align: center" />
+<input type="text" name="{$varName_escaped}" value="{$varValue_escaped}" class="form-control" style="width: 12em" />
 <script type="text/javascript">
 $(function() {
     $("input[name={$varName}]").{$datewidget}({$params});
