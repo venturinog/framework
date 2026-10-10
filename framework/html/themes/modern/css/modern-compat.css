@@ -67,3 +67,21 @@
 @media (min-width: 768px) and (max-width: 991px) { .visible-sm { display: block !important; } .hidden-sm { display: none !important; } }
 @media (min-width: 992px) and (max-width: 1199px) { .visible-md { display: block !important; } .hidden-md { display: none !important; } }
 @media (min-width: 1200px) { .visible-lg { display: block !important; } .hidden-lg { display: none !important; } }
+
+/* Utilidades BS3 renombradas en BS5 */
+.text-right { text-align: right !important; }
+.text-left { text-align: left !important; }
+.hidden { display: none !important; }
+.caret { display: inline-block; width: 0; height: 0; margin-left: 2px; vertical-align: middle; border-top: 4px dashed; border-right: 4px solid transparent; border-left: 4px solid transparent; }
+.glyphicon { display: none !important; } /* BS3 usaba Glyphicons; no disponibles en BS5 */
+
+/* Listas y etiquetas inline BS3 */
+.list-inline { padding-left: 0; list-style: none; }
+.list-inline > li { display: inline-block; padding-right: 5px; padding-left: 5px; }
+.btn-xs { font-size: .72rem; padding: .15rem .4rem; border-radius: .25rem; }
+
+/* Barras de progreso BS3 con color por variante */
+.progress-bar-success { background-color: #2fb344; }
+.progress-bar-info { background-color: #206bc4; }
+.progress-bar-warning { background-color: #f59f00; }
+.progress-bar-danger { background-color: #d63939; }
