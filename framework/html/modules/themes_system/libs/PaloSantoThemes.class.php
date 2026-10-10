@@ -65,6 +65,7 @@ class PaloSantoThemes
             function _getThemes_is_theme_dir_valid($themedir)
             {
                 $theme = basename($themedir);
+                if (function_exists('deprecated_themes') && in_array($theme, deprecated_themes())) return FALSE;
                 if (!preg_match('/^\w+$/', $theme)) return FALSE;
                 if (!is_dir($themedir)) return FALSE;
                 if (!file_exists($themedir.'/_common/index.tpl')) return FALSE;

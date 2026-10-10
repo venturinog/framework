@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 6
+Release: 7
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -377,6 +377,7 @@ rm -rf $RPM_BUILD_ROOT
 /var/www/html/libs
 /var/www/html/modules
 /var/www/html/themes/tenant
+/var/www/html/themes/modern
 /var/www/html/*.php
 /var/www/html/robots.txt
 /var/www/html/panels/README.en
@@ -421,8 +422,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 /var/www/html/themes/*
 %exclude /var/www/html/themes/tenant
+%exclude /var/www/html/themes/modern
 
 %changelog
+* Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-7
+- Add the "modern" GUI theme (Bootstrap 5 + Tabler) and make it the default via
+  load_theme(); deprecate tenant/farsi_rtl as non-selectable themes while keeping
+  their assets for path compatibility.
+
 * Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-6
 - Drop the orphan postfix_stats.log and its logrotate config, plus the dead
   Cyrus helpers (obtenerClaveCyrusAdmin, isPostfixToIssabel2), configs/email.conf.php

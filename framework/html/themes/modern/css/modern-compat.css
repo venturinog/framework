@@ -1,0 +1,69 @@
+/* =========================================================================
+   modern-compat.css — capa de compatibilidad BS3 → BS5 (D8)
+   Re-mapea las clases Bootstrap 3 que emiten los módulos de terceros/legacy,
+   para que sigan viéndose bien bajo el tema "Modern" sin reescribirlos.
+   Se carga DESPUÉS de Tabler.
+   ========================================================================= */
+
+/* Contenedores */
+.panel, .panel-default { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); }
+.panel-heading { background: var(--iss-surface-2); border-bottom: 1px solid var(--iss-border); padding: 12px 16px; border-radius: var(--iss-radius) var(--iss-radius) 0 0; }
+.panel-body { padding: 16px; }
+.panel-footer { background: var(--iss-surface-2); border-top: 1px solid var(--iss-border); padding: 12px 16px; border-radius: 0 0 var(--iss-radius) var(--iss-radius); }
+.panel-title { font-weight: 600; margin: 0; }
+.well { background: var(--iss-surface-2); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); padding: 16px; margin-bottom: 1rem; }
+.thumbnail { display: block; padding: 6px; background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); }
+
+/* Botones */
+.btn-default { background: var(--iss-surface); border-color: var(--iss-border); color: var(--iss-text); }
+.btn-default:hover { background: var(--iss-surface-2); color: var(--iss-text); }
+.btn-xs { font-size: .72rem; padding: .15rem .4rem; }
+
+/* Utilidades de flotación / centrado */
+.pull-right { float: right !important; }
+.pull-left { float: left !important; }
+.center-block { display: block; margin-left: auto; margin-right: auto; }
+.clearfix::after { content: ""; display: table; clear: both; }
+
+/* Imágenes */
+.img-circle { border-radius: 50% !important; }
+.img-responsive, .img-rounded { max-width: 100%; height: auto; }
+.img-rounded { border-radius: .4rem; }
+
+/* Grilla BS3 (xs eliminado en BS5) */
+.col-xs-12 { flex: 0 0 auto; width: 100%; }
+.col-xs-6 { flex: 0 0 auto; width: 50%; }
+.col-xs-4 { flex: 0 0 auto; width: 33.3333%; }
+.col-xs-3 { flex: 0 0 auto; width: 25%; }
+.col-xs-2 { flex: 0 0 auto; width: 16.6667%; }
+.col-xs-1 { flex: 0 0 auto; width: 8.3333%; }
+
+/* Formularios BS3 */
+.input-group-addon { display: flex; align-items: center; padding: .375rem .75rem; background: var(--iss-surface-2); border: 1px solid var(--iss-border); border-radius: .375rem; }
+.input-append, .input-prepend { display: flex; }
+.input-append .add-on, .input-prepend .add-on { display: flex; align-items: center; padding: .375rem .75rem; background: var(--iss-surface-2); border: 1px solid var(--iss-border); }
+.form-group { margin-bottom: 1rem; }
+.control-label { display: block; margin-bottom: .35rem; font-weight: 500; }
+.help-block { display: block; margin-top: .25rem; font-size: .85em; color: var(--iss-text-muted); }
+.has-error .form-control { border-color: #d63939; }
+.has-error .help-block { color: #d63939; }
+.has-success .form-control { border-color: #2fb344; }
+
+/* Etiquetas (.label de BS3 → .badge) */
+.label { display: inline-block; padding: .25em .5em; font-size: .75em; font-weight: 600; line-height: 1; border-radius: .375rem; color: #fff; text-align: center; }
+.label-default { background: var(--iss-text-dim); }
+.label-primary { background: var(--iss-primary); }
+.label-success { background: #2fb344; }
+.label-info { background: #206bc4; }
+.label-warning { background: #f59f00; }
+.label-danger { background: #d63939; }
+
+/* Tablas */
+.table-condensed > thead > tr > th, .table-condensed > tbody > tr > td { padding: .25rem .4rem; }
+
+/* Visibilidad responsiva BS3 (reconstruida con media queries) */
+.visible-xs, .visible-sm, .visible-md, .visible-lg { display: none !important; }
+@media (max-width: 767px) { .visible-xs { display: block !important; } .hidden-xs { display: none !important; } }
+@media (min-width: 768px) and (max-width: 991px) { .visible-sm { display: block !important; } .hidden-sm { display: none !important; } }
+@media (min-width: 992px) and (max-width: 1199px) { .visible-md { display: block !important; } .hidden-md { display: none !important; } }
+@media (min-width: 1200px) { .visible-lg { display: block !important; } .hidden-lg { display: none !important; } }

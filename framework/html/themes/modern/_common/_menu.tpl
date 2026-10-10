@@ -1,0 +1,139 @@
+{*
+  _menu.tpl - tema "Modern" (Issabel 6)
+  Renderiza el sidebar + topbar + breadcrumb y ABRE el bloque .iss-main
+  y .iss-content (que cierra _common/index.tpl).
+*}
+<input type="hidden" id="lblRegisterCm"   value="{$lblRegisterCm}" />
+<input type="hidden" id="lblRegisteredCm" value="{$lblRegisteredCm}" />
+<input type="hidden" id="userMenuColor"   value="{$MENU_COLOR}" />
+<input type="hidden" id="issabel_theme_name" value="{$THEMENAME}" />
+<input type="hidden" id="toolTip_addBookmark" value="{$ADD_BOOKMARK}" />
+<input type="hidden" id="toolTip_removeBookmark" value="{$REMOVE_BOOKMARK}" />
+<input type="hidden" id="toolTip_addingBookmark" value="{$ADDING_BOOKMARK}" />
+<input type="hidden" id="toolTip_removingBookmark" value="{$REMOVING_BOOKMARK}" />
+<input type="hidden" id="amount_char_label" value="{$AMOUNT_CHARACTERS}" />
+<input type="hidden" id="save_note_label" value="{$MSG_SAVE_NOTE}" />
+<input type="hidden" id="get_note_label" value="{$MSG_GET_NOTE}" />
+<input type="hidden" id="lbl_no_description" value="{$LBL_NO_STICKY}" />
+
+<!-- ============================ SIDEBAR ============================ -->
+<aside class="iss-sidebar" id="issSidebar">
+    <div class="iss-sidebar__brand">
+        <a href="index.php" class="iss-logo">
+            <img src="{$WEBPATH}themes/{$THEMENAME}/images/issabel_logo.png" alt="Issabel" class="iss-logo__img">
+        </a>
+        <span class="iss-version">{$issabel_version|default:'6.0'}</span>
+    </div>
+
+    <div class="iss-search">
+        <i class="ti ti-search"></i>
+        <input type="text" id="menuSearch" placeholder="{$MODULES_SEARCH}">
+    </div>
+
+    <nav class="iss-nav">
+        {foreach from=$arrMainMenu key=idMenu item=menu name=menuMain}
+        <div class="iss-nav__group">
+            <button type="button" class="iss-nav__toggle" data-target="#m-{$idMenu}" aria-expanded="{if $idMenu eq $idMainMenuSelected}true{else}false{/if}">
+                <i class="{$menu.icon}"></i><span>{$menu.Name}</span><i class="ti ti-chevron-down iss-chev"></i>
+            </button>
+            <div class="iss-nav__sub" id="m-{$idMenu}"{if $idMenu neq $idMainMenuSelected} hidden{/if}>
+                {foreach from=$menu.children key=idSubMenu item=subMenu}
+                    {if $subMenu.Type eq "popup"}
+                        <a href="{$subMenu.Link}" target="{$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
+                    {else}
+                        <a href="index.php?menu={$idSubMenu}"{if $subMenu.children} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
+                    {/if}
+                    {if $subMenu.children}
+                        <div class="iss-nav__third">
+                            {foreach from=$subMenu.children key=idSubMenu2 item=subMenu2}
+                                {if $subMenu2.Type eq "popup"}
+                                    <a href="{$subMenu2.Link}" target="{$idSubMenu2}"{if $idSubMenu2 eq $idSubMenu2Selected} class="active"{/if}>{$subMenu2.Name}</a>
+                                {else}
+                                    <a href="index.php?menu={$idSubMenu2}"{if $idSubMenu2 eq $idSubMenu2Selected} class="active"{/if}>{$subMenu2.Name}</a>
+                                {/if}
+                            {/foreach}
+                        </div>
+                    {/if}
+                {/foreach}
+            </div>
+        </div>
+        {/foreach}
+
+        <ul class="iss-nav__shortcut">{$SHORTCUT}</ul>
+    </nav>
+
+    <div class="iss-sidebar__foot"><i class="ti ti-info-circle"></i> Issabel 6 &middot; GPLv2+</div>
+</aside>
+
+<!-- ============================ MAIN ============================ -->
+<div class="iss-main">
+
+    <header class="iss-topbar">
+        <button class="iss-topbar__burger" id="issBurger" type="button" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+
+        <div class="iss-topbar__right">
+            <!-- Notificaciones -->
+            <div class="dropdown">
+                <button class="iss-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{$NOTIFICATIONS.LBL_NOTIFICATION_SYSTEM}">
+                    <i class="ti ti-bell"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-header">{$NOTIFICATIONS.LBL_NOTIFICATION_SYSTEM}</li>
+                    {foreach from=$NOTIFICATIONS.NOTIFICATIONS_PUBLIC item=NOTI}
+                    <li class="{if $NOTI.level eq "info"}iss-noti-info{elseif $NOTI.level eq "warning"}iss-noti-warning{else}iss-noti-danger{/if}">
+                        <a class="dropdown-item" href="#" onclick='readNoti("{$NOTI.id}")'>{$NOTI.content}</a>
+                    </li>
+                    {foreachelse}
+                    <li><span class="dropdown-item-text text-secondary">{$NOTIFICATIONS.TXT_NO_NOTIFICATIONS}</span></li>
+                    {/foreach}
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="dropdown-header">{$NOTIFICATIONS.LBL_NOTIFICATION_USER}</li>
+                    {foreach from=$NOTIFICATIONS.NOTIFICATIONS_PRIVATE item=NOTI}
+                    <li class="{if $NOTI.level eq "info"}iss-noti-info{elseif $NOTI.level eq "warning"}iss-noti-warning{else}iss-noti-danger{/if}">
+                        <a class="dropdown-item" href="#">{$NOTI.content}</a>
+                    </li>
+                    {foreachelse}
+                    <li><span class="dropdown-item-text text-secondary">{$NOTIFICATIONS.TXT_NO_NOTIFICATIONS}</span></li>
+                    {/foreach}
+                </ul>
+            </div>
+
+            <!-- Usuario -->
+            <div class="dropdown iss-user">
+                <a href="#" class="iss-user__link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="iss-avatar">{$USER_LOGIN|truncate:2:""|upper}</span>
+                    <span class="iss-user__name"><strong>{$USER_LOGIN}</strong><small>#{$EXTENSION}</small></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item setadminpassword" href="#"><i class="ti ti-user me-2"></i>{$CHANGE_PASSWORD}</a></li>
+                    <li><a class="dropdown-item" href="#" id="viewDetailsRPMs"><i class="ti ti-info-circle me-2"></i>{$ABOUT_ISSABEL2}</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="dropdown-header"><i class="ti ti-adjustments-alt me-1"></i>{$APPEARANCE}</li>
+                    <li class="px-3 pb-2">
+                        <div class="btn-group w-100 iss-theme-toggle" role="group" aria-label="Appearance">
+                            <button type="button" class="btn btn-sm" data-theme-set="auto"><i class="ti ti-contrast me-1"></i>{$THEME_AUTO}</button>
+                            <button type="button" class="btn btn-sm" data-theme-set="light"><i class="ti ti-sun me-1"></i>{$THEME_LIGHT}</button>
+                            <button type="button" class="btn btn-sm" data-theme-set="dark"><i class="ti ti-moon me-1"></i>{$THEME_DARK}</button>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="index.php?logout=yes"><i class="ti ti-logout me-2"></i>{$LOGOUT}</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <nav class="iss-breadcrumb">
+        <a href="index.php"><i class="ti ti-home"></i></a>
+        {foreach from=$BREADCRUMB item=value name=menu}
+            <i class="ti ti-chevron-right"></i>
+            {if $smarty.foreach.menu.last}
+                <span>{$value}</span>
+            {else}
+                <a href="#">{$value}</a>
+            {/if}
+        {/foreach}
+    </nav>
+
+    <div class="iss-content">
+    {* ABIERTO: lo cierra _common/index.tpl *}

@@ -276,6 +276,13 @@ function load_version_issabel($ruta_base='')
     else return $theme;
 }
 
+/* Temas retirados en Issabel 6 (D5/D10): dejan de ser seleccionables, pero se
+ * conservan sus assets (css/js/images/fonts) por compatibilidad de rutas. */
+function deprecated_themes()
+{
+    return array('tenant', 'farsi_rtl');
+}
+
 function load_theme($ruta_base='')
 {
     require_once $ruta_base."configs/default.conf.php";
@@ -286,6 +293,7 @@ function load_theme($ruta_base='')
         function _load_theme_is_theme_dir_valid($themedir)
         {
             $theme = basename($themedir);
+            if (in_array($theme, deprecated_themes())) return FALSE;
             if (!preg_match('/^\w+$/', $theme)) return FALSE;
             if (!is_dir($themedir)) return FALSE;
             if (!file_exists($themedir.'/_common/index.tpl')) return FALSE;
@@ -306,18 +314,10 @@ function load_theme($ruta_base='')
             $settings_theme = NULL;
     }
 
-    // Verificar si los temas existen en el orden indicado
-    if(is_file("/etc/centos-release")) {
-        $output=file("/etc/centos-release");
-    } else if(is_file("/etc/redhat-release")) {
-        $output=file("/etc/redhat-release");
-    }
-	$ver = explode(" ",$output[0]);
-    if(intval($ver[3])==5) {
-	    $available_themes = array('elastixneo','tenant', 'blackmin', 'giox', 'default');
-    } else {
-	    $available_themes = array('tenant', 'elastixneo', 'blackmin', 'giox', 'default');
-	}
+    // Orden de preferencia de temas. En Issabel 6 "modern" es el default (D14).
+    // Los temas retirados (tenant/farsi_rtl) quedan en la lista pero ya no validan,
+    // así que un settings con theme=tenant cae a "modern" y se auto-migra.
+    $available_themes = array('modern', 'elastixneo', 'tenant', 'farsi_rtl', 'blackmin', 'giox', 'default');
     if (!is_null($settings_theme)) array_unshift($available_themes, $settings_theme);
     foreach ($available_themes as $theme) {
         if (_load_theme_is_theme_dir_valid($ruta_base."themes/$theme")) {
