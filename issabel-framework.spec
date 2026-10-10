@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 5
+Release: 6
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -181,7 +181,6 @@ chmod 644 $RPM_BUILD_ROOT/etc/logrotate.d/*
 # File Issabel Access Audit log
 mkdir -p    $RPM_BUILD_ROOT/var/log/issabel
 touch       $RPM_BUILD_ROOT/var/log/issabel/audit.log
-touch	    $RPM_BUILD_ROOT/var/log/issabel/postfix_stats.log
 
 %pre
 #Para conocer la version de issabel antes de actualizar o instalar
@@ -341,7 +340,6 @@ issabel-menumerge $pathModule/menu.xml
 
 # Los archivos de logrotate TIENEN que ser 0644 (http://bugs.elastix.org/view.php?id=2608)
 chmod 644 /etc/logrotate.d/issabelAudit.logrotate
-chmod 644 /etc/logrotate.d/issabelEmailStats.logrotate
 
 if [ "$1" -ge 1 ]; then
     /usr/bin/issabel-admin-passwords --ensure-jwt-secret >/dev/null 2>&1 || :
@@ -369,7 +367,6 @@ rm -rf $RPM_BUILD_ROOT
 /var/www/db
 /var/www/backup
 /var/log/issabel/audit.log
-/var/log/issabel/postfix_stats.log
 # %config(noreplace) /var/www/db/
 %defattr(-, root, root)
 /var/www/html/configs
@@ -410,7 +407,6 @@ rm -rf $RPM_BUILD_ROOT
 /etc/yum.repos.d/Issabel5.repo
 #%config(noreplace) /etc/yum.repos.d/Issabel.repo
 %config(noreplace) /etc/logrotate.d/issabelAudit.logrotate
-%config(noreplace) /etc/logrotate.d/issabelEmailStats.logrotate
 %config /etc/httpd/conf.d/issabel-htaccess.conf
 /etc/init.d/generic-cloexec
 %defattr(755, root, root)
@@ -427,6 +423,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/tenant
 
 %changelog
+* Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-6
+- Drop the orphan postfix_stats.log and its logrotate config, plus the dead
+  Cyrus helpers (obtenerClaveCyrusAdmin, isPostfixToIssabel2), configs/email.conf.php
+  and the cyrus-imapd entry in the Mail package group: Issabel 6 no longer
+  ships a local mail server.
 * Fri Oct 09 2026 Issabel Foundation <info@issabel.org> - 6.0.0-5
 - getSmarty(): prefer /usr/share/php/smarty4/ (EPEL php-smarty4) over the old
   /usr/share/php/Smarty/ (php-Smarty 3), which creates dynamic properties and

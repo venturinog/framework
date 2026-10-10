@@ -33,7 +33,7 @@ function obtenerDetallesRPMS()
         'Kernel'    =>  NULL,
         'Issabel'   =>  array('issabel*'),
         'RoundCubeMail' =>  array('RoundCubeMail'),
-        'Mail'          =>  array('postfix', 'cyrus-imapd'),
+        'Mail'          =>  array('postfix'),
         'IM'            =>  array('prosody'),
         'IssablPBX'     =>  array('issabelPBX'),
         'Asterisk'      =>  array('asterisk*'),

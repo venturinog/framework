@@ -491,42 +491,6 @@ function getParameter($parameter)
 }
 
 /**
- * Función para obtener la clave del Cyrus Admin de Issabel.
- * La clave es obtenida de /etc/issabel.conf
- *
- * @param   string  $ruta_base          Ruta base para inclusión de librerías
- *
- * @return  mixed   NULL si no se reconoce usuario, o la clave en plaintext
- */
-function obtenerClaveCyrusAdmin($ruta_base='')
-{
-    require_once $ruta_base.'libs/paloSantoConfig.class.php';
-
-    if(is_file("/etc/issabel.conf")) {
-        $pConfig = new paloConfig("/etc", "issabel.conf", "=", "[[:space:]]*=[[:space:]]*");
-        $listaParam = $pConfig->leer_configuracion(FALSE);
-        if (isset($listaParam['cyrususerpwd'])) {
-        $ret = $listaParam['cyrususerpwd']['valor'];
-        } else {
-            $ret = 'palosanto';
-        }
-    }
-
-    if(is_file("/etc/issabel.conf")) {
-        $pConfig = new paloConfig("/etc", "issabel.conf", "=", "[[:space:]]*=[[:space:]]*");
-        $listaParam = $pConfig->leer_configuracion(FALSE);
-        if (isset($listaParam['cyrususerpwd'])) {
-            $ret = $listaParam['cyrususerpwd']['valor'];
-        } else {
-            $ret = 'palosanto';
-        }
-    }
-
-    return $ret;
-
-}
-
-/**
  * Función para obtener la clave MySQL de usuarios bien conocidos de Issabel.
  * Los usuarios conocidos hasta ahora son 'root' (sacada de /etc/issabel.conf)
  * y 'asteriskuser' (sacada de /etc/amportal.conf)
@@ -646,22 +610,6 @@ function generarDSNSistema($sNombreUsuario, $sNombreDB, $ruta_base='')
         }
     }
     return NULL;
-}
-
-function isPostfixToIssabel2(){
-    $pathImap    = "/etc/imapd.conf";
-    $vitualDomain = "virtdomains: yes";
-    $band = TRUE;
-    $handle = fopen($pathImap, "r");
-    $contents = fread($handle, filesize($pathImap));
-    fclose($handle);
-    if(strstr($contents,$vitualDomain)){
-        $band = TRUE; // if the conf postfix is for Elastix 2.0
-    }
-    else{
-        $band = FALSE;// if the conf postfix is for Elastix 1.6
-    }
-    return $band;
 }
 
 // Esta función revisa las bases de datos del framework (acl.db, menu.db, register.db, settings.db, samples.db) en caso de que no existan y se encuentre su equivalente pero con extensión .rpmsave entonces se las renombra.
