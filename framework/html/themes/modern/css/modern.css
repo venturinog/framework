@@ -118,6 +118,22 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-nav__sub > a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
 .iss-nav__sub > a.is-open { color: #fff; font-weight: 600; }
 
+/* Link rápido (Dashboard) */
+.iss-nav__quick { display: flex; align-items: center; gap: 11px; padding: 11px 12px; margin-bottom: 6px; border-radius: 9px; color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 600; background: rgba(255,255,255,.06); }
+.iss-nav__quick i { font-size: 19px; color: var(--iss-accent); }
+.iss-nav__quick:hover { background: rgba(255,255,255,.12); color: #fff; }
+.iss-nav__quick.active { background: var(--iss-accent-soft); box-shadow: inset 3px 0 0 var(--iss-accent); }
+
+/* 2º nivel colapsable (padre con hijos) */
+.iss-nav__subtoggle { width: 100%; border: 0; background: transparent; color: var(--iss-sidebar-fg); display: flex; align-items: center; gap: 9px; padding: 8px 12px 8px 40px; border-radius: 8px; font-size: 13.5px; cursor: pointer; text-align: left; }
+.iss-nav__subtoggle span { flex: 1 1 auto; }
+.iss-nav__subtoggle:hover { background: rgba(255,255,255,.05); color: #fff; }
+.iss-nav__subtoggle[aria-expanded="true"] { color: #fff; font-weight: 600; }
+.iss-nav__subtoggle .iss-chev { font-size: 14px; }
+
+/* Badge de notificaciones */
+.iss-badge { position: absolute; top: 2px; right: 2px; background: #d63939; color: #fff; font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 999px; }
+
 .iss-nav__third { margin: 2px 0 4px 22px; padding-left: 30px; border-left: 1px solid rgba(255, 255, 255, 0.08); }
 .iss-nav__third a { display: block; padding: 6px 10px; color: var(--iss-sidebar-fg-dim); text-decoration: none; font-size: 13px; border-radius: 7px; }
 .iss-nav__third a:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
@@ -184,7 +200,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-login__foot a { color: var(--iss-text-dim); text-decoration: none; }
 
 /* ------------------------------ Grilla ------------------------------- */
-.iss-grid { background: transparent; }
+.iss-grid { background: transparent; border-radius: var(--iss-radius); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
 .iss-grid__toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; background: var(--iss-surface); border: 1px solid var(--iss-border); border-bottom: 0; border-radius: var(--iss-radius) var(--iss-radius) 0 0; }
 .iss-grid__combo { display: flex; gap: 6px; align-items: center; }
 .iss-grid__nav { display: flex; align-items: center; gap: 6px; color: var(--iss-text-muted); font-size: 13px; }

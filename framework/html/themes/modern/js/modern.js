@@ -58,12 +58,26 @@
   });
 
   /* ------------------------- Acordeón del menú ------------------------- */
+  function setExpanded(btn, open) {
+    btn.setAttribute('aria-expanded', String(open));
+    var t = document.querySelector(btn.dataset.target);
+    if (t) t.hidden = !open;
+  }
+  // 1er nivel: exclusivos entre sí
   document.querySelectorAll('.iss-nav__toggle').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var sub = document.querySelector(btn.dataset.target);
       var open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      if (sub) sub.hidden = open;
+      document.querySelectorAll('.iss-nav__toggle').forEach(function (b) { if (b !== btn) setExpanded(b, false); });
+      setExpanded(btn, !open);
+    });
+  });
+  // 2º nivel: exclusivos entre hermanos (mismo grupo)
+  document.querySelectorAll('.iss-nav__subtoggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      var group = btn.closest('.iss-nav__sub');
+      if (group) group.querySelectorAll('.iss-nav__subtoggle').forEach(function (b) { if (b !== btn) setExpanded(b, false); });
+      setExpanded(btn, !open);
     });
   });
 

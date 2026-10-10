@@ -59,8 +59,12 @@ function themeSetup(&$smarty, $selectedMenu, $pdbACL, $pACL, $idUser)
         'IMG_BOOKMARKS'             =>  menuIsBookmark($pdbACL, $idUser, $selectedMenu) ? 'bookmarkon.png' : 'bookmark.png',
         'SHORTCUT'                  =>  loadShortcut($pdbACL, $idUser, $smarty),
         'BREADCRUMB'                =>  setBreadcrumbModern($arrMainMenu, $selectedMenu),
-        'NOTIFICATIONS'             =>  loadSystemNotifications($pdbACL, $idUser),
     ));
+
+    $notifications = loadSystemNotifications($pdbACL, $idUser);
+    $smarty->assign('NOTIFICATIONS', $notifications);
+    $smarty->assign('NOTIF_COUNT',
+        count($notifications['NOTIFICATIONS_PUBLIC']) + count($notifications['NOTIFICATIONS_PRIVATE']));
 }
 
 /* Iconos Tabler para los items de primer nivel del menú */

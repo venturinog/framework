@@ -31,6 +31,10 @@
     </div>
 
     <nav class="iss-nav">
+        <a href="index.php?menu=dashboard" class="iss-nav__quick{if $idSubMenuSelected eq 'dashboard' or $idSubMenu2Selected eq 'dashboard'} active{/if}">
+            <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+        </a>
+
         {foreach from=$arrMainMenu key=idMenu item=menu name=menuMain}
         <div class="iss-nav__group">
             <button type="button" class="iss-nav__toggle" data-target="#m-{$idMenu}" aria-expanded="{if $idMenu eq $idMainMenuSelected}true{else}false{/if}">
@@ -38,13 +42,11 @@
             </button>
             <div class="iss-nav__sub" id="m-{$idMenu}"{if $idMenu neq $idMainMenuSelected} hidden{/if}>
                 {foreach from=$menu.children key=idSubMenu item=subMenu}
-                    {if $subMenu.Type eq "popup"}
-                        <a href="{$subMenu.Link}" target="{$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
-                    {else}
-                        <a href="index.php?menu={$idSubMenu}"{if $subMenu.children} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
-                    {/if}
                     {if $subMenu.children}
-                        <div class="iss-nav__third">
+                        <button type="button" class="iss-nav__subtoggle" data-target="#s-{$idSubMenu}" aria-expanded="{if $idSubMenu eq $idSubMenuSelected}true{else}false{/if}">
+                            <span>{$subMenu.Name}</span><i class="ti ti-chevron-down iss-chev"></i>
+                        </button>
+                        <div class="iss-nav__third" id="s-{$idSubMenu}"{if $idSubMenu neq $idSubMenuSelected} hidden{/if}>
                             {foreach from=$subMenu.children key=idSubMenu2 item=subMenu2}
                                 {if $subMenu2.Type eq "popup"}
                                     <a href="{$subMenu2.Link}" target="{$idSubMenu2}"{if $idSubMenu2 eq $idSubMenu2Selected} class="active"{/if}>{$subMenu2.Name}</a>
@@ -53,6 +55,10 @@
                                 {/if}
                             {/foreach}
                         </div>
+                    {elseif $subMenu.Type eq "popup"}
+                        <a href="{$subMenu.Link}" target="{$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
+                    {else}
+                        <a href="index.php?menu={$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
                     {/if}
                 {/foreach}
             </div>
@@ -75,7 +81,7 @@
             <!-- Notificaciones -->
             <div class="dropdown">
                 <button class="iss-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{$NOTIFICATIONS.LBL_NOTIFICATION_SYSTEM}">
-                    <i class="ti ti-bell"></i>
+                    <i class="ti ti-bell"></i>{if $NOTIF_COUNT > 0}<span class="iss-badge">{$NOTIF_COUNT}</span>{/if}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li class="dropdown-header">{$NOTIFICATIONS.LBL_NOTIFICATION_SYSTEM}</li>
