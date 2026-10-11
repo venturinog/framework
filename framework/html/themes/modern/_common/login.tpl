@@ -5,16 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Issabel - {$PAGE_NAME}</title>
 
-  <script>
-    (function () {
-      try {
-        var m = localStorage.getItem('issabel-theme') || 'auto';
-        var d = (m === 'auto') ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : m;
-        document.documentElement.setAttribute('data-bs-theme', d);
-      } catch (e) {}
-    })();
-  </script>
-
   <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabler.min.css">
   <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabler-icons.min.css">
   <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/inter.css">
@@ -23,11 +13,19 @@
   {$HEADER_LIBS_JQUERY}
 </head>
 <body class="iss-login {$BODYPARAMS}">
-  <div class="iss-login__wrap">
+
+  {* Mitad superior: blanca, con el logo animado (Lottie) y el triángulo
+     centrado que se introduce en la mitad morada (como Issabel 5). *}
+  <div class="iss-login__hero">
+    <div id="animIssabel" class="iss-login__anim">
+      <noscript><img src="{$WEBPATH}themes/{$THEMENAME}/images/issabel_logo_color.png" alt="Issabel" class="iss-login__logo"></noscript>
+    </div>
+  </div>
+
+  {* Mitad inferior: morado de marca, con el formulario. *}
+  <div class="iss-login__panel">
     <div class="iss-login__card">
-      <div class="iss-login__brand">
-        <img src="{$WEBPATH}themes/{$THEMENAME}/images/issabel_logo_color.png" alt="Issabel" class="iss-login__logo">
-      </div>
+      {if !empty($WELCOME)}<h1 class="iss-login__title">{$WELCOME}</h1>{/if}
 
       {if !empty($LOGIN_INCORRECT)}
       <div class="alert alert-danger" role="alert">{$LOGIN_INCORRECT}</div>
@@ -64,7 +62,23 @@
     </div>
   </div>
 
-  <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabler.min.js"></script>
-  <script src="{$WEBPATH}themes/{$THEMENAME}/js/modern.js"></script>
+  <script src="{$WEBPATH}themes/{$THEMENAME}/js/lottie.min.js"></script>
+  <script>
+    (function () {
+      var el = document.getElementById('animIssabel');
+      if (!el) return;
+      if (window.lottie) {
+        lottie.loadAnimation({
+          container: el,
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+          path: '{$WEBPATH}themes/{$THEMENAME}/images/animIssabel.json'
+        }).setSpeed(1.5);
+      } else {
+        el.innerHTML = '<img src="{$WEBPATH}themes/{$THEMENAME}/images/issabel_logo_color.png" alt="Issabel" class="iss-login__logo">';
+      }
+    })();
+  </script>
 </body>
 </html>

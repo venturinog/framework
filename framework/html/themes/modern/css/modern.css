@@ -228,13 +228,65 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-theme-toggle .btn.active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
 
 /* ------------------------------ Login -------------------------------- */
-.iss-login { min-height: 100vh; background: linear-gradient(160deg, #3d1f57 0%, #522b76 55%, #643590 100%); display: flex; align-items: center; justify-content: center; }
-.iss-login__wrap { width: 100%; max-width: 400px; padding: 24px; }
-.iss-login__card { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: 16px; padding: 32px 28px; box-shadow: 0 18px 50px rgba(16, 24, 40, 0.28); }
-.iss-login__brand { text-align: center; margin-bottom: 22px; }
-.iss-login__logo { height: 54px; width: auto; }
-.iss-login__foot { margin-top: 20px; text-align: center; font-size: 12.5px; color: var(--iss-text-dim); }
-.iss-login__foot a { color: var(--iss-text-dim); text-decoration: none; }
+/* Réplica del login de Issabel 5: mitad superior blanca con el logo animado
+ * (Lottie) y el triángulo blanco centrado que se introduce en la mitad morada;
+ * mitad inferior en el morado de marca de Issabel 6, con el formulario. */
+.iss-login { min-height: 100vh; display: flex; flex-direction: column; color-scheme: light; }
+
+.iss-login__hero {
+  flex: 1 1 50%;
+  min-height: 50vh;
+  background: #ffffff;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+/* Triángulo blanco centrado que muerde la mitad morada (25x13px, 13px dentro) */
+.iss-login__hero::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -13px;
+  margin-left: -12.5px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 13px 12.5px 0 12.5px;
+  border-color: #ffffff transparent transparent transparent;
+  z-index: 2;
+}
+.iss-login__anim { width: 200px; height: 260px; }
+.iss-login__logo { height: 54px; width: auto; display: block; margin: 0 auto; }
+
+.iss-login__panel {
+  flex: 1 1 50%;
+  min-height: 50vh;
+  background: var(--iss-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 24px 46px;
+  color: #ffffff;
+}
+.iss-login__card { width: 100%; max-width: 360px; }
+.iss-login__title { text-align: center; font-size: 20px; font-weight: 700; line-height: 1.25; margin: 0 0 18px; color: #ffffff; }
+.iss-login__panel .form-label { color: rgba(255, 255, 255, 0.88); }
+
+.iss-login .form-control { background: #ffffff; border-color: transparent; min-height: 44px; color: var(--iss-text); }
+.iss-login .form-control:focus { border-color: var(--iss-accent); box-shadow: 0 0 0 3px var(--iss-accent-soft); }
+.iss-login .input-group-text { background: #ffffff; border-color: transparent; color: var(--iss-primary); }
+.iss-login .btn-primary { background: #ffffff; border-color: #ffffff; color: var(--iss-primary); font-weight: 600; }
+.iss-login .btn-primary:hover, .iss-login .btn-primary:active { background: var(--iss-accent); border-color: var(--iss-accent); color: #ffffff; }
+
+.iss-login__foot { margin-top: 22px; text-align: center; font-size: 12.5px; color: rgba(255, 255, 255, 0.75); }
+.iss-login__foot a { color: rgba(255, 255, 255, 0.92); text-decoration: none; }
+.iss-login__foot a:hover { text-decoration: underline; }
+
+@media (max-width: 575px) {
+  .iss-login__hero { min-height: 38vh; }
+  .iss-login__anim { width: 160px; height: 208px; }
+  .iss-login__panel { min-height: auto; padding: 26px 20px 40px; }
+}
 
 /* ------------------------------ Grilla ------------------------------- */
 .iss-grid { background: transparent; border-radius: var(--iss-radius); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
