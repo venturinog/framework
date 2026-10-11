@@ -73,7 +73,24 @@
 .text-left { text-align: left !important; }
 .hidden { display: none !important; }
 .caret { display: inline-block; width: 0; height: 0; margin-left: 2px; vertical-align: middle; border-top: 4px dashed; border-right: 4px solid transparent; border-left: 4px solid transparent; }
-.glyphicon { display: none !important; } /* BS3 usaba Glyphicons; no disponibles en BS5 */
+/* BS3 usaba Glyphicons; no están en BS5 → se mapean a Font Awesome 6 (que sí
+ * viene con el tema) por ::before, para no tocar los tpls de los módulos. */
+.glyphicon {
+  display: inline-block !important;
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-style: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.glyphicon::before { content: "\f059"; } /* circle-question (fallback) */
+.glyphicon-stats::before { content: "\f080"; }
+.glyphicon-info-sign::before { content: "\f05a"; }
+.glyphicon-tag::before { content: "\f02b"; }
+.glyphicon-phone-alt::before { content: "\f095"; }
+.glyphicon-list-alt::before { content: "\f022"; }
+.glyphicon-list::before { content: "\f03a"; }
+.glyphicon-calendar::before { content: "\f073"; }
 
 /* Listas y etiquetas inline BS3 */
 .list-inline { padding-left: 0; list-style: none; }
@@ -103,3 +120,107 @@
 .neo-table-toolbar-button:hover, .neo-table-action:hover { background: var(--iss-surface-2); color: var(--iss-text); }
 /* Los botones con color de fondo (ocolor) van con texto blanco */
 .neo-table-toolbar-button[style*="background"], .neo-table-action[style*="background"] { color: #fff; }
+
+/* =========================================================================
+   Widgets legacy de terceros usados por los módulos nativos
+   (jQuery UI, Chosen, DataTables, FullCalendar, facebox, filestyle).
+   Se re-mapean a los tokens del tema (claro/oscuro) sin tocar los módulos.
+   ========================================================================= */
+
+/* --- jQuery UI (datepicker / dialog / widgets) --- */
+.ui-widget { font-family: inherit; font-size: 1em; }
+.ui-widget-content { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); }
+.ui-widget-header { background: var(--iss-primary); color: #fff; border-color: var(--iss-primary); }
+.ui-state-default, .ui-widget-content .ui-state-default { background: var(--iss-surface-2); border-color: var(--iss-border); color: var(--iss-text); }
+.ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-hover { background: var(--iss-surface-2); border-color: var(--iss-ink); color: var(--iss-text); }
+.ui-state-active, .ui-widget-content .ui-state-active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight { background: var(--iss-primary-soft); border-color: var(--iss-primary-soft); color: var(--iss-ink); }
+.ui-datepicker { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); box-shadow: 0 10px 30px rgba(16, 24, 40, .22); padding: 6px; }
+.ui-datepicker .ui-datepicker-header { background: var(--iss-surface-2); color: var(--iss-text); border: 0; }
+.ui-datepicker .ui-datepicker-title, .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next { color: var(--iss-text); }
+.ui-datepicker td span, .ui-datepicker td a { color: var(--iss-text); text-align: center; }
+.ui-datepicker .ui-state-default { background: transparent; border: 0; }
+.ui-datepicker .ui-state-hover { background: var(--iss-surface-2); }
+.ui-datepicker .ui-state-active { background: var(--iss-primary); color: #fff; }
+.ui-dialog { background: var(--iss-surface); border-color: var(--iss-border); }
+.ui-dialog .ui-dialog-titlebar { background: var(--iss-surface-2); color: var(--iss-text); border-color: var(--iss-border); }
+.ui-dialog .ui-dialog-buttonpane { background: var(--iss-surface-2); border-color: var(--iss-border); }
+
+/* --- jQuery Chosen (módulos que lo traen local, p.ej. sec_rules) --- */
+.chosen-container .chosen-single { background: var(--iss-surface); background-image: none; border-color: var(--iss-border); color: var(--iss-text); box-shadow: none; }
+.chosen-container .chosen-single span { color: var(--iss-text); }
+.chosen-container .chosen-drop { background: var(--iss-surface); border-color: var(--iss-border); box-shadow: 0 8px 20px rgba(16, 24, 40, .18); }
+.chosen-container .chosen-results { color: var(--iss-text); }
+.chosen-container .chosen-results li { color: var(--iss-text); }
+.chosen-container .chosen-results li.highlighted,
+.chosen-container .chosen-results li.result-selected { background: var(--iss-primary-soft); color: var(--iss-ink); }
+.chosen-container .chosen-results li.group-result { color: var(--iss-text-muted); }
+.chosen-container-active .chosen-single,
+.chosen-container-active.chosen-with-drop .chosen-single { background: var(--iss-surface); border-color: var(--iss-ink); box-shadow: 0 0 0 3px var(--iss-primary-soft); }
+.chosen-container .chosen-search input,
+.chosen-container-multi .chosen-choices { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); box-shadow: none; }
+.chosen-container-multi .chosen-choices .search-choice { background: var(--iss-surface-2); border-color: var(--iss-border); color: var(--iss-text); }
+
+/* --- DataTables --- */
+table.dataTable { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); }
+table.dataTable thead th, table.dataTable tfoot th { background: var(--iss-surface-2); color: var(--iss-text-muted); border-color: var(--iss-border); }
+table.dataTable tbody tr { background: transparent; }
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd { background: var(--iss-surface-2); }
+table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover { background: var(--iss-primary-soft); }
+table.dataTable tbody tr.selected, table.dataTable tbody tr > .selected,
+table.dataTable.stripe tbody tr.odd.selected { background: var(--iss-primary-soft) !important; color: var(--iss-text); }
+table.dataTable.row-border tbody th, table.dataTable.row-border tbody td { border-color: var(--iss-border); }
+.dataTables_wrapper { color: var(--iss-text); }
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  background: var(--iss-surface); color: var(--iss-text); border: 1px solid var(--iss-border); border-radius: .375rem; padding: .25rem .5rem;
+}
+.dataTables_wrapper .dataTables_info { color: var(--iss-text-muted); }
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: var(--iss-text-muted) !important; background: transparent !important; border: 1px solid transparent !important; border-radius: .375rem;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: var(--iss-surface-2) !important; color: var(--iss-text) !important; border-color: var(--iss-border) !important; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover { background: var(--iss-primary) !important; border-color: var(--iss-primary) !important; color: #fff !important; }
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled { color: var(--iss-text-dim) !important; }
+/* Botones de export (buttons.dataTables) */
+button.dt-button, div.dt-button, a.dt-button {
+  background: var(--iss-surface-2) !important; background-image: none !important;
+  border: 1px solid var(--iss-border) !important; color: var(--iss-text) !important;
+  border-radius: .5rem !important; box-shadow: none !important; text-shadow: none !important;
+}
+button.dt-button:hover, div.dt-button:hover, a.dt-button:hover { background: var(--iss-surface) !important; border-color: var(--iss-ink) !important; }
+button.dt-button.active, a.dt-button.active { background: var(--iss-primary) !important; border-color: var(--iss-primary) !important; color: #fff !important; }
+div.dt-button-collection { background: var(--iss-surface) !important; border-color: var(--iss-border) !important; }
+div.dt-button-info { background: var(--iss-surface) !important; border-color: var(--iss-border) !important; color: var(--iss-text); }
+div.dt-button-info h2 { background: var(--iss-surface-2) !important; color: var(--iss-text); border-color: var(--iss-border); }
+
+/* --- FullCalendar (agenda/calendar) --- */
+.fc, .fc-unthemed { color: var(--iss-text); }
+.fc-unthemed th, .fc-unthemed td, .fc-unthemed hr, .fc-unthemed .fc-popover, .fc-unthemed .fc-divider { border-color: var(--iss-border); }
+.fc-unthemed .fc-content, .fc-unthemed .fc-divider, .fc-unthemed .fc-list-heading td, .fc-unthemed .fc-list-view, .fc-unthemed .fc-popover, .fc-unthemed .fc-row, .fc-unthemed tbody, .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead { border-color: var(--iss-border); }
+.fc-widget-header, .fc-day-header, .fc-unthemed .fc-divider, .fc-unthemed .fc-popover .fc-header { background: var(--iss-surface-2); color: var(--iss-text-muted); }
+.fc-widget-content, .fc-day, .fc-unthemed .fc-list-view, .fc-unthemed .fc-popover { background: var(--iss-surface); }
+.fc-day-number, .fc-day-top, .fc-day-header { color: var(--iss-text); }
+.fc-unthemed .fc-today { background: var(--iss-primary-soft); }
+.fc button { background: var(--iss-surface-2); border-color: var(--iss-border); color: var(--iss-text); border-radius: .5rem; }
+.fc button:hover { background: var(--iss-surface); }
+.fc .fc-state-active, .fc .fc-button-active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
+.fc-event { color: #fff; }
+
+/* --- facebox (backup_restore / storage) --- */
+.facebox { color: var(--iss-text); }
+.facebox .popup, .facebox-popup, .thickstyle { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); color: var(--iss-text); box-shadow: 0 12px 40px rgba(16, 24, 40, .3); }
+.facebox-content, .facebox .content { color: var(--iss-text); }
+.facebox .loading { background: var(--iss-surface); }
+
+/* --- jquery-filestyle (upload) --- */
+.jfilestyle .buttonText, .jfilestyle .buttonBefore, .jfilestyle .buttonAfter {
+  background: var(--iss-surface-2); border: 1px solid var(--iss-border); color: var(--iss-text);
+}
+.jfilestyle input { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); }
+
+/* --- Restos de clases de layout legacy (Neon) que no eran puramente hooks JS --- */
+.neo-divisor { height: 1px; margin: 10px 0; background: var(--iss-border); }
+.neo-navigation-arrow-active { color: var(--iss-brand-ink); text-decoration: none; cursor: pointer; }
+.neo-navigation-arrow-active:hover { color: var(--iss-primary-hover); }
