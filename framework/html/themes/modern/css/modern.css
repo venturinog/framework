@@ -1,21 +1,21 @@
 /* =========================================================================
    modern.css — tema "Modern" (Issabel 6)  [Fase 0]
-   Marca Issabel (morado #522b76 / magenta #f94399) sobre Bootstrap 5 + Tabler.
+   Marca Issabel (morado #572364 / magenta #f94399) sobre Bootstrap 5 + Tabler.
    Los colores de superficie/texto/borde delegan en Tabler para que el modo
    oscuro (data-bs-theme) funcione sin reescribir componentes.
    ========================================================================= */
 
 :root {
   /* Marca (fija en ambos modos) */
-  --iss-primary: #522b76;
-  --iss-primary-rgb: 82, 43, 118;
-  --iss-primary-soft: rgba(82, 43, 118, 0.12);
-  --iss-primary-hover: #643590;
+  --iss-primary: #572364;
+  --iss-primary-rgb: 87, 35, 100;
+  --iss-primary-soft: rgba(87, 35, 100, 0.12);
+  --iss-primary-hover: #6f2d80;
   --iss-accent: #f94399;
   --iss-accent-soft: rgba(249, 67, 153, 0.16);
   --iss-lavender: #e6e0f0;
-  --iss-sidebar-bg: #522b76;
-  --iss-sidebar-bg2: #3d1f57;
+  --iss-sidebar-bg: #572364;
+  --iss-sidebar-bg2: #3f1a49;
   --iss-sidebar-fg: #e6e0f0;
   --iss-sidebar-fg-dim: #b79fce;
   --iss-radius: 12px;
@@ -31,12 +31,12 @@
   --iss-brand-ink: var(--iss-primary);
 
   /* Recolorear Tabler/Bootstrap a la marca */
-  --bs-primary: #522b76;
-  --bs-primary-rgb: 82, 43, 118;
-  --bs-link-color: #522b76;
-  --bs-link-color-rgb: 82, 43, 118;
-  --tblr-primary: #522b76;
-  --tblr-primary-rgb: 82, 43, 118;
+  --bs-primary: #572364;
+  --bs-primary-rgb: 87, 35, 100;
+  --bs-link-color: #572364;
+  --bs-link-color-rgb: 87, 35, 100;
+  --tblr-primary: #572364;
+  --tblr-primary-rgb: 87, 35, 100;
   --tblr-primary-lt: #e6e0f0;
 }
 
