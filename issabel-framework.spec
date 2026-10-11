@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 15
+Release: 16
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Sun Oct 11 2026 Issabel Foundation <info@issabel.org> - 6.0.0-16
+- Modern theme: animate the sidebar accordion (grid 0fr->1fr, 400ms
+  cubic-bezier) so opening a group while another closes is gradual and the eye
+  can follow the level-2 items, like Issabel 5. Closed groups are not focusable.
+
 * Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-15
 - Legacy themes (tenant, farsi_rtl): use the official Issabel brand purple
   (#572364) in their purple palette too.

@@ -61,7 +61,7 @@
   function setExpanded(btn, open) {
     btn.setAttribute('aria-expanded', String(open));
     var t = document.querySelector(btn.dataset.target);
-    if (t) t.hidden = !open;
+    if (t) t.classList.toggle('expanded', open);
   }
   // 1er nivel: exclusivos entre sí
   document.querySelectorAll('.iss-nav__toggle').forEach(function (btn) {

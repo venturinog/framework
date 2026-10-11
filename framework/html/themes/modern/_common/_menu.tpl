@@ -40,13 +40,15 @@
             <button type="button" class="iss-nav__toggle" data-target="#m-{$idMenu}" aria-expanded="{if $idMenu eq $idMainMenuSelected}true{else}false{/if}">
                 <i class="{$menu.icon}"></i><span>{$menu.Name}</span><i class="ti ti-chevron-down iss-chev"></i>
             </button>
-            <div class="iss-nav__sub" id="m-{$idMenu}"{if $idMenu neq $idMainMenuSelected} hidden{/if}>
+            <div class="iss-nav__sub{if $idMenu eq $idMainMenuSelected} expanded{/if}" id="m-{$idMenu}">
+                <div class="iss-nav__subinner">
                 {foreach from=$menu.children key=idSubMenu item=subMenu}
                     {if $subMenu.children}
                         <button type="button" class="iss-nav__subtoggle" data-target="#s-{$idSubMenu}" aria-expanded="{if $idSubMenu eq $idSubMenuSelected}true{else}false{/if}">
                             <span>{$subMenu.Name}</span><i class="ti ti-chevron-down iss-chev"></i>
                         </button>
-                        <div class="iss-nav__third" id="s-{$idSubMenu}"{if $idSubMenu neq $idSubMenuSelected} hidden{/if}>
+                        <div class="iss-nav__third{if $idSubMenu eq $idSubMenuSelected} expanded{/if}" id="s-{$idSubMenu}">
+                            <div class="iss-nav__thirdinner">
                             {foreach from=$subMenu.children key=idSubMenu2 item=subMenu2}
                                 {if $subMenu2.Type eq "popup"}
                                     <a href="{$subMenu2.Link}" target="{$idSubMenu2}"{if $idSubMenu2 eq $idSubMenu2Selected} class="active"{/if}>{$subMenu2.Name}</a>
@@ -54,6 +56,7 @@
                                     <a href="index.php?menu={$idSubMenu2}"{if $idSubMenu2 eq $idSubMenu2Selected} class="active"{/if}>{$subMenu2.Name}</a>
                                 {/if}
                             {/foreach}
+                            </div>
                         </div>
                     {elseif $subMenu.Type eq "popup"}
                         <a href="{$subMenu.Link}" target="{$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
@@ -61,6 +64,7 @@
                         <a href="index.php?menu={$idSubMenu}"{if $idSubMenu eq $idSubMenuSelected} class="is-open"{/if}><span>{$subMenu.Name}</span></a>
                     {/if}
                 {/foreach}
+                </div>
             </div>
         </div>
         {/foreach}

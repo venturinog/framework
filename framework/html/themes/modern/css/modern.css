@@ -176,10 +176,28 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-nav__toggle[aria-expanded="true"] .iss-chev { transform: rotate(180deg); }
 .iss-nav__toggle[aria-expanded="true"] { color: #fff; }
 
-.iss-nav__sub { margin: 2px 0 6px; }
-.iss-nav__sub > a { display: flex; align-items: center; gap: 9px; padding: 8px 12px 8px 40px; color: var(--iss-sidebar-fg); text-decoration: none; font-size: 13.5px; border-radius: 8px; }
-.iss-nav__sub > a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-.iss-nav__sub > a.is-open { color: #fff; font-weight: 600; }
+/* Acordeón animado: la altura se anima con grid 0fr→1fr (sin medir con JS).
+ * Al abrir un grupo mientras otro se cierra, ambos animan a la vez para que el
+ * ojo siga el movimiento (como en Issabel 5). El contenido cerrado no recibe
+ * foco ni clics. */
+.iss-nav__sub, .iss-nav__third {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .4s cubic-bezier(.4, 0, .2, 1),
+              opacity .3s cubic-bezier(.4, 0, .2, 1);
+}
+.iss-nav__sub.expanded, .iss-nav__third.expanded { grid-template-rows: 1fr; opacity: 1; }
+.iss-nav__subinner, .iss-nav__thirdinner { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s .4s; }
+.iss-nav__sub.expanded > .iss-nav__subinner,
+.iss-nav__third.expanded > .iss-nav__thirdinner { visibility: visible; transition: visibility 0s 0s; }
+@media (prefers-reduced-motion: reduce) {
+  .iss-nav__sub, .iss-nav__third, .iss-nav__subinner, .iss-nav__thirdinner { transition: none; }
+}
+
+.iss-nav__subinner > a { display: flex; align-items: center; gap: 9px; padding: 8px 12px 8px 40px; color: var(--iss-sidebar-fg); text-decoration: none; font-size: 13.5px; border-radius: 8px; }
+.iss-nav__subinner > a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+.iss-nav__subinner > a.is-open { color: #fff; font-weight: 600; }
 
 /* Link rápido (Dashboard) */
 .iss-nav__quick { display: flex; align-items: center; gap: 11px; padding: 11px 12px; margin-bottom: 6px; border-radius: 9px; color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 600; background: rgba(255,255,255,.06); }
@@ -197,7 +215,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 /* Badge de notificaciones */
 .iss-badge { position: absolute; top: 2px; right: 2px; background: #d63939; color: #fff; font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 999px; }
 
-.iss-nav__third { margin: 2px 0 4px 22px; padding-left: 30px; border-left: 1px solid rgba(255, 255, 255, 0.08); }
+.iss-nav__thirdinner { margin-inline-start: 22px; padding-inline-start: 30px; border-inline-start: 1px solid rgba(255, 255, 255, 0.08); }
 .iss-nav__third a { display: block; padding: 6px 10px; color: var(--iss-sidebar-fg-dim); text-decoration: none; font-size: 13px; border-radius: 7px; }
 .iss-nav__third a:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
 .iss-nav__third a.active { color: #fff; background: var(--iss-accent-soft); font-weight: 600; box-shadow: inset 2px 0 0 var(--iss-accent); }
