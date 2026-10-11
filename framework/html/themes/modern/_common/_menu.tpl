@@ -108,7 +108,7 @@
             <div class="dropdown iss-user">
                 <a href="#" class="iss-user__link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="iss-avatar">{$USER_LOGIN|truncate:2:""|upper}</span>
-                    <span class="iss-user__name"><strong>{$USER_LOGIN}</strong><small>#{$EXTENSION}</small></span>
+                    <span class="iss-user__name"><strong>{$USER_LOGIN}</strong>{if !empty($EXTENSION)}<small>#{$EXTENSION}</small>{/if}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item setadminpassword" href="#"><i class="ti ti-user me-2"></i>{$CHANGE_PASSWORD}</a></li>
