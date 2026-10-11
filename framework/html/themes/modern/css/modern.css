@@ -60,27 +60,67 @@ body.iss-body { background: var(--iss-body-bg); }
 .page-item.active .page-link { background-color: var(--iss-primary); border-color: var(--iss-primary); }
 
 /* --------------------- Botones legacy (.button) ---------------------- */
-/* Clase usada por los módulos nativos; antes la estilaba tenant/widgets.css */
+/* Clase usada por los formularios de los módulos nativos (save/cancel…);
+ * antes la estilaba tenant/widgets.css. Se lleva a paridad con los botones de
+ * la grilla (.btn de Tabler): mismas métricas, transición, hover y focus ring.
+ * El <input class="button"> (p.ej. Cancel) se normaliza para que no se vea
+ * "crudo": hereda la tipografía del sitio y pierde el aspect nativo. */
 .button, input.button, a.button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid var(--iss-border);
   background: var(--iss-surface);
   color: var(--iss-text);
+  font-family: inherit;
   font-size: 13px;
+  font-weight: 500;
   line-height: 1.3;
   cursor: pointer;
   text-decoration: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease;
 }
-.button:hover, input.button:hover, a.button:hover { background: var(--iss-surface-2); color: var(--iss-text); }
+.button:hover, input.button:hover, a.button:hover {
+  background: var(--iss-surface-2);
+  color: var(--iss-text);
+  box-shadow: 0 2px 6px rgba(16, 24, 40, .10);
+}
+.button:focus-visible, input.button:focus-visible, a.button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--iss-primary-soft);
+}
+.button i { font-size: 14px; line-height: 1; }
+
+/* Variantes explícitas (algunos módulos ya las usan) */
 .button.primary, .button-primary { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
 .button.primary:hover, .button-primary:hover { background: var(--iss-primary-hover); border-color: var(--iss-primary-hover); }
 .button.danger, .button-danger { background: #d63939; border-color: #d63939; color: #fff; }
 .button.danger:hover, .button-danger:hover { background: #c02f2f; border-color: #c02f2f; }
 .button.success, .button-success { background: #2fb344; border-color: #2fb344; color: #fff; }
+
+/* Acción principal por nombre del control: los formularios de los módulos no
+ * comparten plantilla, pero el "name" es estable y no depende del idioma.
+ * Save -> relleno de marca (igual que "Create User" en la grilla). */
+.button[name^="save"], .button[name^="submit_save"], .button[name^="submit_apply"] {
+  background: var(--iss-primary);
+  border-color: var(--iss-primary);
+  color: #fff;
+}
+.button[name^="save"]:hover, .button[name^="submit_save"]:hover, .button[name^="submit_apply"]:hover {
+  background: var(--iss-primary-hover);
+  border-color: var(--iss-primary-hover);
+  color: #fff;
+}
+.button[name^="save"]:focus-visible, .button[name^="submit_save"]:focus-visible, .button[name^="submit_apply"]:focus-visible {
+  box-shadow: 0 0 0 3px var(--iss-primary-soft);
+}
 
 /* ------------------------------ Sidebar ------------------------------ */
 .iss-sidebar {
