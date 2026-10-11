@@ -32,6 +32,19 @@ function themeSetup(&$smarty, $selectedMenu, $pdbACL, $pACL, $idUser)
     $smarty->assign('LANG', $lang);
     $smarty->assign('IS_RTL', $isRtl);
 
+    /* Cabecera de página: breadcrumb + título grande (mockup .iss-pagehead).
+     * El último elemento del breadcrumb es el módulo actual. Si no hay
+     * breadcrumb (p.ej. Dashboard) se usa el nombre del menú seleccionado. */
+    $breadcrumb = setBreadcrumbModern($arrMainMenu, $selectedMenu);
+    if (!is_array($breadcrumb)) $breadcrumb = array();
+    $pageTitle = count($breadcrumb) ? end($breadcrumb) : '';
+    if ($pageTitle === '') {
+        foreach (array('nameSubMenu2Selected', 'nameSubMenuSelected', 'nameMainMenuSelected') as $navVar) {
+            $candidate = $smarty->get_template_vars($navVar);
+            if (!empty($candidate)) { $pageTitle = $candidate; break; }
+        }
+    }
+
     $extension = $pACL->getUserExtension($_SESSION['issabel_user']);
     $smarty->assign(array(
         "ABOUT_ISSABEL2"            =>  _tr('About Issabel'),
@@ -58,7 +71,8 @@ function themeSetup(&$smarty, $selectedMenu, $pdbACL, $pACL, $idUser)
         'MENU_COLOR'                =>  getMenuColorByMenu($pdbACL, $idUser),
         'IMG_BOOKMARKS'             =>  menuIsBookmark($pdbACL, $idUser, $selectedMenu) ? 'bookmarkon.png' : 'bookmark.png',
         'SHORTCUT'                  =>  loadShortcut($pdbACL, $idUser, $smarty),
-        'BREADCRUMB'                =>  setBreadcrumbModern($arrMainMenu, $selectedMenu),
+        'BREADCRUMB'                =>  $breadcrumb,
+        'PAGE_TITLE'                =>  $pageTitle,
     ));
 
     $notifications = loadSystemNotifications($pdbACL, $idUser);

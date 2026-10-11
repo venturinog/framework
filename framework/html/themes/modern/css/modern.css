@@ -191,8 +191,22 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-noti-warning { border-left: 3px solid #f59f00; }
 .iss-noti-danger { border-left: 3px solid #d63939; }
 
-/* --------------------------- Breadcrumb ------------------------------ */
-.iss-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--iss-text-dim); background: var(--iss-surface); border-bottom: 1px solid var(--iss-border); padding: 12px 24px; flex-wrap: wrap; }
+/* --------------------------- Page header ----------------------------- */
+.iss-pagehead {
+  background: var(--iss-surface);
+  border-bottom: 1px solid var(--iss-border);
+  padding: 18px 24px 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.iss-pagehead__text { min-width: 0; }
+.iss-pagehead__title { font-size: 24px; font-weight: 700; line-height: 1.2; margin: 0; color: var(--iss-text); }
+.iss-pagehead__actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.iss-breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--iss-text-dim); margin-bottom: 6px; flex-wrap: wrap; }
 .iss-breadcrumb a { color: var(--iss-text-dim); text-decoration: none; }
 .iss-breadcrumb a:hover { color: var(--iss-brand-ink); }
 .iss-breadcrumb span { color: var(--iss-text); font-weight: 600; }
@@ -239,6 +253,13 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-table thead th { background: var(--iss-surface-2); color: var(--iss-text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; border-color: var(--iss-border); }
 .iss-table tbody td { border-color: var(--iss-border); vertical-align: middle; }
 .iss-table tbody tr:hover { background: var(--iss-surface-2); }
+
+.iss-grid__action { text-decoration: none; }
+.iss-grid__action:hover { text-decoration: none; }
+
+/* Estado vacío de la grilla (mockup: icono + texto centrados) */
+.iss-empty { text-align: center; color: var(--iss-text-muted); padding: 40px 16px !important; }
+.iss-empty i { display: block; font-size: 34px; color: var(--iss-text-dim); margin-bottom: 8px; }
 
 /* --------------------- Formularios (paloSantoForm → BS5) --------------------- */
 .radio_buttonset_elx { display: flex; flex-direction: column; gap: 2px; }

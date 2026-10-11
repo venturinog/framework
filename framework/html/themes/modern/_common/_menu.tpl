@@ -129,17 +129,22 @@
         </div>
     </header>
 
-    <nav class="iss-breadcrumb">
-        <a href="index.php"><i class="ti ti-home"></i></a>
-        {foreach from=$BREADCRUMB item=value name=menu}
-            <i class="ti ti-chevron-right"></i>
-            {if $smarty.foreach.menu.last}
-                <span>{$value}</span>
-            {else}
-                <a href="#">{$value}</a>
-            {/if}
-        {/foreach}
-    </nav>
+    <div class="iss-pagehead">
+        <div class="iss-pagehead__text">
+            <nav class="iss-breadcrumb">
+                <a href="index.php"><i class="ti ti-home"></i></a>
+                {foreach from=$BREADCRUMB item=value name=menu}
+                    <i class="ti ti-chevron-right"></i>
+                    {if $smarty.foreach.menu.last}
+                        <span>{$value}</span>
+                    {else}
+                        <a href="#">{$value}</a>
+                    {/if}
+                {/foreach}
+            </nav>
+            {if !empty($PAGE_TITLE)}<h1 class="iss-pagehead__title">{$PAGE_TITLE}</h1>{/if}
+        </div>
+    </div>
 
     <div class="iss-content">
     {* ABIERTO: lo cierra _common/index.tpl *}

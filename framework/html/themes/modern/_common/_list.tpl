@@ -139,7 +139,10 @@
                 {/foreach}
             {else}
                 <tr>
-                    <td class="table_data" colspan="{$numColumns}" align="center">{$NO_DATA_FOUND}</td>
+                    <td class="table_data iss-empty" colspan="{$numColumns}">
+                        <i class="ti ti-inbox"></i>
+                        <div>{$NO_DATA_FOUND}</div>
+                    </td>
                 </tr>
             {/if}
         </tbody>
