@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 11
+Release: 12
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-12
+- issabel-dbprocess: ismysqlRunning() checks /usr/sbin/pidof (EL10 merges /sbin)
+  and accepts the mariadbd process name.
+- Modern theme: add the page header (.iss-pagehead) with breadcrumb and page
+  title, an empty state for the grid, an Issabel 5 style login (white/purple
+  split with the animated Lottie logo and the centered caret), and fix the help
+  frame stylesheet path (themes/default is no longer shipped).
+
 * Sat Oct 10 2026 Issabel Foundation <info@issabel.org> - 6.0.0-11
 - Style the legacy .button class (native module buttons) and legacy grid buttons
   (neo-table-toolbar-button); make grid action buttons brand-coloured and force
