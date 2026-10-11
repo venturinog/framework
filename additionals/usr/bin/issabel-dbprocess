@@ -544,8 +544,8 @@ function getSQLUpdateString($version_actual,$path_folder,$action,$dbname)
  */
 function ismysqlRunning()
 {
-    // CentOS 7 ISO install runs in chroot which messes up /sbin/service.
-    return (strlen(trim(`/sbin/pidof mysqld`)) > 0);
+    // EL10 merges /sbin into /usr/sbin and runs MariaDB as mariadbd (no mysqld).
+    return (strlen(trim(`/usr/sbin/pidof mysqld mariadbd`)) > 0);
 }
 
 /**
