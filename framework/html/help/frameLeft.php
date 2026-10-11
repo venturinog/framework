@@ -114,8 +114,16 @@ $nodeserial=urlencode(implode(',',$oPt->obtenerNodosAbiertos()));
 $oPt->setURLBase("frameLeft.php?nodeserial=$nodeserial");
 $oPt->setRutaImage("../images");
 
+$help_theme = isset($arrConf['mainTheme']) ? $arrConf['mainTheme'] : 'tenant';
+$help_css = '';
+foreach (array('styles.css', 'help.css') as $help_css_name) {
+    if (file_exists(dirname(__FILE__).'/../themes/'.$help_theme.'/'.$help_css_name)) {
+        $help_css = '../themes/'.$help_theme.'/'.$help_css_name;
+        break;
+    }
+}
 echo "<html><head>";
-echo "<link rel='stylesheet' href='../themes/default/styles.css'>";
+if ($help_css !== '') echo "<link rel='stylesheet' href='$help_css'>";
 echo "</head><body style=\"background-image: url(../images/bgGrayHoriz.gif); background-color: #f6f6f6; background-repeat: repeat-y;\">";
 echo $oPt->dibujaArbol("root");
 echo "</body></html>";
