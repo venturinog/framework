@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 17
+Release: 18
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-18
+- checkbox() now renders a Bootstrap 5 / Tabler switch (form-check form-switch)
+  instead of the old checkbox markup, so the on/off toggles look consistent with
+  the rest of the GUI and work in dark mode.
+
 * Sun Oct 11 2026 Issabel Foundation <info@issabel.org> - 6.0.0-17
 - Modern theme: theme the legacy third-party widgets used by the native modules
   (jQuery UI datepicker/dialog, Chosen, DataTables, FullCalendar, facebox,

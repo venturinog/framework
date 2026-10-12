@@ -448,7 +448,9 @@ function checkbox($id_name, $checked='off', $disable='off')
     if(!($disable=='off'))
         $disab = "disabled=\"disabled\"";
 
-    $checkbox  = "<input type=\"checkbox\" class=\"form-check-input\" name=\"chkold{$id_name}\" $check $disab onclick=\"javascript:{$id_name_fixed}check();\" />
+    $checkbox  = "<div class=\"form-check form-switch\">
+                  <input type=\"checkbox\" class=\"form-check-input\" role=\"switch\" name=\"chkold{$id_name}\" $check $disab onclick=\"javascript:{$id_name_fixed}check();\" />
+                  </div>
                   <input type=\"hidden\"   name=\"{$id_name}\" id=\"{$id_name}\"   value=\"{$checked}\" />
                   <script type=\"text/javascript\">
                     function {$id_name_fixed}check(){
