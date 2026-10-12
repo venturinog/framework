@@ -205,6 +205,18 @@ class paloForm
             $strInput = "";
             $arrVars['EDITABLE'] = isset($arrVars['EDITABLE'])?$arrVars['EDITABLE']:'';
 
+            // Estilado por defecto del tema: los widgets de entrada nacen con la
+            // clase de Bootstrap 5/Tabler salvo que el módulo especifique la suya
+            // en INPUT_EXTRA_PARAM (SELECT ya emite form-select; CHECKBOX, RADIO,
+            // HIDDEN y CUSTOM_INPUT quedan como están).
+            $sWidgetType = isset($arrVars['INPUT_TYPE']) ? strtoupper($arrVars['INPUT_TYPE']) : '';
+            if (in_array($sWidgetType, array('TEXT', 'PASSWORD', 'TEXTAREA', 'FILE', 'RANGE'))) {
+                if (!is_array($arrVars['INPUT_EXTRA_PARAM']))
+                    $arrVars['INPUT_EXTRA_PARAM'] = array();
+                if (!isset($arrVars['INPUT_EXTRA_PARAM']['class']))
+                    $arrVars['INPUT_EXTRA_PARAM']['class'] = 'form-control';
+            }
+
             // Verificar si se debe mostrar un widget activo para ingreso de valor
             $bIngresoActivo = ($this->modo == 'input' || ($this->modo == 'edit' && $arrVars['EDITABLE']!='no'));
 
