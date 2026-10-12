@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 20
+Release: 21
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-21
+- Rotate the collapse trigger chevron via aria-expanded and style the jQuery
+  UI datepicker image trigger as a proper field button in the compat layer.
+
 * Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-20
 - Make the "Show Filter" button toggle the filter row again: the labeled
   button never had a click handler in the modern theme (only the small

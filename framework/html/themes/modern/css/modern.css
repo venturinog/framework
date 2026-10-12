@@ -371,6 +371,11 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-empty { text-align: center; color: var(--iss-text-muted); padding: 40px 16px !important; }
 .iss-empty i { display: block; font-size: 34px; color: var(--iss-text-dim); margin-bottom: 8px; }
 
+/* Triggers de collapse/accordion (BS5 data-api): el chevron de abrir/cerrar
+ * rota 180° cuando el colapso está expandido, como feedback del estado. */
+.btn[aria-expanded="true"] i.ti-chevron-down { transform: rotate(180deg); }
+.btn[aria-expanded="true"] i.ti-chevron-up { transform: rotate(0deg); }
+
 /* --------------------- Formularios (paloSantoForm → BS5) --------------------- */
 .radio_buttonset_elx { display: flex; flex-direction: column; gap: 2px; }
 .form_datetime { max-width: 260px; }

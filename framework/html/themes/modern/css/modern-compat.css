@@ -347,6 +347,21 @@ fieldset > legend i { color: var(--iss-brand-ink); }
 /* --- Asterisco de requerido --- */
 .required { color: var(--tblr-danger, #d63939); font-weight: 600; }
 
+/* --- jQuery UI datepicker con buttonImageOnly: el botón-calendario dejaba
+   el mini-icono colgando bajo el input sin estilo; se lo convierte en un
+   botón integrado al field control (todos los módulos lo heredan). --- */
+.ui-datepicker-trigger {
+  vertical-align: middle;
+  margin-left: .4rem;
+  margin-bottom: 0;
+  padding: .45rem .6rem;
+  border-radius: .5rem;
+  border: 1px solid var(--iss-border);
+  background: var(--iss-surface-2);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
 /* --- filterForm (fila de filtro de listas legacy) --- */
 .filterForm { width: 100%; }
 .filterForm input[type="text"], .filterForm input[type="password"] { width: auto; min-width: 12rem; max-width: 20rem; }
