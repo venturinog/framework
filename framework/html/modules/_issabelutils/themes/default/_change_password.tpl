@@ -1,21 +1,25 @@
 <script type='text/javascript' src="modules/{$module_name}/themes/default/js/change_password.js"></script>
-<table class='tabForm' width='100%' >
-    <tr class='letra12'>
-        <td align='left'><b>{$CURRENT_PASSWORD}</b></td>
-        <td align='left'><input type='password' id='curr_pass' name='curr_pass' value='' /></td>
-    </tr>
-    <tr class='letra12'>
-        <td align='left'><b>{$NEW_PASSWORD}</b></td>
-        <td align='left'><input type='password' id='curr_pass_new' name='curr_pass_new' value='' /></td>
-    </tr>
-    <tr class='letra12'>
-        <td align='left'><b>{$RETYPE_PASSWORD}</b></td>
-        <td align='left'><input type='password' id='curr_pass_renew' name='curr_pass_renew' value='' /></td>
-    </tr>
-    <tr class='letra12'>
-        <td align='center' colspan='2'><input type='button' id='sendChanPass' name='sendChanPss' value='{$CHANGE_PASSWORD_BTN}' /></td>
-    </tr>
-</table>
+<section class="iss-card" style="margin:0;">
+    <div class="iss-card__body iss-formgrid">
+      <div class="iss-field">
+        <span class="iss-field__label">{$CURRENT_PASSWORD}</span>
+        <span class="iss-field__control"><input type='password' class='form-control' id='curr_pass' name='curr_pass' value='' autocomplete='current-password' /></span>
+      </div>
+      <div class="iss-field">
+        <span class="iss-field__label">{$NEW_PASSWORD}</span>
+        <span class="iss-field__control"><input type='password' class='form-control' id='curr_pass_new' name='curr_pass_new' value='' autocomplete='new-password' /></span>
+      </div>
+      <div class="iss-field">
+        <span class="iss-field__label">{$RETYPE_PASSWORD}</span>
+        <span class="iss-field__control"><input type='password' class='form-control' id='curr_pass_renew' name='curr_pass_renew' value='' autocomplete='new-password' /></span>
+      </div>
+      <div class="iss-field iss-field--full">
+        <span class="iss-field__control">
+          <input type='button' class='button' id='sendChanPass' name='sendChanPss' value='{$CHANGE_PASSWORD_BTN}' />
+        </span>
+      </div>
+    </div>
+</section>
 <input type="hidden" id="lblCurrentPassAlert" value="{$CURRENT_PASSWORD_ALERT}" />
 <input type="hidden" id="lblNewRetypePassAlert"   value="{$NEW_RETYPE_PASSWORD_ALERT}" />
 <input type="hidden" id="lblPassNoTMatchAlert" value="{$PASSWORDS_NOT_MATCH}" />

@@ -1,15 +1,16 @@
-<form method="POST">
-<table width="99%" border="0" cellspacing="0" cellpadding="4" align="center">
-    <tr class="letra12">
-    <td>
-        <input class="button" type="submit" name="save_language" value="{$CAMBIAR}" >
-	</td>
-    </tr>
-</table>
-<table class="tabForm" width="99%" >
-    <tr class="letra12">
-        <td width="9%"><b>{$language.LABEL}:</b></td>
-        <td width="35%">{$language.INPUT}</td>
-    </tr>
-</table>
+<form class="iss-form" method="POST" autocomplete="off">
+  <section class="iss-card">
+    <header class="iss-card__header"><i class="ti ti-world"></i> {$title}</header>
+    <div class="iss-card__body iss-formgrid">
+      <div class="iss-field iss-field--full">
+        <span class="iss-field__label">{$language.LABEL}</span>
+        <span class="iss-field__control">{$language.INPUT}</span>
+      </div>
+    </div>
+  </section>
+  <div class="iss-form__toolbar">
+    <div class="iss-form__buttons">
+      <input class="button" type="submit" name="save_language" value="{$CAMBIAR}">
+    </div>
+  </div>
 </form>

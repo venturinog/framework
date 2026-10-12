@@ -3,15 +3,37 @@
 <html>
     <head>
         <title>Issabel</title>
+        {if $THEMENAME eq "modern"}
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/tabler.min.css">
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/tabler-icons.min.css">
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/font-awesome.min.css">
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/inter.css">
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/modern.css">
+        <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/css/modern-compat.css">
+        {else}
         <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/styles.css">
         <link rel="stylesheet" href="{$path}themes/{$THEMENAME}/help.css">
+        {/if}
         {$HEADER_LIBS_JQUERY}
         <script type="text/javascript" src="{$path}libs/js/base.js"></script>
         {$HEADER}
         {$HEADER_MODULES|default:''}
     </head>
-    <body>
-    {if $THEMENAME eq "elastixneo"}
+    <body class="{if $THEMENAME eq "modern"}iss-popup{else}iss-body{/if}">
+    {if $THEMENAME eq "modern"}
+        <div class="iss-popup-container" style="padding: 18px; background: var(--iss-body-bg); min-height: 100vh; box-sizing: border-box; color: var(--iss-text);">
+{if !empty($mb_message)}
+<div class="div_msg_errors" id="message_error">
+    <div style="height:24px">
+        <div class="div_msg_errors_title" style="padding-left:5px"><b style="color:red;">&nbsp;{$mb_title}</b></div>
+        <div class="div_msg_errors_dismiss"><input type="button" onclick="hide_message_error();" value="{$md_message_title}"/></div>
+    </div>
+    <div style="padding:2px 10px 2px 10px">{$mb_message}</div>
+</div>
+{/if}
+          {$CONTENT}
+        </div>
+    {elseif $THEMENAME eq "elastixneo"}
       <div>
         <div class="elxneo-module-title">
             <div class="name-left"></div>
