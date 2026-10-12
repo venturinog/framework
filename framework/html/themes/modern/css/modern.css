@@ -382,6 +382,56 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .subMenu a { text-decoration: none; color: var(--iss-text); }
 .neo-display-none { display: none !important; }
 
+/* --------------------- Kit de formularios (fase "Modern 2") --------------------- */
+/* Estructura nueva elegida por los módulos modernizados: acciones en toolbar,
+   cada sección como card (.iss-card) y el cuerpo como grilla de campos
+   (.iss-form) con labels arriba del control. Todo con tokens del tema, por lo
+   que el modo oscuro se hereda automáticamente. */
+
+.iss-form { display: block; max-width: 1180px; }
+
+/* Barra de acciones del form: hint de requeridos a la izquierda, botones a la
+ * derecha. Sin fondo (las cards de abajo llevan la superficie). */
+.iss-form__toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.iss-form__hint { color: var(--iss-text-muted); font-size: 12.5px; display: inline-flex; align-items: center; gap: 4px; }
+.iss-form__buttons { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* Card de sección de formulario */
+.iss-card { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); margin-bottom: 1.25rem; }
+.iss-card__header { display: flex; align-items: center; gap: 9px; padding: 12px 18px; border-bottom: 1px solid var(--iss-border); font-weight: 600; font-size: 14.5px; color: var(--iss-text); }
+.iss-card__header i { color: var(--iss-brand-ink); font-size: 19px; line-height: 1; }
+.iss-card__header img { height: 20px; width: 20px; flex-shrink: 0; }
+.iss-card__body { padding: 16px 18px 18px; }
+
+/* Grilla de campos: 2 columnas responsivas (labels arriba). Los controles
+ * deben ocupar el ancho completo de su celda para una línea visual limpia. */
+.iss-form { --iss-formgrid-gap-x: 18px; --iss-formgrid-gap-y: 14px; }
+.iss-formgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--iss-formgrid-gap-y) var(--iss-formgrid-gap-x); }
+.iss-formgrid > .iss-field { grid-column: auto; }
+.iss-formgrid > .iss-field--full, .iss-formgrid > .iss-span2 { grid-column: 1 / -1; }
+.iss-formgrid--3col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 767px) {
+  .iss-formgrid, .iss-formgrid--3col { grid-template-columns: 1fr; }
+}
+
+/* Campo individual: label arriba, control, texto de ayuda */
+.iss-field { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.iss-field__label { font-size: .8125rem; font-weight: 500; color: var(--iss-text); line-height: 1.35; }
+.iss-field__label label { font-size: inherit; font-weight: inherit; color: inherit; margin: 0; }
+.iss-field__control { display: block; min-width: 0; }
+.iss-field__control > .form-control, .iss-field__control > .form-select { width: 100%; max-width: 430px; }
+.iss-field__help { font-size: .75rem; color: var(--iss-text-muted); }
+
+/* Marcar requerido: se usa como span suelto o dentro del label */
+.iss-required { color: var(--tblr-danger, #d63939); font-weight: 600; }
+
+/* In-line (checkbox con texto, radios one-per-row ya definidos arriba) */
+.iss-inline-field { display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 575px) {
+  .iss-form__buttons { margin-left: 0; }
+}
+
 /* ------------------------------ Responsive --------------------------- */
 @media (min-width: 992px) { body.iss-collapsed .iss-sidebar { display: none; } }
 @media (max-width: 991px) {
