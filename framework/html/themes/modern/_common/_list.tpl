@@ -43,7 +43,7 @@
 
         {if !empty($contentFilter)}
             <button type="button" class="btn btn-sm btn-outline-primary" id="neo-table-button-filter-left">
-                <i class="ti ti-filter"></i> {if $AS_OPTION}{$MORE_OPTIONS}{else}{$FILTER_GRID_SHOW}{/if}
+                <i class="ti ti-filter"></i> <span id="neo-table-label-filter">{if $AS_OPTION}{$MORE_OPTIONS}{else}{$FILTER_GRID_SHOW}{/if}</span>
             </button>
             <button type="button" class="btn btn-sm btn-outline-primary" id="neo-table-filter-button-arrow">
                <i class="ti ti-chevron-down"></i>
@@ -206,7 +206,15 @@ $(document).ready(function () {
         else if (id == "pagedown") $("#pageup").val(val);
     });
 
-    $("#neo-table-filter-button-arrow").click(function () {
+    /* Toggle del row de filtros. Con click delegado en document, para que el
+     * registro no dependa del orden de carga de los scripts ni de que el
+     * contenido esté en el DOM al momento de la asignación. Cubre ambos
+     * controles: el botón con el texto ("Show Filter" / "Hide Filter") y el
+     * chevron, que son visualmente dos botones distintos desde el restyle
+     * del tema modern. */
+    $(document).on("click", "#neo-table-button-filter-left, #neo-table-filter-button-arrow", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
 {/literal}
     {if $AS_OPTION}
         var filter_show = "{$MORE_OPTIONS}";
@@ -216,11 +224,14 @@ $(document).ready(function () {
         var filter_hide = "{$FILTER_GRID_HIDE}";
     {/if}
 {literal}
-        if ($("#neo-table-header-filterrow").hasClass("neo-display-none")) {
-            $("#neo-table-header-filterrow").removeClass("neo-display-none");
+        var $row = $("#neo-table-header-filterrow");
+        if ($row.hasClass("neo-display-none")) {
+            $row.removeClass("neo-display-none");
+            $("#neo-table-label-filter").text(filter_hide);
             $("#neo-table-filter-button-arrow i").removeClass("ti-chevron-down").addClass("ti-chevron-up");
         } else {
-            $("#neo-table-header-filterrow").addClass("neo-display-none");
+            $row.addClass("neo-display-none");
+            $("#neo-table-label-filter").text(filter_show);
             $("#neo-table-filter-button-arrow i").removeClass("ti-chevron-up").addClass("ti-chevron-down");
         }
     });

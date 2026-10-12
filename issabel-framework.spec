@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 19
+Release: 20
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -425,6 +425,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-20
+- Make the "Show Filter" button toggle the filter row again: the labeled
+  button never had a click handler in the modern theme (only the small
+  chevron did), so every module's grid filter looked dead. Bind the click
+  to both controls with event delegation and sync the label text and
+  chevron icon with the row state.
+
 * Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-18
 - checkbox() now renders a Bootstrap 5 / Tabler switch (form-check form-switch)
   instead of the old checkbox markup, so the on/off toggles look consistent with
