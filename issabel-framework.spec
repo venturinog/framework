@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 21
+Release: 25
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -85,6 +85,7 @@ mkdir -p $RPM_BUILD_ROOT/var/www/db
 mkdir -p $RPM_BUILD_ROOT/var/www/html
 mkdir -p $RPM_BUILD_ROOT/var/www/backup
 mkdir -p $RPM_BUILD_ROOT/var/lib/php/session-asterisk
+mkdir -p $RPM_BUILD_ROOT/var/lib/php/session-asterisk/tabs
 
 # ** /usr path ** #
 mkdir -p $RPM_BUILD_ROOT/usr/local/bin
@@ -96,6 +97,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/issabel
 mkdir -p $RPM_BUILD_ROOT/usr/share/pear/DB
 mkdir -p $RPM_BUILD_ROOT/usr/share/issabel/privileged
 mkdir -p $RPM_BUILD_ROOT/usr/share/issabel/module_installer/%{name}-%{version}-%{release}/
+mkdir -p $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 
 # ** /etc path ** #
 mkdir -p $RPM_BUILD_ROOT/etc/cron.d
@@ -123,6 +125,10 @@ mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/php.d/issabel.ini          
 # ** crons config ** #
 mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/cron.d/issabel.cron              $RPM_BUILD_ROOT/etc/cron.d/
 chmod 644 $RPM_BUILD_ROOT/etc/cron.d/*
+
+# ** Runtime tab-store directory cleanup ** #
+mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/usr/lib/tmpfiles.d/issabel-tabs.conf $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/
+chmod 644 $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/issabel-tabs.conf
 
 # ** Repos config ** #
 mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/yum.repos.d/Issabel.repo         $RPM_BUILD_ROOT/etc/yum.repos.d/
@@ -224,6 +230,7 @@ fi
 #chkconfig --del gpm   &> /dev/null
 systemctl enable mariadb || :
 systemctl enable httpd || :
+systemd-tmpfiles --create /usr/lib/tmpfiles.d/issabel-tabs.conf >/dev/null 2>&1 || :
 
 mkdir -p /usr/share/fonts/truetype
 
@@ -409,11 +416,13 @@ rm -rf $RPM_BUILD_ROOT
 #%config(noreplace) /etc/yum.repos.d/Issabel.repo
 %config(noreplace) /etc/logrotate.d/issabelAudit.logrotate
 %config /etc/httpd/conf.d/issabel-htaccess.conf
+/usr/lib/tmpfiles.d/issabel-tabs.conf
 /etc/init.d/generic-cloexec
 %defattr(755, root, root)
 /usr/share/issabel/privileged/*
 %defattr(770, root, asterisk, 770)
-/var/lib/php/session-asterisk
+%dir /var/lib/php/session-asterisk
+%attr(0750, asterisk, asterisk) %dir /var/lib/php/session-asterisk/tabs
 %defattr(-, asterisk, asterisk)
 /var/www/html/cache/.dummy
 /var/www/html/templates_c/.dummy
@@ -425,6 +434,20 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-25
+- Highlight selected second-level module links with the same magenta state.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-24
+- Load the shared jQuery assets in the Modern shell without module HTML.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-23
+- Restore localized per-tab titles, breadcrumbs and sidebar selection; show a
+  toast when navigation focuses an already-open tab. Expose the active menu ID
+  in module documents so dashboard applets route AJAX requests to their owner.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-22
+- Add the JSON-backed in-app tab registry and its aged-file cleanup rule.
+
 * Mon Oct 12 2026 Issabel Foundation <info@issabel.org> - 6.0.0-21
 - Rotate the collapse trigger chevron via aria-expanded and style the jQuery
   UI datepicker image trigger as a proper field button in the compat layer.

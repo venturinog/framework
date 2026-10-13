@@ -50,6 +50,170 @@ function get_post_login_redirect($pACL, $sUsername)
     return 'index.php';
 }
 
+function issabel_tabs_json_response($status, array $payload)
+{
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, private');
+    header('X-Content-Type-Options: nosniff');
+    echo json_encode($payload);
+    exit;
+}
+
+function issabel_tabs_same_origin_request()
+{
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    if ($origin === '' && !empty($_SERVER['HTTP_REFERER'])) {
+        $parts = parse_url($_SERVER['HTTP_REFERER']);
+        if (is_array($parts) && isset($parts['scheme'], $parts['host'])) {
+            $origin = $parts['scheme'].'://'.$parts['host'];
+            if (isset($parts['port'])) $origin .= ':'.$parts['port'];
+        }
+    }
+
+    $https = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off';
+    $expected = ($https ? 'https' : 'http').'://'.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '');
+    return $origin !== '' && hash_equals($expected, $origin);
+}
+
+function issabel_tabs_handle_request($pdbACL, $pACL, $idUser, $maxTabs, $csrfToken)
+{
+    $action = isset($_GET['tabmgr']) ? $_GET['tabmgr'] : '';
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        issabel_tabs_json_response(405, array('error' => 'method_not_allowed'));
+    }
+
+    $instanceId = isset($_SERVER['HTTP_X_ISSABEL_INSTANCE_ID'])
+        ? $_SERVER['HTTP_X_ISSABEL_INSTANCE_ID'] : '';
+    if (!issabelTabs::isValidInstanceId($instanceId)) {
+        issabel_tabs_json_response(400, array('error' => 'invalid_instance'));
+    }
+
+    $requestToken = isset($_SERVER['HTTP_X_ISSABEL_TABS_CSRF'])
+        ? $_SERVER['HTTP_X_ISSABEL_TABS_CSRF']
+        : (isset($_POST['tabs_csrf']) ? $_POST['tabs_csrf'] : '');
+    if (!is_string($requestToken) || !hash_equals($csrfToken, $requestToken) ||
+        !issabel_tabs_same_origin_request()) {
+        issabel_tabs_json_response(403, array('error' => 'request_rejected'));
+    }
+
+    // Release PHP's session lock before taking the independent JSON store lock.
+    $sessionId = session_id();
+    session_write_close();
+
+    try {
+        $tabs = new issabelTabs($sessionId, $instanceId, null, $maxTabs);
+        switch ($action) {
+            case 'init':
+                $state = $tabs->initialize();
+                issabel_tabs_json_response(200, $state);
+
+            case 'create':
+                $result = $tabs->createDashboardLanding();
+                issabel_tabs_json_response($result['created'] ? 200 : 409, $result);
+
+            case 'activate':
+                $state = $tabs->setActive(isset($_POST['id']) ? $_POST['id'] : 0);
+                if ($state === null) issabel_tabs_json_response(404, array('error' => 'tab_not_found'));
+                issabel_tabs_json_response(200, $state);
+
+            case 'close':
+                $result = $tabs->close(isset($_POST['id']) ? $_POST['id'] : 0);
+                issabel_tabs_json_response($result['closed'] ? 200 : 409, $result);
+
+            case 'update':
+                $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+                $key = isset($_POST['key']) && is_string($_POST['key']) ? $_POST['key'] : '';
+                $kind = isset($_POST['kind']) && $_POST['kind'] === 'pbx' ? 'pbx' : 'issabel';
+                $label = isset($_POST['label']) && is_string($_POST['label'])
+                    ? trim(strip_tags($_POST['label'])) : '';
+                $label = function_exists('mb_substr') ? mb_substr($label, 0, 120, 'UTF-8') : substr($label, 0, 120);
+                $title = isset($_POST['title']) && is_string($_POST['title'])
+                    ? trim(strip_tags($_POST['title'])) : $label;
+                $title = function_exists('mb_substr') ? mb_substr($title, 0, 120, 'UTF-8') : substr($title, 0, 120);
+                $menuId = isset($_POST['menuId']) && is_string($_POST['menuId'])
+                    ? $_POST['menuId'] : (($kind === 'pbx') ? 'pbxadmin' : $key);
+                if (!preg_match('/^[a-zA-Z0-9_.-]{1,80}$/D', $menuId)) $menuId = '';
+                $breadcrumb = array();
+                if (isset($_POST['breadcrumb']) && is_string($_POST['breadcrumb'])) {
+                    $decodedBreadcrumb = json_decode($_POST['breadcrumb'], true);
+                    if (is_array($decodedBreadcrumb)) {
+                        foreach (array_slice($decodedBreadcrumb, 0, 8) as $crumb) {
+                            if (!is_string($crumb)) continue;
+                            $crumb = trim(strip_tags($crumb));
+                            if ($crumb !== '') {
+                                $breadcrumb[] = function_exists('mb_substr')
+                                    ? mb_substr($crumb, 0, 80, 'UTF-8') : substr($crumb, 0, 80);
+                            }
+                        }
+                    }
+                }
+
+                $isLanding = $kind === 'issabel' && preg_match('/^landing-dashboard-[0-9]+$/D', $key);
+                $pbxLanding = $kind === 'pbx' && $key === 'pbx|landing';
+                $pbxIdentity = null;
+                if ($kind === 'pbx' && !$pbxLanding) {
+                    $parts = explode('|', $key, 2);
+                    if (count($parts) === 2) $pbxIdentity = $tabs->normalizeKey($parts[0], $parts[1]);
+                }
+                if (($kind === 'issabel' && !$isLanding && !preg_match('/^[a-zA-Z0-9_.-]{1,80}$/D', $key)) ||
+                    ($kind === 'pbx' && !$pbxLanding && ($pbxIdentity === null || $pbxIdentity !== $key))) {
+                    issabel_tabs_json_response(400, array('error' => 'invalid_tab_identity'));
+                }
+                $authKey = ($kind === 'pbx') ? 'pbxadmin' : ($isLanding ? 'dashboard' : $key);
+                if (!$pACL->isUserAuthorizedById($idUser, 'access', $authKey)) {
+                    issabel_tabs_json_response(403, array('error' => 'module_not_authorized'));
+                }
+
+                if ($kind === 'pbx') {
+                    $query = array();
+                    if (!$pbxLanding) {
+                        list($display, $extdisplay) = explode('|', $key, 2);
+                        $query[] = 'display='.rawurlencode($display);
+                        if ($extdisplay !== '') $query[] = 'extdisplay='.rawurlencode($extdisplay);
+                    }
+                    $query[] = 'iss_instance='.rawurlencode($instanceId);
+                    $query[] = 'iss_tab='.$id;
+                    $src = '/admin/config.php?'.implode('&', $query);
+                } else {
+                    $srcKey = $isLanding ? 'dashboard' : $key;
+                    $src = 'index.php?menu='.rawurlencode($srcKey)
+                        .'&rawmode=iframe&iss_instance='.rawurlencode($instanceId);
+                }
+                $result = $tabs->update($id, array(
+                    'kind' => $kind,
+                    'key' => $key,
+                    'label' => ($label === '') ? $key : $label,
+                    'title' => ($title === '') ? (($label === '') ? $key : $label) : $title,
+                    'breadcrumb' => $breadcrumb,
+                    'menuId' => $menuId,
+                    'src' => $src,
+                    'loaded' => true,
+                ));
+
+                if (!empty($result['updated']) && $kind === 'issabel' && !$isLanding &&
+                    isset($_POST['history']) && $_POST['history'] === '1') {
+                    putMenuAsHistory($pdbACL, $pACL, $idUser, $key);
+                }
+                $status = (!empty($result['updated']) || isset($result['duplicate'])) ? 200 : 404;
+                issabel_tabs_json_response($status, $result);
+
+            case 'setDirty':
+                $dirtyValue = isset($_POST['dirty']) ? strtolower((string)$_POST['dirty']) : '';
+                $result = $tabs->update(isset($_POST['id']) ? $_POST['id'] : 0, array(
+                    'dirty' => in_array($dirtyValue, array('1', 'true', 'yes'), true),
+                ));
+                issabel_tabs_json_response(!empty($result['updated']) ? 200 : 404, $result);
+
+            default:
+                issabel_tabs_json_response(400, array('error' => 'unknown_action'));
+        }
+    } catch (Throwable $e) {
+        error_log('Issabel tabs request failed: '.$e->getMessage());
+        issabel_tabs_json_response(500, array('error' => 'tab_store_error'));
+    }
+}
+
 // Agregar directorio libs de script a la lista de rutas a buscar para require()
 ini_set('include_path', dirname($_SERVER['SCRIPT_FILENAME'])."/libs:".ini_get('include_path'));
 
@@ -250,6 +414,25 @@ if (isset($_SESSION['issabel_user']) &&
 
     setcookie('issaUser',$_SESSION['issabel_user']);
     $idUser = $pACL->getIdUser($_SESSION['issabel_user']);
+    if (empty($_SESSION['issabel_tabs_csrf'])) {
+        $_SESSION['issabel_tabs_csrf'] = bin2hex(random_bytes(32));
+    }
+    $ISSABEL_MAX_TABS = isset($arrConf['issabel_max_tabs'])
+        ? max(1, (int)$arrConf['issabel_max_tabs']) : 6;
+    $ISSABEL_TABS_TOKEN = $_SESSION['issabel_tabs_csrf'];
+    $smarty->assign('ISSABEL_MAX_TABS', $ISSABEL_MAX_TABS);
+    $smarty->assign('ISSABEL_TABS_TOKEN', $ISSABEL_TABS_TOKEN);
+    $smarty->assign('ISSABEL_TABS_CONFIG_JSON', json_encode(array(
+        'csrf' => $ISSABEL_TABS_TOKEN,
+        'max' => $ISSABEL_MAX_TABS,
+        'openedToast' => _tr('Opened in another tab'),
+    ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT));
+
+    // Endpoint sits after authentication and before menu/module dispatch.
+    if (isset($_GET['tabmgr'])) {
+        issabel_tabs_handle_request($pdbACL, $pACL, $idUser, $ISSABEL_MAX_TABS, $ISSABEL_TABS_TOKEN);
+    }
+
     $pMenu = new paloMenu($arrConf['issabel_dsn']['menu']);
     $arrMenuFiltered = $pMenu->filterAuthorizedMenus($idUser);
     if (!is_array($arrMenuFiltered)) {
@@ -320,22 +503,27 @@ if (isset($_SESSION['issabel_user']) &&
     $rawmode = getParameter("rawmode");
     $oPn = new paloSantoNavigation($arrMenuFiltered, $smarty, $selectedMenu);
     $selectedMenu = $oPn->getSelectedModule();
+    $smarty->assign('ISSABEL_MODULE_ID', $selectedMenu);
 
-    if(!isset($rawmode)) {
+    if(!isset($rawmode) || $rawmode == 'iframe') {
        // Inicializa el objeto palosanto navigation
        $_SESSION['menu'] = $selectedMenu;
 
        // Guardar historial de la navegación
-       putMenuAsHistory($pdbACL, $pACL, $idUser, $selectedMenu);
+       if (!isset($rawmode)) putMenuAsHistory($pdbACL, $pACL, $idUser, $selectedMenu);
     }
 
     // Obtener contenido del módulo, si usuario está autorizado a él
     $bModuleAuthorized = $pACL->isUserAuthorizedById($idUser, "access", $selectedMenu);
 
-    $sModuleContent = ($bModuleAuthorized) ? $oPn->showContent() : '';
+    // The shell no longer renders module HTML; module content is loaded in
+    // its tab iframe. Keep both raw modes working for existing callers.
+    $tabsEnabled = isset($arrConf['mainTheme']) && $arrConf['mainTheme'] === 'modern';
+    $sModuleContent = ($bModuleAuthorized && (isset($rawmode) || !$tabsEnabled))
+        ? $oPn->showContent() : '';
 
     // try to open wizard modal
-    if($selectedMenu=='pbxadmin') {
+    if(isset($rawmode) && $selectedMenu=='pbxadmin') {
         if(is_file("/var/www/html/wizard/index.php")) {
         $pDB = new paloDB(generarDSNSistema('asteriskuser', 'asterisk'));
             $query = "SELECT count(*) FROM `users`";
@@ -354,7 +542,27 @@ if (isset($_SESSION['issabel_user']) &&
     // del modulo. Esto es util en ciertos casos.
     if(isset($rawmode) && $rawmode=='yes') {
         echo $sModuleContent;
+    } elseif (isset($rawmode) && $rawmode === 'iframe' && $tabsEnabled) {
+        $issInstance = getParameter('iss_instance');
+        if (!is_string($issInstance) || !issabelTabs::isValidInstanceId($issInstance)) {
+            header('HTTP/1.1 403 Forbidden');
+            echo 'Invalid tab instance';
+            exit;
+        }
+
+        $smarty->assign('WEBPATH', '');
+        $smarty->assign('WEBCOMMON', 'libs/');
+        $smarty->assign('THEMENAME', $arrConf['mainTheme']);
+        $lang = get_language();
+        $smarty->assign('LANG', $lang);
+        $smarty->assign('IS_RTL', in_array(strtolower(substr($lang, 0, 2)), array('fa', 'ar', 'he', 'iw', 'ur', 'yi')));
+        $smarty->assign('currentyear', date('Y'));
+        $smarty->assign('CONTENT', $sModuleContent);
+        $smarty->display('_common/iframe_module.tpl');
+    } elseif (isset($rawmode) && $rawmode === 'iframe') {
+        echo $sModuleContent;
     } else {
+        if ($tabsEnabled) $oPn->putHEAD_JQUERY_HTML();
         $oPn->renderMenuTemplates();
 
         // Generar contenido principal de todos los paneles
@@ -409,6 +617,9 @@ if (isset($_SESSION['issabel_user']) &&
         $smarty->display("_common/index.tpl");
     }
 } else {
+    if (isset($_GET['tabmgr'])) {
+        issabel_tabs_json_response(401, array('error' => 'session_expired'));
+    }
     $rawmode = getParameter("rawmode");
     if(isset($rawmode) && $rawmode=='yes'){
         include_once "libs/paloSantoJSON.class.php";

@@ -7,6 +7,7 @@
 <input type="hidden" id="lblRegisteredCm" value="{$lblRegisteredCm}" />
 <input type="hidden" id="userMenuColor"   value="{$MENU_COLOR}" />
 <input type="hidden" id="issabel_theme_name" value="{$THEMENAME}" />
+<input type="hidden" id="issabel_framework_module_id" value="{$ISSABEL_MODULE_ID|escape:html}" />
 <input type="hidden" id="toolTip_addBookmark" value="{$ADD_BOOKMARK}" />
 <input type="hidden" id="toolTip_removeBookmark" value="{$REMOVE_BOOKMARK}" />
 <input type="hidden" id="toolTip_addingBookmark" value="{$ADDING_BOOKMARK}" />
@@ -129,9 +130,11 @@
         </div>
     </header>
 
+    <div id="iss-tabbar" class="iss-tabbar" hidden></div>
+
     <div class="iss-pagehead">
         <div class="iss-pagehead__text">
-            <nav class="iss-breadcrumb">
+            <nav class="iss-breadcrumb" id="iss-active-breadcrumb" aria-label="Breadcrumb">
                 <a href="index.php"><i class="ti ti-home"></i></a>
                 {foreach from=$BREADCRUMB item=value name=menu}
                     <i class="ti ti-chevron-right"></i>
@@ -142,9 +145,9 @@
                     {/if}
                 {/foreach}
             </nav>
-            {if !empty($PAGE_TITLE)}<h1 class="iss-pagehead__title">{$PAGE_TITLE}</h1>{/if}
+            <h1 id="iss-active-page-title" class="iss-pagehead__title">{$PAGE_TITLE|default:''}</h1>
         </div>
     </div>
 
-    <div class="iss-content">
+    <div class="iss-content iss-tabs-enabled">
     {* ABIERTO: lo cierra _common/index.tpl *}

@@ -197,7 +197,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 
 .iss-nav__subinner > a { display: flex; align-items: center; gap: 9px; padding: 8px 12px 8px 40px; color: var(--iss-sidebar-fg); text-decoration: none; font-size: 13.5px; border-radius: 8px; }
 .iss-nav__subinner > a:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-.iss-nav__subinner > a.is-open { color: #fff; font-weight: 600; }
+.iss-nav__subinner > a.is-open { color: #fff; background: var(--iss-accent-soft); font-weight: 600; box-shadow: inset 2px 0 0 var(--iss-accent); }
 
 /* Link rápido (Dashboard) */
 .iss-nav__quick { display: flex; align-items: center; gap: 11px; padding: 11px 12px; margin-bottom: 6px; border-radius: 9px; color: #fff; text-decoration: none; font-size: 14.5px; font-weight: 600; background: rgba(255,255,255,.06); }

@@ -16,12 +16,8 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabler.min.css">
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabler-icons.min.css">
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/font-awesome.min.css">
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/inter.css">
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/modern.css">
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/modern-compat.css">
+  {include file="_common/_head_assets.tpl"}
+  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabs.css">
 
   {$HEADER_LIBS_JQUERY}
   <script src="libs/js/base.js"></script>
@@ -44,7 +40,7 @@
     </div>
     {/if}
 
-    {$CONTENT}
+    <div id="iss-tabpanes" class="iss-tabpanes" hidden></div>
     </div><!-- /.iss-content (abierto en _menu.tpl) -->
 
         <footer class="iss-footer">
@@ -94,5 +90,7 @@
 <!-- Bottom scripts -->
 <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabler.min.js"></script>
 <script src="{$WEBPATH}themes/{$THEMENAME}/js/modern.js"></script>
+<script>window.ISSABEL_TABS_CONFIG = {$ISSABEL_TABS_CONFIG_JSON};</script>
+<script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs.js"></script>
 </body>
 </html>

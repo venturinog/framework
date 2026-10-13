@@ -40,6 +40,7 @@ $arrConf['mainTheme'] = load_theme($arrConf['basePath']."/"); //theme para la pa
 $arrConf['issabel_version'] = load_version_issabel($arrConf['basePath']."/"); //la version y le release del sistema Issabel
 $arrConf['defaultMenu'] = 'config';
 $arrConf['language'] = 'en';
+$arrConf['issabel_max_tabs'] = 6;
 
 /* La siguiente lista define los módulos provistos por el framework que deben
  * estar siempre disponibles sin importar el estado del menú. Estos módulos deben
