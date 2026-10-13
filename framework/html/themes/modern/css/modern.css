@@ -230,7 +230,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-sidebar__foot { padding: 12px 18px; flex-shrink: 0; border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 12px; color: var(--iss-sidebar-fg-dim); }
 
 /* ------------------------------ Topbar ------------------------------- */
-.iss-topbar { height: 62px; background: var(--iss-surface); border-bottom: 1px solid var(--iss-border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 20; }
+.iss-topbar { height: 62px; background: var(--iss-surface); border-bottom: 1px solid var(--iss-border); display: flex; align-items: center; gap: 12px; padding: 0 20px; position: sticky; top: 0; z-index: 20; }
 .iss-topbar__burger { border: 0; background: transparent; font-size: 22px; color: var(--iss-text-muted); cursor: pointer; padding: 6px 8px; border-radius: 8px; }
 .iss-topbar__burger:hover { background: var(--iss-body-bg); }
 .iss-topbar__right { display: flex; align-items: center; gap: 8px; margin-left: auto; }

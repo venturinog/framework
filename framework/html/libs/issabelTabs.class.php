@@ -15,7 +15,7 @@ class issabelTabs
     private $storeDir;
     private $maxTabs;
 
-    public function __construct($sessionId, $instanceId, $storeDir = null, $maxTabs = 6)
+    public function __construct($sessionId, $instanceId, $storeDir = null, $maxTabs = 8)
     {
         if (!is_string($sessionId) || $sessionId === '') {
             throw new InvalidArgumentException('A session ID is required');
@@ -102,7 +102,7 @@ class issabelTabs
                 'title' => 'Dashboard',
                 'breadcrumb' => array(),
                 'menuId' => 'dashboard',
-                'src' => 'index.php?menu=dashboard&rawmode=iframe&iss_instance='.$this->instanceId,
+                'src' => 'index.php?menu=dashboard&rawmode=iframe&iss_instance='.$this->instanceId.'&iss_tab='.$id,
                 'dirty' => false,
                 'loaded' => true,
             );
@@ -232,7 +232,7 @@ class issabelTabs
                 'title' => 'Dashboard',
                 'breadcrumb' => array(),
                 'menuId' => 'dashboard',
-                'src' => 'index.php?menu=dashboard&rawmode=iframe&iss_instance='.$this->instanceId,
+                'src' => 'index.php?menu=dashboard&rawmode=iframe&iss_instance='.$this->instanceId.'&iss_tab=1',
                 'dirty' => false,
                 'loaded' => true,
             )),

@@ -44,14 +44,23 @@
 
         var url = new URL(link.href, window.location.href);
         if (url.origin !== origin || !url.searchParams.has('menu')) return;
+        var currentModule = document.getElementById('issabel_framework_module_id');
+        var currentMenu = currentModule ? currentModule.value :
+            (new URLSearchParams(window.location.search).get('menu') || '');
+        if (url.pathname === window.location.pathname && url.searchParams.get('menu') === currentMenu) {
+            // Keep actions and item IDs inside the current module iframe.
+            return;
+        }
         event.preventDefault();
         window.parent.postMessage({ type: 'navigateModule', href: url.href }, origin);
     }, true);
 
     window.addEventListener('message', function (event) {
         if (event.origin !== origin || event.source !== window.parent) return;
-        // The shell currently owns tab state; messages are validated here so
-        // future module-specific bridge messages share the same origin gate.
+        var message = event.data || {};
+        if (message.type === 'themeChanged' && (message.theme === 'light' || message.theme === 'dark')) {
+            document.documentElement.setAttribute('data-bs-theme', message.theme);
+        }
     });
 
     if (document.readyState === 'loading') {

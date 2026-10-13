@@ -77,6 +77,7 @@
 
     <header class="iss-topbar">
         <button class="iss-topbar__burger" id="issBurger" type="button" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <div id="iss-tabbar" class="iss-tabbar" hidden></div>
 
         <div class="iss-topbar__right">
             <!-- Notificaciones -->
@@ -129,8 +130,6 @@
             </div>
         </div>
     </header>
-
-    <div id="iss-tabbar" class="iss-tabbar" hidden></div>
 
     <div class="iss-pagehead">
         <div class="iss-pagehead__text">

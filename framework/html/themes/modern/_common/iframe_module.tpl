@@ -20,7 +20,7 @@
   <script src="{$WEBPATH}libs/js/iframe.js"></script>
   {$HEADER}
   {$HEADER_MODULES|default:''}
-  <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs-bridge.js"></script>
+  <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs-bridge.js?v={$ISSABEL_TABS_ASSET_VERSIONS.tabsBridgeJs}"></script>
 </head>
 <body class="iss-body iss-iframe-body">
   <input type="hidden" id="issabel_framework_module_id" value="{$ISSABEL_MODULE_ID|escape:html}">

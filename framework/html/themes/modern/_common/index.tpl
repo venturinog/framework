@@ -17,7 +17,7 @@
   </script>
 
   {include file="_common/_head_assets.tpl"}
-  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabs.css">
+  <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabs.css?v={$ISSABEL_TABS_ASSET_VERSIONS.tabsCss}">
 
   {$HEADER_LIBS_JQUERY}
   <script src="libs/js/base.js"></script>
@@ -89,8 +89,8 @@
 
 <!-- Bottom scripts -->
 <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabler.min.js"></script>
-<script src="{$WEBPATH}themes/{$THEMENAME}/js/modern.js"></script>
+<script src="{$WEBPATH}themes/{$THEMENAME}/js/modern.js?v={$ISSABEL_TABS_ASSET_VERSIONS.modernJs}"></script>
 <script>window.ISSABEL_TABS_CONFIG = {$ISSABEL_TABS_CONFIG_JSON};</script>
-<script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs.js"></script>
+<script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs.js?v={$ISSABEL_TABS_ASSET_VERSIONS.tabsJs}"></script>
 </body>
 </html>

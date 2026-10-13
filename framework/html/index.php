@@ -76,6 +76,39 @@ function issabel_tabs_same_origin_request()
     return $origin !== '' && hash_equals($expected, $origin);
 }
 
+/** Recover tab context when a module's relative redirect drops iframe params. */
+function issabel_tabs_iframe_referer_context()
+{
+    if (empty($_SERVER['HTTP_REFERER'])) return null;
+    if (!empty($_SERVER['HTTP_SEC_FETCH_DEST']) && $_SERVER['HTTP_SEC_FETCH_DEST'] !== 'iframe') return null;
+
+    $referer = parse_url($_SERVER['HTTP_REFERER']);
+    if (!is_array($referer) || empty($referer['scheme']) || empty($referer['host']) || empty($referer['path'])) return null;
+
+    $https = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off';
+    $expectedScheme = $https ? 'https' : 'http';
+    $expectedHost = isset($_SERVER['HTTP_HOST']) ? parse_url($expectedScheme.'://'.$_SERVER['HTTP_HOST']) : false;
+    if (!is_array($expectedHost) || strtolower($referer['scheme']) !== $expectedScheme ||
+        strtolower($referer['host']) !== strtolower($expectedHost['host'])) return null;
+
+    $refererPort = isset($referer['port']) ? (int)$referer['port'] : (($referer['scheme'] === 'https') ? 443 : 80);
+    $expectedPort = isset($expectedHost['port']) ? (int)$expectedHost['port'] : ($https ? 443 : 80);
+    if ($refererPort !== $expectedPort) return null;
+    if (isset($_SERVER['SCRIPT_NAME']) && $referer['path'] !== $_SERVER['SCRIPT_NAME']) return null;
+
+    $query = array();
+    parse_str(isset($referer['query']) ? $referer['query'] : '', $query);
+    if (!isset($query['rawmode']) || $query['rawmode'] !== 'iframe' ||
+        !isset($query['iss_instance']) || !issabelTabs::isValidInstanceId($query['iss_instance'])) return null;
+
+    return array(
+        'instanceId' => $query['iss_instance'],
+        'menu' => isset($query['menu']) && is_string($query['menu']) ? $query['menu'] : '',
+        'tabId' => isset($query['iss_tab']) && ctype_digit((string)$query['iss_tab'])
+            ? (int)$query['iss_tab'] : null,
+    );
+}
+
 function issabel_tabs_handle_request($pdbACL, $pACL, $idUser, $maxTabs, $csrfToken)
 {
     $action = isset($_GET['tabmgr']) ? $_GET['tabmgr'] : '';
@@ -178,7 +211,8 @@ function issabel_tabs_handle_request($pdbACL, $pACL, $idUser, $maxTabs, $csrfTok
                 } else {
                     $srcKey = $isLanding ? 'dashboard' : $key;
                     $src = 'index.php?menu='.rawurlencode($srcKey)
-                        .'&rawmode=iframe&iss_instance='.rawurlencode($instanceId);
+                        .'&rawmode=iframe&iss_instance='.rawurlencode($instanceId)
+                        .'&iss_tab='.$id;
                 }
                 $result = $tabs->update($id, array(
                     'kind' => $kind,
@@ -418,14 +452,48 @@ if (isset($_SESSION['issabel_user']) &&
         $_SESSION['issabel_tabs_csrf'] = bin2hex(random_bytes(32));
     }
     $ISSABEL_MAX_TABS = isset($arrConf['issabel_max_tabs'])
-        ? max(1, (int)$arrConf['issabel_max_tabs']) : 6;
+        ? max(1, (int)$arrConf['issabel_max_tabs']) : 8;
     $ISSABEL_TABS_TOKEN = $_SESSION['issabel_tabs_csrf'];
     $smarty->assign('ISSABEL_MAX_TABS', $ISSABEL_MAX_TABS);
     $smarty->assign('ISSABEL_TABS_TOKEN', $ISSABEL_TABS_TOKEN);
+    $tabAssetFiles = array(
+        'modernJs' => $arrConf['basePath'].'/themes/modern/js/modern.js',
+        'tabsJs' => $arrConf['basePath'].'/themes/modern/js/tabs.js',
+        'tabsBridgeJs' => $arrConf['basePath'].'/themes/modern/js/tabs-bridge.js',
+        'tabsCss' => $arrConf['basePath'].'/themes/modern/css/tabs.css',
+    );
+    $tabAssetVersions = array();
+    foreach ($tabAssetFiles as $assetName => $assetPath) {
+        $tabAssetVersions[$assetName] = is_file($assetPath) ? (string)filemtime($assetPath) : '0';
+    }
+    $smarty->assign('ISSABEL_TABS_ASSET_VERSIONS', $tabAssetVersions);
     $smarty->assign('ISSABEL_TABS_CONFIG_JSON', json_encode(array(
         'csrf' => $ISSABEL_TABS_TOKEN,
         'max' => $ISSABEL_MAX_TABS,
         'openedToast' => _tr('Opened in another tab'),
+        'messages' => array(
+            'openNewTab' => _tr('Open a new tab'),
+            'closeTab' => _tr('Close %s'),
+            'dismissNotice' => _tr('Dismiss tab notice'),
+            'tab' => _tr('Tab'),
+            'module' => _tr('Module'),
+            'moduleFrame' => _tr('Issabel module'),
+            'closeUnsaved' => _tr('This tab has unsaved changes. Close it anyway?'),
+            'requestRejected' => _tr('The server rejected the tab request. Check your session and try again.'),
+            'sessionExpired' => _tr('Your session expired. Reload the page and sign in again.'),
+            'moduleNotAuthorized' => _tr('You are not allowed to open this module.'),
+            'invalidInstance' => _tr('This tab instance is invalid. Reload the page.'),
+            'invalidIdentity' => _tr('The page identity is invalid.'),
+            'tabNotFound' => _tr('This tab no longer exists. Reload the page.'),
+            'tabStoreError' => _tr('The tab registry could not be saved.'),
+            'limit' => _tr('The maximum number of open tabs has been reached.'),
+            'lastTab' => _tr('At least one tab must remain open.'),
+            'requestFailed' => _tr('The tab request failed'),
+            'initFailed' => _tr('Could not initialize tabs.'),
+            'browserUnsupported' => _tr('This browser does not support separate tabs. Use a modern browser.'),
+            'operationError' => _tr('The tab operation could not be completed.'),
+            'retry' => _tr('Retry'),
+        ),
     ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT));
 
     // Endpoint sits after authentication and before menu/module dispatch.
@@ -483,6 +551,31 @@ if (isset($_SESSION['issabel_user']) &&
     }
 
     $selectedMenu = getParameter('menu');
+    $rawmode = getParameter('rawmode');
+    $tabsEnabled = isset($arrConf['mainTheme']) && $arrConf['mainTheme'] === 'modern';
+
+    // Module redirects/forms can navigate this iframe to `?menu=...` and drop
+    // rawmode plus the per-window ID. Reconstruct that context from its own
+    // same-origin Referer, not from the session's last active menu.
+    if (empty($rawmode) && $tabsEnabled) {
+        $iframeContext = issabel_tabs_iframe_referer_context();
+        if ($iframeContext !== null) {
+            if (empty($selectedMenu) && $iframeContext['menu'] !== '') {
+                $selectedMenu = $iframeContext['menu'];
+            }
+            if (!empty($selectedMenu)) {
+                $redirectParams = $_GET;
+                $redirectParams['menu'] = $selectedMenu;
+                $redirectParams['rawmode'] = 'iframe';
+                $redirectParams['iss_instance'] = $iframeContext['instanceId'];
+                if ($iframeContext['tabId'] !== null) $redirectParams['iss_tab'] = $iframeContext['tabId'];
+                $redirectPath = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : 'index.php';
+                $redirectStatus = $_SERVER['REQUEST_METHOD'] === 'GET' ? 302 : 307;
+                header('Location: '.$redirectPath.'?'.http_build_query($redirectParams), true, $redirectStatus);
+                exit;
+            }
+        }
+    }
 
     // Ejecutar una petición a un módulo global del framework
     if (!is_null($selectedMenu) && isset($arrConf['elx_framework_globalmodules']) &&
@@ -500,7 +593,6 @@ if (isset($_SESSION['issabel_user']) &&
     if (empty($selectedMenu) && !empty($_SESSION['menu']))
         $selectedMenu = $_SESSION['menu'];
 
-    $rawmode = getParameter("rawmode");
     $oPn = new paloSantoNavigation($arrMenuFiltered, $smarty, $selectedMenu);
     $selectedMenu = $oPn->getSelectedModule();
     $smarty->assign('ISSABEL_MODULE_ID', $selectedMenu);
@@ -518,7 +610,6 @@ if (isset($_SESSION['issabel_user']) &&
 
     // The shell no longer renders module HTML; module content is loaded in
     // its tab iframe. Keep both raw modes working for existing callers.
-    $tabsEnabled = isset($arrConf['mainTheme']) && $arrConf['mainTheme'] === 'modern';
     $sModuleContent = ($bModuleAuthorized && (isset($rawmode) || !$tabsEnabled))
         ? $oPn->showContent() : '';
 
@@ -543,6 +634,7 @@ if (isset($_SESSION['issabel_user']) &&
     if(isset($rawmode) && $rawmode=='yes') {
         echo $sModuleContent;
     } elseif (isset($rawmode) && $rawmode === 'iframe' && $tabsEnabled) {
+        header('Referrer-Policy: same-origin');
         $issInstance = getParameter('iss_instance');
         if (!is_string($issInstance) || !issabelTabs::isValidInstanceId($issInstance)) {
             header('HTTP/1.1 403 Forbidden');

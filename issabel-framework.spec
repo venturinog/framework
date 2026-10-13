@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 25
+Release: 32
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,27 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-32
+- Move the tab strip into the Modern topbar to preserve module content height.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-31
+- Localize tab messages and cache-bust the tab shell and iframe bridges.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-30
+- Keep same-module actions inside their tab iframe after module navigation.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-29
+- Preserve iframe mode and tab identity across module-relative redirects.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-28
+- Allow eight in-app tabs and hide the add control at the limit.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-27
+- Show recoverable tab errors as dismissible notices and add init retry.
+
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-26
+- Broadcast Modern theme changes to loaded module iframes.
+
 * Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-25
 - Highlight selected second-level module links with the same magenta state.
 

@@ -20,12 +20,16 @@
     return mode === 'auto' ? (mq.matches ? 'dark' : 'light') : mode;
   }
   function paint(mode) {
-    document.documentElement.setAttribute('data-bs-theme', resolve(mode));
+    var resolvedTheme = resolve(mode);
+    document.documentElement.setAttribute('data-bs-theme', resolvedTheme);
     document.querySelectorAll('[data-theme-set]').forEach(function (b) {
       var on = b.getAttribute('data-theme-set') === mode;
       b.classList.toggle('active', on);
       b.setAttribute('aria-pressed', String(on));
     });
+    window.dispatchEvent(new CustomEvent('issabel-theme-changed', {
+      detail: { mode: mode, theme: resolvedTheme }
+    }));
   }
   function setMode(mode) {
     try { localStorage.setItem(KEY, mode); } catch (e) {}
@@ -36,6 +40,9 @@
     if (b) { e.preventDefault(); setMode(b.getAttribute('data-theme-set')); }
   });
   mq.addEventListener('change', function () { if (stored() === 'auto') paint('auto'); });
+  window.addEventListener('storage', function (event) {
+    if (event.key === KEY) paint(event.newValue || 'auto');
+  });
   paint(stored());
 
   /* ------------------------------ Sidebar ------------------------------ */

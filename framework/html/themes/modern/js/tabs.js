@@ -3,6 +3,7 @@
 
     var config = window.ISSABEL_TABS_CONFIG || {};
     var state = { tabs: [], activeTab: 0 };
+    var claimedInstanceId = null;
     var tabbar = document.getElementById('iss-tabbar');
     var tabpanes = document.getElementById('iss-tabpanes');
     var pageTitle = document.getElementById('iss-active-page-title');
@@ -29,6 +30,7 @@
     // Browser tab duplication can clone sessionStorage. A short same-origin
     // claim elects one owner; other documents using that ID rotate to a new one.
     async function claimInstanceId() {
+        if (claimedInstanceId) return claimedInstanceId;
         var id = instanceId();
         var nonce = newId();
         if (!('BroadcastChannel' in window)) throw new Error('BroadcastChannel required');
@@ -52,7 +54,33 @@
             window.sessionStorage.setItem('issabel_instance', id);
             channel.postMessage({ type: 'claim', id: id, nonce: nonce });
         }
+        claimedInstanceId = id;
         return id;
+    }
+
+    function requestErrorMessage(action, status, data) {
+        var messages = config.messages || {};
+        var errorKeys = {
+            request_rejected: 'requestRejected',
+            session_expired: 'sessionExpired',
+            module_not_authorized: 'moduleNotAuthorized',
+            invalid_instance: 'invalidInstance',
+            invalid_tab_identity: 'invalidIdentity',
+            tab_not_found: 'tabNotFound',
+            tab_store_error: 'tabStoreError'
+        };
+        var reasonKeys = {
+            limit: 'limit',
+            last_tab: 'lastTab',
+            not_found: 'tabNotFound'
+        };
+        if (data && data.error && errorKeys[data.error] && messages[errorKeys[data.error]]) {
+            return messages[errorKeys[data.error]];
+        }
+        if (data && data.reason && reasonKeys[data.reason] && messages[reasonKeys[data.reason]]) {
+            return messages[reasonKeys[data.reason]];
+        }
+        return (messages.requestFailed || 'The tab request failed') + ' (HTTP ' + status + ').';
     }
 
     function request(action, values) {
@@ -72,13 +100,14 @@
             },
             body: body.toString()
         }).then(function (response) {
-            return response.json().then(function (data) {
+            return response.json().catch(function () { return {}; }).then(function (data) {
                 if (!response.ok) {
-                    var error = new Error(data.error || 'Tab request failed');
+                    var error = new Error(requestErrorMessage(action, response.status, data));
                     error.response = data;
                     error.status = response.status;
                     throw error;
                 }
+                clearTransientError();
                 return data;
             });
         });
@@ -93,26 +122,74 @@
     }
 
     var toastTimer = null;
-    function showToast(message) {
+    function dismissToast() {
+        var toast = document.getElementById('iss-tab-toast');
+        if (toast) toast.classList.remove('visible');
+        window.clearTimeout(toastTimer);
+        toastTimer = null;
+    }
+
+    function showNotice(message, type, duration) {
         var toast = document.getElementById('iss-tab-toast');
         if (!toast) {
             toast = document.createElement('div');
             toast.id = 'iss-tab-toast';
             toast.className = 'iss-tab-toast';
-            toast.setAttribute('role', 'status');
-            toast.setAttribute('aria-live', 'polite');
+            var text = document.createElement('span');
+            text.className = 'iss-tab-toast__text';
+            var close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'iss-tab-toast__close';
+            close.setAttribute('aria-label', (config.messages && config.messages.dismissNotice) || 'Dismiss tab notice');
+            close.textContent = '×';
+            close.addEventListener('click', dismissToast);
+            toast.appendChild(text);
+            toast.appendChild(close);
             document.body.appendChild(toast);
         }
-        toast.textContent = message || config.openedToast || 'Opened in another tab';
+
+        toast.dataset.type = type;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+        toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+        toast.querySelector('.iss-tab-toast__text').textContent = message;
+        toast.classList.toggle('iss-tab-toast--error', type === 'error');
         toast.classList.add('visible');
         window.clearTimeout(toastTimer);
-        toastTimer = window.setTimeout(function () { toast.classList.remove('visible'); }, 3000);
+        toastTimer = window.setTimeout(dismissToast, duration);
+    }
+
+    function showToast(message) {
+        showNotice(message || config.openedToast || (config.messages && config.messages.openedToast) ||
+            'Opened in another tab', 'info', 3000);
+    }
+
+    function showError(message) {
+        showNotice(message || (config.messages && config.messages.operationError) ||
+            'The tab operation could not be completed.', 'error', 6000);
+    }
+
+    function clearTransientError() {
+        var toast = document.getElementById('iss-tab-toast');
+        if (toast && toast.dataset.type === 'error') dismissToast();
     }
 
     function safeFrameSource(tab) {
         if (!tab || typeof tab.src !== 'string') return '';
         var url = new URL(tab.src, window.location.href);
         return url.origin === window.location.origin ? url.href : '';
+    }
+
+    function currentTheme() {
+        return document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light';
+    }
+
+    function syncFrameTheme(frame) {
+        if (!frame || !frame.contentWindow) return;
+        frame.contentWindow.postMessage({ type: 'themeChanged', theme: currentTheme() }, window.location.origin);
+    }
+
+    function broadcastTheme() {
+        document.querySelectorAll('.iss-tabpane__frame').forEach(syncFrameTheme);
     }
 
     function menuLinkFor(menuId) {
@@ -256,7 +333,8 @@
             close.className = 'iss-tabbar__close';
             close.dataset.action = 'close';
             close.dataset.tabId = tab.id;
-            close.setAttribute('aria-label', 'Close ' + (metadataForTab(tab).title || tab.label || 'tab'));
+            var closeTemplate = (config.messages && config.messages.closeTab) || 'Close %s';
+            close.setAttribute('aria-label', closeTemplate.replace('%s', metadataForTab(tab).title || tab.label || 'Tab'));
             close.textContent = '×';
             close.disabled = state.tabs.length <= 1;
 
@@ -265,14 +343,15 @@
             fragment.appendChild(item);
         });
 
-        var add = document.createElement('button');
-        add.type = 'button';
-        add.className = 'iss-tabbar__add';
-        add.dataset.action = 'create';
-        add.setAttribute('aria-label', 'Open new tab');
-        add.textContent = '+';
-        add.disabled = state.tabs.length >= Number(config.max || 6);
-        fragment.appendChild(add);
+        if (state.tabs.length < Number(config.max || 8)) {
+            var add = document.createElement('button');
+            add.type = 'button';
+            add.className = 'iss-tabbar__add';
+            add.dataset.action = 'create';
+            add.setAttribute('aria-label', (config.messages && config.messages.openNewTab) || 'Open a new tab');
+            add.textContent = '+';
+            fragment.appendChild(add);
+        }
 
         tabbar.replaceChildren(fragment);
     }
@@ -289,9 +368,10 @@
         var frame = document.createElement('iframe');
         frame.id = 'issTab-' + tab.id;
         frame.className = 'iss-tabpane__frame';
-        frame.title = tab.label || tab.key || 'Issabel module';
+        frame.title = tab.label || (config.messages && config.messages.moduleFrame) || 'Issabel module';
         frame.setAttribute('loading', 'lazy');
         frame.setAttribute('referrerpolicy', 'same-origin');
+        frame.addEventListener('load', function () { syncFrameTheme(frame); });
         pane.appendChild(frame);
         tabpanes.appendChild(pane);
         return pane;
@@ -304,7 +384,7 @@
             var pane = ensurePane(tab);
             pane.classList.toggle('active', Number(tab.id) === Number(state.activeTab));
             var frame = pane.querySelector('iframe');
-            frame.title = tab.label || tab.key || 'Issabel module';
+            frame.title = tab.label || (config.messages && config.messages.moduleFrame) || 'Issabel module';
         });
 
         Array.prototype.forEach.call(tabpanes.querySelectorAll('.iss-tabpane'), function (pane) {
@@ -315,6 +395,7 @@
     function renderState() {
         renderBar();
         renderPanes();
+        broadcastTheme();
         var active = getTab(state.activeTab);
         if (active) {
             var metadata = metadataForTab(active);
@@ -411,15 +492,39 @@
         });
     }
 
-    function showError(message) {
-        var error = document.getElementById('iss-tabs-error');
+    function clearInitError() {
+        var error = document.getElementById('iss-tabs-init-error');
+        if (error) error.remove();
+    }
+
+    function showInitError(message) {
+        tabbar.hidden = true;
+        tabpanes.hidden = true;
+
+        var error = document.getElementById('iss-tabs-init-error');
         if (!error) {
             error = document.createElement('div');
-            error.id = 'iss-tabs-error';
-            error.className = 'iss-tabs-error alert alert-danger';
+            error.id = 'iss-tabs-init-error';
+            error.className = 'iss-tabs-init-error alert alert-danger';
+            error.setAttribute('role', 'alert');
+            var text = document.createElement('span');
+            text.className = 'iss-tabs-init-error__text';
+            var retry = document.createElement('button');
+            retry.type = 'button';
+            retry.className = 'btn btn-sm btn-outline-danger';
+            retry.textContent = (config.messages && config.messages.retry) || 'Retry';
+            retry.addEventListener('click', function () {
+                retry.disabled = true;
+                initialize();
+            });
+            error.appendChild(text);
+            error.appendChild(retry);
             tabpanes.parentNode.insertBefore(error, tabpanes);
         }
-        error.textContent = message;
+        error.querySelector('.iss-tabs-init-error__text').textContent = message;
+        var retryButton = error.querySelector('button');
+        retryButton.disabled = false;
+        retryButton.textContent = (config.messages && config.messages.retry) || 'Retry';
         error.hidden = false;
     }
 
@@ -443,7 +548,9 @@
             activateTab(id).catch(function (error) { showError(error.message); });
         } else if (action === 'close') {
             var tab = getTab(id);
-            if (tab && tab.dirty && !window.confirm('Hay cambios sin submitear. ¿Cerrar la solapa?')) return;
+            var closeWarning = (config.messages && config.messages.closeUnsaved) ||
+                'This tab has unsaved changes. Close it anyway?';
+            if (tab && tab.dirty && !window.confirm(closeWarning)) return;
             request('close', { id: id }).then(function (response) {
                 applyResponse(response);
                 loadActiveFrame();
@@ -511,6 +618,8 @@
         }
     });
 
+    window.addEventListener('issabel-theme-changed', broadcastTheme);
+
     function broadcastTabs() {
         document.querySelectorAll('.iss-tabpane__frame').forEach(function (frame) {
             if (!frame.contentWindow) return;
@@ -518,18 +627,31 @@
         });
     }
 
+    var initializing = false;
     async function initialize() {
+        if (initializing) return;
+        initializing = true;
         try {
             var id = await claimInstanceId();
             window.sessionStorage.setItem('issabel_instance', id);
             var response = await request('init');
             applyResponse(response);
+            clearInitError();
             tabbar.hidden = false;
             tabpanes.hidden = false;
             loadActiveFrame();
             initialNavigation();
         } catch (error) {
-            showError('No se pudieron iniciar las solapas: ' + error.message);
+            var messages = config.messages || {};
+            var initError = messages.initFailed || 'Could not initialize tabs.';
+            if (error.message === 'BroadcastChannel required') {
+                initError = messages.browserUnsupported || initError;
+            } else if (error.status && error.message) {
+                initError += ' ' + error.message;
+            }
+            showInitError(initError);
+        } finally {
+            initializing = false;
         }
     }
 
