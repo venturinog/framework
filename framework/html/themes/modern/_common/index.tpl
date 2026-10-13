@@ -25,7 +25,6 @@
 
   {$HEADER_LIBS_JQUERY}
   <script src="libs/js/base.js"></script>
-  <script src="libs/js/sticky_note/sticky_note.js"></script>
   <script src="libs/js/iframe.js"></script>
 
   {$HEADER}
@@ -54,26 +53,6 @@
         </footer>
     </div><!-- /.iss-main (abierto en _menu.tpl) -->
 </div><!-- /.page -->
-
-{* Sticky note (mantiene los ids que usa libs/js/sticky_note/sticky_note.js) *}
-<div id="neo-sticky-note">
-    <div id="neo-sticky-note-text"></div>
-    <div id="neo-sticky-note-text-edit">
-        <textarea id="neo-sticky-note-textarea"></textarea>
-        <div id="neo-sticky-note-text-char-count"></div>
-        <input type="button" value="{$SAVE_NOTE}" id="neo-submit-button" />
-        <div id="auto-popup">AutoPopUp <input type="checkbox" id="neo-sticky-note-auto-popup" value="1" /></div>
-    </div>
-    <div id="neo-sticky-note-text-edit-delete"></div>
-</div>
-{if $AUTO_POPUP eq '1'}{literal}
-<script type="text/javascript">
-$(document).ready(function (e) {
-    $("#neo-sticky-note-auto-popup").prop('checked', true);
-    $('#togglestickynote1').click();
-});
-</script>
-{/literal}{/if}
 
 {* Popup box global *}
 <div class="neo-modal-issabel-popup-box">

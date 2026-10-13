@@ -11,10 +11,6 @@
 <input type="hidden" id="toolTip_removeBookmark" value="{$REMOVE_BOOKMARK}" />
 <input type="hidden" id="toolTip_addingBookmark" value="{$ADDING_BOOKMARK}" />
 <input type="hidden" id="toolTip_removingBookmark" value="{$REMOVING_BOOKMARK}" />
-<input type="hidden" id="amount_char_label" value="{$AMOUNT_CHARACTERS}" />
-<input type="hidden" id="save_note_label" value="{$MSG_SAVE_NOTE}" />
-<input type="hidden" id="get_note_label" value="{$MSG_GET_NOTE}" />
-<input type="hidden" id="lbl_no_description" value="{$LBL_NO_STICKY}" />
 
 <!-- ============================ SIDEBAR ============================ -->
 <aside class="iss-sidebar" id="issSidebar">
