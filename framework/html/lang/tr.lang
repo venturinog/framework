@@ -278,6 +278,7 @@ $arrLang=array(
 "Retype New Password" => "Yeni Parola Tekrar",
 "Change" => "Değiştir",
 "Search modules" => "Modül Ara",
+"No modules found" => "Modül bulunamadı",
 "Unauthorized" => "Yetkisiz",
 "You are not authorized to access this page." => "Bu ekrana girme yetkiniz yok.",
 "You have not permissions to access to Flash Operator Panel. Please contact your administrator." => "You don't have permissions to access to Flash Operator Panel. Please contact your administrator.",

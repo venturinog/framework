@@ -307,6 +307,7 @@ $arrLang=array(
 "Load left panel" => "Показать левую панель",
 "Add Bookmark" => "Добавить Закладку",
 "Search modules" => "Поиск модулей",
+"No modules found" => "Модули не найдены",
 "Change Issabel Password" => "Изменить Пароль Issabel",
 "CDR Report" => "Отчёт CDR",
 "Channels Usage" => "Использование Каналов",

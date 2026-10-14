@@ -88,14 +88,149 @@
     });
   });
 
-  /* --------------------- Buscador de módulos --------------------- */
+  /* --------------------- Buscador de módulos ---------------------
+   * Filtra ítem por ítem (no el grupo entero): muestra solo los módulos
+   * que coinciden por texto o por id de menú (href/data-target),
+   * auto-expande los ancestros (grupo/subgrupo), resalta la coincidencia
+   * y oculta los accesos rápidos mientras dura la búsqueda. Al vaciar el
+   * campo se restaura el estado previo del menú. */
   var menuSearch = document.getElementById('menuSearch');
-  if (menuSearch) {
-    menuSearch.addEventListener('input', function () {
-      var q = this.value.toLowerCase();
-      document.querySelectorAll('.iss-nav__group').forEach(function (g) {
-        g.style.display = g.textContent.toLowerCase().indexOf(q) !== -1 ? '' : 'none';
+  var nav = document.querySelector('.iss-nav');
+  if (menuSearch && nav) {
+    var quickLinks   = nav.querySelectorAll('.iss-nav__quick');
+    var shortcutList = nav.querySelector('.iss-nav__shortcut');
+    var noResultsMsg = document.createElement('div');
+    noResultsMsg.className = 'iss-nav__noresults';
+    noResultsMsg.setAttribute('role', 'status');
+    noResultsMsg.textContent = menuSearch.getAttribute('data-no-results') || 'No modules found';
+    noResultsMsg.style.display = 'none';
+    if (shortcutList) nav.insertBefore(noResultsMsg, shortcutList);
+    else nav.appendChild(noResultsMsg);
+
+    function normalizeText(s) {
+      s = (s || '').toString().toLowerCase();
+      try { s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+      return s;
+    }
+    function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function showEl(el, visible) { if (el) el.style.display = visible ? '' : 'none'; }
+
+    // El texto visible del ítem está en el <span> (toggles) o en el propio
+    // enlace; el icono tabler es un <i> sin texto.
+    function labelTarget(el) {
+      if (!el) return null;
+      return el.querySelector('span') || el;
+    }
+    function labelTargets() {
+      var out = [];
+      nav.querySelectorAll('.iss-nav__toggle, .iss-nav__subtoggle, .iss-nav__subinner > a, .iss-nav__thirdinner > a')
+        .forEach(function (el) {
+          var t = labelTarget(el);
+          if (t && out.indexOf(t) === -1) out.push(t);
+        });
+      return out;
+    }
+    function highlight(el, raw) {
+      var t = labelTarget(el);
+      if (!t) return;
+      if (t._issOrigHtml === undefined) t._issOrigHtml = t.innerHTML;
+      t.innerHTML = t._issOrigHtml;
+      if (!raw || t.children.length) return;
+      var re = new RegExp('(' + escapeRegExp(raw) + ')', 'gi');
+      if (re.test(t.textContent)) t.innerHTML = t.textContent.replace(re, '<mark>$1</mark>');
+    }
+    function unhighlight() {
+      labelTargets().forEach(function (t) {
+        if (t._issOrigHtml !== undefined) t.innerHTML = t._issOrigHtml;
       });
+    }
+    function matches(el, q) {
+      if (!el) return false;
+      var hay = normalizeText(el.textContent + ' ' + (el.getAttribute('href') || '') +
+                              ' ' + (el.getAttribute('data-target') || ''));
+      if (hay.indexOf(q) !== -1) return true;
+      // Tolerante a separadores: "addressbook"/"address-book" → "Address Book".
+      var qAlnum = q.replace(/[^a-z0-9]/g, '');
+      if (!qAlnum) return false;
+      return hay.replace(/[^a-z0-9]/g, '').indexOf(qAlnum) !== -1;
+    }
+
+    /* Estado previo a la búsqueda (display + acordeón) para restaurarlo. */
+    var savedState = null;
+    function saveState() {
+      savedState = { display: [], expanded: [] };
+      nav.querySelectorAll('.iss-nav__quick, .iss-nav__group, .iss-nav__subinner > a, ' +
+                           '.iss-nav__subtoggle, .iss-nav__third, .iss-nav__thirdinner > a, .iss-nav__shortcut')
+        .forEach(function (el) { savedState.display.push([el, el.style.display]); });
+      nav.querySelectorAll('.iss-nav__toggle, .iss-nav__subtoggle').forEach(function (btn) {
+        savedState.expanded.push([btn, btn.getAttribute('aria-expanded') === 'true']);
+      });
+    }
+    function restoreState() {
+      if (!savedState) return;
+      savedState.display.forEach(function (p) { p[0].style.display = p[1]; });
+      savedState.expanded.forEach(function (p) {
+        var btn = p[0];
+        var t = btn.dataset.target ? document.querySelector(btn.dataset.target) : null;
+        btn.setAttribute('aria-expanded', String(p[1]));
+        if (t) t.classList.toggle('expanded', p[1]);
+      });
+      savedState = null;
+    }
+
+    function applyFilter(q, raw) {
+      quickLinks.forEach(function (a) { showEl(a, false); });
+      showEl(shortcutList, false);
+      showEl(noResultsMsg, false);
+      unhighlight();
+
+      var anyResult = false;
+      nav.querySelectorAll('.iss-nav__group').forEach(function (g) {
+        var toggle = g.querySelector('.iss-nav__toggle');
+        var labelMatch = matches(toggle, q);
+        var groupVisible = labelMatch;
+
+        // Enlaces directos de 2º nivel
+        g.querySelectorAll('.iss-nav__subinner > a').forEach(function (a) {
+          var m = labelMatch || matches(a, q);
+          showEl(a, m);
+          if (m) { groupVisible = true; highlight(a, raw); }
+        });
+
+        // Ramas de 3er nivel (subtoggle + su .iss-nav__third)
+        g.querySelectorAll('.iss-nav__subtoggle').forEach(function (st) {
+          var stMatch = labelMatch || matches(st, q);
+          var third = st.dataset.target ? document.querySelector(st.dataset.target) : null;
+          var branchVisible = stMatch;
+          if (third) {
+            third.querySelectorAll('.iss-nav__thirdinner > a').forEach(function (a) {
+              var m = stMatch || matches(a, q);
+              showEl(a, m);
+              if (m) { branchVisible = true; highlight(a, raw); }
+            });
+          }
+          showEl(st, branchVisible);
+          showEl(third, branchVisible);
+          setExpanded(st, branchVisible);
+          if (stMatch) highlight(st, raw);
+          if (branchVisible) groupVisible = true;
+        });
+
+        if (labelMatch) highlight(toggle, raw);
+        showEl(g, groupVisible);
+        setExpanded(toggle, groupVisible);
+        if (groupVisible) anyResult = true;
+      });
+
+      showEl(noResultsMsg, !anyResult);
+    }
+
+    menuSearch.addEventListener('input', function () {
+      var raw = this.value.trim();
+      var q = normalizeText(raw);
+      if (q === '') { restoreState(); unhighlight(); showEl(noResultsMsg, false); return; }
+      if (!savedState) saveState();
+      applyFilter(q, raw);
     });
   }
 

@@ -24,7 +24,7 @@
 
     <div class="iss-search">
         <i class="ti ti-search"></i>
-        <input type="text" id="menuSearch" placeholder="{$MODULES_SEARCH}">
+        <input type="text" id="menuSearch" placeholder="{$MODULES_SEARCH}" data-no-results="{$NO_MODULES_FOUND|escape:'html'}">
     </div>
 
     <nav class="iss-nav">

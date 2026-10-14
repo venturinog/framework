@@ -54,6 +54,7 @@ function themeSetup(&$smarty, $selectedMenu, $pdbACL, $pACL, $idUser)
         "EXTENSION"                 =>  $extension,
         "CHANGE_PASSWORD"           =>  _tr("Change Issabel Password"),
         "MODULES_SEARCH"            =>  _tr("Search modules"),
+        "NO_MODULES_FOUND"          =>  _tr("No modules found"),
         "MENU_DASHBOARD"            =>  _tr("Dashboard"),
         "ADD_BOOKMARK"              =>  _tr("Add Bookmark"),
         "REMOVE_BOOKMARK"           =>  _tr("Remove Bookmark"),

@@ -225,6 +225,7 @@ $arrLang=array(
 "Load left panel" => "Показати ліву панель",
 "Add Bookmark" => "Додати Закладку",
 "Search modules" => "Пошук модулів",
+"No modules found" => "Модулі не знайдено",
 "Change Issabel Password" => "Змінити Пароль Issabel",
 "Billing" => "Білінг",
 "Issabel Website" => "Сайт Issabel",

@@ -337,6 +337,7 @@ $arrLang=array(
 "Issabel Website" => "رمز جدید",
 "Retype New Password" => "ورود دوباره رمز",
 "Search modules" => "جستجوی منو",
+"No modules found" => "ماژولی یافت نشد",
 
 
 /*VOIPIRN*/

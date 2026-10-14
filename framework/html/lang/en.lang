@@ -189,6 +189,7 @@ $arrLang=array(
 "Retype New Password" => "Retype New Password",
 "Change" => "Change",
 "Search modules" => "Search modules",
+"No modules found" => "No modules found",
 "Unauthorized" => "Unauthorized",
 "You are not authorized to access this page." => "You are not authorized to access this page.",
 "You have not permissions to access to Flash Operator Panel. Please contact your administrator." => "You don't have permissions to access to Flash Operator Panel. Please contact your administrator.",
