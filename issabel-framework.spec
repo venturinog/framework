@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 37
+Release: 38
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 14 2026 Issabel Foundation <info@issabel.org> - 6.0.0-38
+- Modern theme: make the sidebar module search filter item by item (matching the
+  label and the module id, accent- and separator-insensitive), auto-expanding the
+  groups/subgroups that contain hits and highlighting the match, instead of
+  showing whole top-level groups. Hide the quick links and the recent-modules
+  list while searching and show a "No modules found" notice when nothing matches.
+
 * Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-35
 - Modern form kit: trim the horizontal padding of the .iss-ip-octets controls
   so the IPv4 octet boxes can actually show their three digits.
