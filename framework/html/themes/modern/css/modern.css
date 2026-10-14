@@ -425,6 +425,9 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-field__label label { font-size: inherit; font-weight: inherit; color: inherit; margin: 0; }
 .iss-field__control { display: block; min-width: 0; }
 .iss-field__control > .form-control, .iss-field__control > .form-select { width: 100%; max-width: 430px; }
+/* Octetos IPv4 (a.b.c.d): en fila y alineados, no apilados por .form-control */
+.iss-ip-octets { display: flex; align-items: center; flex-wrap: wrap; }
+.iss-ip-octets > .form-control { display: inline-block; width: auto; }
 .iss-field__help { font-size: .75rem; color: var(--iss-text-muted); }
 
 /* Marcar requerido: se usa como span suelto o dentro del label */
