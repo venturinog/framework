@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 34
+Release: 35
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-35
+- Modern form kit: trim the horizontal padding of the .iss-ip-octets controls
+  so the IPv4 octet boxes can actually show their three digits.
+
 * Tue Oct 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-34
 - Rotate the level-2 submenu chevron via aria-expanded so an expanded
   parent points up like the level-1 toggle.
