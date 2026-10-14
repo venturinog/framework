@@ -211,6 +211,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-nav__subtoggle:hover { background: rgba(255,255,255,.05); color: #fff; }
 .iss-nav__subtoggle[aria-expanded="true"] { color: #fff; font-weight: 600; }
 .iss-nav__subtoggle .iss-chev { font-size: 14px; }
+.iss-nav__subtoggle[aria-expanded="true"] .iss-chev { transform: rotate(180deg); }
 
 /* Badge de notificaciones */
 .iss-badge { position: absolute; top: 2px; right: 2px; background: #d63939; color: #fff; font-size: 10px; line-height: 1; padding: 3px 5px; border-radius: 999px; }
