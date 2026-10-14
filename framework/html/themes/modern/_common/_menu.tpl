@@ -29,7 +29,7 @@
 
     <nav class="iss-nav">
         <a href="index.php?menu=dashboard" class="iss-nav__quick{if $idSubMenuSelected eq 'dashboard' or $idSubMenu2Selected eq 'dashboard'} active{/if}">
-            <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+            <i class="ti ti-layout-dashboard"></i><span>{$MENU_DASHBOARD}</span>
         </a>
 
         {foreach from=$arrMainMenu key=idMenu item=menu name=menuMain}

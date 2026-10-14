@@ -416,8 +416,7 @@
         loadActiveFrame();
     }
 
-    function loadActiveFrame() {
-        var tab = getTab(state.activeTab);
+    function loadTabFrame(tab) {
         if (!tab) return;
         var frame = document.getElementById('issTab-' + tab.id);
         if (!frame) return;
@@ -427,6 +426,41 @@
             frame.dataset.issSrc = source;
             frame.src = source;
         }
+    }
+
+    function loadActiveFrame() {
+        loadTabFrame(getTab(state.activeTab));
+    }
+
+    // issabelPBX tab labels are persisted in the store and preferred over the
+    // freshly translated sidebar, so they stay in the old language until their
+    // iframe reloads and reports a translated tabinfo. After a language change
+    // reload those frames explicitly (Inactive tabs are otherwise lazy).
+    // Issabel tabs already derive their labels from the reloaded sidebar.
+    function reloadPbxFramesAfterLanguageChange() {
+        var flag = 'issabel_reload_pbx_tabs';
+        if (window.sessionStorage.getItem(flag) !== '1') return;
+        window.sessionStorage.removeItem(flag);
+        state.tabs.forEach(function (tab) {
+            if (tab.kind === 'pbx') loadTabFrame(tab);
+        });
+    }
+
+    function handleLanguageChange() {
+        var dirty = state.tabs.some(function (tab) { return tab.dirty; });
+        if (dirty) {
+            var confirmMessage = (config.messages && config.messages.languageReload) ||
+                'Changing the language will reload all open tabs and discard unsaved changes. Continue?';
+            if (!window.confirm(confirmMessage)) {
+                showNotice((config.messages && config.messages.languageReloadDeferred) ||
+                    'The language will fully apply the next time you reload the page.', 'info', 6000);
+                return;
+            }
+        }
+        try {
+            window.sessionStorage.setItem('issabel_reload_pbx_tabs', '1');
+        } catch (e) {}
+        window.location.reload();
     }
 
     function activateTab(id) {
@@ -611,6 +645,8 @@
         } else if (message.type === 'dirtyChanged') {
             request('setDirty', { id: sourceTab.id, dirty: message.dirty ? '1' : '0' })
                 .then(applyResponse).catch(function () {});
+        } else if (message.type === 'languageChanged') {
+            handleLanguageChange();
         } else if (message.type === 'focusTab') {
             activateTab(message.tabId).then(function () {
                 showToast(config.openedToast);
@@ -640,6 +676,7 @@
             tabbar.hidden = false;
             tabpanes.hidden = false;
             loadActiveFrame();
+            reloadPbxFramesAfterLanguageChange();
             initialNavigation();
         } catch (error) {
             var messages = config.messages || {};

@@ -492,6 +492,8 @@ if (isset($_SESSION['issabel_user']) &&
             'initFailed' => _tr('Could not initialize tabs.'),
             'browserUnsupported' => _tr('This browser does not support separate tabs. Use a modern browser.'),
             'operationError' => _tr('The tab operation could not be completed.'),
+            'languageReload' => _tr('Changing the language will reload all open tabs and discard unsaved changes. Continue?'),
+            'languageReloadDeferred' => _tr('The language will fully apply the next time you reload the page.'),
             'retry' => _tr('Retry'),
         ),
     ), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT));

@@ -20,6 +20,19 @@
         window.parent.postMessage({ type: 'dirtyChanged', dirty: !!dirty }, origin);
     }
 
+    // A language change redirects this iframe with iss_lang_changed=1. Alert the
+    // shell so it reloads the whole environment (menu + every open tab) in the
+    // new language, then strip the flag so it is handled only once.
+    function announceLanguageChange() {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('iss_lang_changed') !== '1') return;
+        window.parent.postMessage({ type: 'languageChanged' }, origin);
+        params.delete('iss_lang_changed');
+        var query = params.toString();
+        window.history.replaceState(null, '',
+            window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+    }
+
     function markDirty(event) {
         var form = event.target.closest('form');
         if (!form || form.dataset.issDirty === '1') return;
@@ -63,9 +76,14 @@
         }
     });
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', reportTab, { once: true });
-    } else {
+    function boot() {
         reportTab();
+        announceLanguageChange();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+    } else {
+        boot();
     }
 }());

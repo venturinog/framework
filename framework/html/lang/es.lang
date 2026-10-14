@@ -392,6 +392,9 @@ $arrLang=array(
 'Could not initialize tabs.' => 'No se pudieron iniciar las solapas.',
 'This browser does not support separate tabs. Use a modern browser.' => 'Este navegador no admite solapas independientes. Usa un navegador moderno.',
 'The tab operation could not be completed.' => 'No se pudo completar la operación de solapas.',
+'Changing the language will reload all open tabs and discard unsaved changes. Continue?' => 'Cambiar el idioma recargará todas las solapas abiertas y descartará los cambios sin guardar. ¿Deseas continuar?',
+'The language will fully apply the next time you reload the page.' => 'El idioma se aplicará del todo la próxima vez que recargues la página.',
+'Dashboard' => 'Panel de control',
 'Retry' => 'Reintentar'
 );
 ?>

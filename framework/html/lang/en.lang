@@ -261,6 +261,9 @@ $arrLang=array(
 'Could not initialize tabs.' => 'Could not initialize tabs.',
 'This browser does not support separate tabs. Use a modern browser.' => 'This browser does not support separate tabs. Use a modern browser.',
 'The tab operation could not be completed.' => 'The tab operation could not be completed.',
+'Changing the language will reload all open tabs and discard unsaved changes. Continue?' => 'Changing the language will reload all open tabs and discard unsaved changes. Continue?',
+'The language will fully apply the next time you reload the page.' => 'The language will fully apply the next time you reload the page.',
+'Dashboard' => 'Dashboard',
 'Retry' => 'Retry'
 );
 ?>

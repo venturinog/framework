@@ -79,8 +79,10 @@ function _moduleContent(&$smarty, $module_name)
                     'mb_message'    =>  $pDB->errMsg,
                 ));
             } else {
-                // Refrescar para que tome efecto el nuevo idioma
-                Header('Location: ?menu='.$module_name);
+                // Refrescar para que tome efecto el nuevo idioma. El flag
+                // iss_lang_changed avisa al shell (solapas) que recargue todo
+                // el entorno en el idioma nuevo.
+                Header('Location: ?menu='.$module_name.'&iss_lang_changed=1');
                 return '';
             }
         }
