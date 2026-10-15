@@ -114,6 +114,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item setadminpassword" href="#"><i class="ti ti-user me-2"></i>{$CHANGE_PASSWORD}</a></li>
+                    <li><a class="dropdown-item register_link" href="#"><i class="ti ti-cloud me-2"></i>{$Registered}</a></li>
                     <li><a class="dropdown-item" href="#" id="viewDetailsRPMs"><i class="ti ti-info-circle me-2"></i>{$ABOUT_ISSABEL2}</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li class="dropdown-header"><i class="ti ti-adjustments-alt me-1"></i>{$APPEARANCE}</li>
