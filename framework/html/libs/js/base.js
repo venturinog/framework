@@ -294,7 +294,12 @@ $(document).ready(function(){
         // Mostrar el popup si no está registrado
         if (arrData.auto_popup) $('a.register_link').click();
     });
-    $('a.register_link').click(function() { showPopupCloudLogin(LblRegister,540,405); });
+    $('a.register_link').click(function() {
+        // Los temas legacy definen LblRegister en su _menu.tpl; el tema modern
+        // no, y expone el label en el hidden input lblRegisterCm.
+        var title = (typeof LblRegister !== 'undefined') ? LblRegister : $('#lblRegisterCm').val();
+        showPopupCloudLogin(title, 540, 405);
+    });
 });
 
 //Si se presiona enter se hace un submit al formulario para que se aplica el filtro
