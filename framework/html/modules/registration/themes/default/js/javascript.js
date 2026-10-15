@@ -81,7 +81,7 @@ function registration()
             showMessage(arrData['msg']);
 
             $('.register_link').css('color',arrData['color']);
-            $('.register_link').text(arrData['label']);
+            setRegisterLabel(arrData['label']);
 
             if(statusResponse=="TRUE") {
                 registrationEnd(arrData.msg);
@@ -167,7 +167,7 @@ function registrationByAccount()
                showMessage(arrData);
 
             $('.register_link').css('color',arrData['color']);
-            $('.register_link').text(arrData['label']);
+            setRegisterLabel(arrData['label']);
 
             if(statusResponse=="TRUE") {
                 registrationEnd(arrData.msg);

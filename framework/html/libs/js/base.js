@@ -168,6 +168,16 @@ function hideModalPopUP()
     $('.neo-modal-issabel-popup-content').html("");
 }
 
+// Actualiza el label del enlace de registro sin borrar el icono del tema.
+// Los temas legacy no envuelven el texto en un span, asi que caen en .text().
+function setRegisterLabel(label)
+{
+    $('.register_link').each(function () {
+        var $label = $(this).find('.iss-register-link__label');
+        if ($label.length) $label.text(label); else $(this).text(label);
+    });
+}
+
 function showPopupCloudLogin(title, width, height)
 {
     $.get('index.php', {
@@ -289,7 +299,7 @@ $(document).ready(function(){
         var error = response.error;
 
         $('.register_link').css('color',arrData['color']);
-        $('.register_link').text(arrData['label']);
+        setRegisterLabel(arrData['label']);
 
         // Mostrar el popup si no está registrado
         if (arrData.auto_popup) $('a.register_link').click();

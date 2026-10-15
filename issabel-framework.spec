@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 53
+Release: 54
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-54
+- Registration: add the Tabler 'contract' icon to the register link in the modern
+  theme user menu. base.js and the registration module rewrote the whole anchor
+  with jQuery .text(), which dropped any icon inside it on every page load; the
+  label is now wrapped in a span and updated through a new setRegisterLabel()
+  helper that only replaces the text, falling back to .text() for the legacy
+  themes (tenant/farsi_rtl), whose anchors have no span.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-53
 - Registration: use a muted amber (#b8860b) instead of pure yellow (#FFFF00 /
   'yellow') for the 'Register Server' and 'Incomplete registration' labels in
