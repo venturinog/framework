@@ -88,6 +88,7 @@ $(document).ready(function() {
 {/if}
 
 			<form method="post">
+				{$ISSABEL_CSRF_FIELD}
 
 				<div class="form-group">
 

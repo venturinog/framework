@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 38
+Release: 39
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-39
+- Add a global CSRF helper (libs/issabelCsrf.class.php) with a single token per
+  session, shared with the tab manager. paloForm and paloSantoGrid inject the
+  hidden field automatically, jQuery AJAX sends it as an X-Issabel-CSRF-Token
+  header, and index.php validates state-changing requests before dispatching a
+  module. It starts in audit mode (logs to /var/log/issabel/audit.log) and is
+  configured with $arrConf['csrf_mode'] and $arrConf['csrf_exempt_modules'].
+
 * Wed Oct 14 2026 Issabel Foundation <info@issabel.org> - 6.0.0-38
 - Modern theme: make the sidebar module search filter item by item (matching the
   label and the module id, accent- and separator-insensitive), auto-expanding the

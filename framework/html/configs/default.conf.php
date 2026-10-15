@@ -42,6 +42,23 @@ $arrConf['defaultMenu'] = 'config';
 $arrConf['language'] = 'en';
 $arrConf['issabel_max_tabs'] = 8;
 
+/* Protección CSRF global (ver libs/issabelCsrf.class.php y README.md).
+ *
+ * csrf_mode:
+ *   'off'      desactiva la validación.
+ *   'audit'    registra en /var/log/issabel/audit.log las peticiones mutantes
+ *              sin token válido, sin bloquearlas. Es el modo de arranque,
+ *              mientras los módulos se van migrando al helper.
+ *   'enforce'  además responde 403 a esas peticiones. Activar solo cuando la
+ *              auditoría no registre faltantes durante un ciclo completo de uso.
+ *
+ * csrf_exempt_modules: módulos (parámetro `menu`) exentos de validación. Se usa
+ * para código heredado que todavía no envía token, por ejemplo el IssabelPBX
+ * embebido (`pbxadmin`), que mantiene su propia verificación de Referer.
+ */
+$arrConf['csrf_mode'] = 'audit';
+$arrConf['csrf_exempt_modules'] = array();
+
 /* La siguiente lista define los módulos provistos por el framework que deben
  * estar siempre disponibles sin importar el estado del menú. Estos módulos deben
  * funcionar únicamente con requerimientos AJAX, y para consistencia, todo

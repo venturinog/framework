@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="issabel-csrf-token" content="{$ISSABEL_CSRF_TOKEN}">
   <title>Issabel</title>
 
   {* Anti-FOUC del modo oscuro (default: auto). Se aplica antes de pintar. *}
@@ -22,6 +23,7 @@
   {$HEADER_LIBS_JQUERY}
   <script src="libs/js/base.js"></script>
   <script src="libs/js/iframe.js"></script>
+  <script src="libs/js/csrf.js"></script>
 
   {$HEADER}
   {$HEADER_MODULES|default:''}

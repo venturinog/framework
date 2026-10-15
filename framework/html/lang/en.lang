@@ -265,6 +265,7 @@ $arrLang=array(
 'Changing the language will reload all open tabs and discard unsaved changes. Continue?' => 'Changing the language will reload all open tabs and discard unsaved changes. Continue?',
 'The language will fully apply the next time you reload the page.' => 'The language will fully apply the next time you reload the page.',
 'Dashboard' => 'Dashboard',
-'Retry' => 'Retry'
+'Retry' => 'Retry',
+'The request was rejected because its security token is missing or invalid. Reload the page and try again.' => 'The request was rejected because its security token is missing or invalid. Reload the page and try again.'
 );
 ?>

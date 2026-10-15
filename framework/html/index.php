@@ -329,6 +329,12 @@ $smarty = getSmarty($arrConf['mainTheme'], $arrConf['basePath']);
 $smarty->assign("ISSABEL_LICENSED", _tr("is licensed under"));
 $smarty->assign("LOGIN_INCORRECT",  '');
 
+// Token CSRF global. La clase viene cargada por libs/misc.lib.php, que se
+// incluye antes de session_start(). Se asigna aquí para que esté disponible en
+// todas las plantillas y también en las que no pasan por paloForm/paloSantoGrid.
+$smarty->assign('ISSABEL_CSRF_TOKEN', issabelCsrf::token());
+$smarty->assign('ISSABEL_CSRF_FIELD', issabelCsrf::field());
+
 // Two Factor Authentication Check
 if(isset($_POST['input_code'])) {
     $sec  = $pACL->getTwoFactorSecret($_SESSION['2fa_user']);
@@ -336,6 +342,8 @@ if(isset($_POST['input_code'])) {
     $tfa  = new TwoFactorAuth('Issabel');
     $code = $tfa->getCode($sec);
     if($_POST['input_code']==$code) {
+        // Rota el token CSRF tras completar el segundo factor.
+        issabelCsrf::rotate();
         $iauth = new IssabelAuth();
         list($access_token,$refresh_token) = $iauth->acquire_jwt_token($_SESSION['2fa_user'],$_SESSION['2fa_pass']);
         $_SESSION['access_token']  = $access_token;
@@ -377,6 +385,8 @@ if(isset($_POST['submit_login']) and !empty($_POST['input_user'])) {
     $pass_md5 = md5($_POST['input_pass']);
     if($pACL->authenticateUser($_POST['input_user'], $pass_md5)) {
         session_regenerate_id(TRUE);
+        // Rota el token CSRF para que el de la sesión anónima quede inválido.
+        issabelCsrf::rotate();
 
         if(file_exists('modules/sec_2fa/libs/TwoFactorAuth.class.php')) {
             include('modules/sec_2fa/libs/TwoFactorAuth.class.php');
@@ -448,12 +458,16 @@ if (isset($_SESSION['issabel_user']) &&
 
     setcookie('issaUser',$_SESSION['issabel_user']);
     $idUser = $pACL->getIdUser($_SESSION['issabel_user']);
-    if (empty($_SESSION['issabel_tabs_csrf'])) {
-        $_SESSION['issabel_tabs_csrf'] = bin2hex(random_bytes(32));
-    }
+
+    // Guardián CSRF global: valida la petición antes de despachar cualquier
+    // módulo. En modo 'audit' solo registra; en 'enforce' responde 403.
+    issabel_csrf_guard();
+
     $ISSABEL_MAX_TABS = isset($arrConf['issabel_max_tabs'])
         ? max(1, (int)$arrConf['issabel_max_tabs']) : 8;
-    $ISSABEL_TABS_TOKEN = $_SESSION['issabel_tabs_csrf'];
+    // Un solo token para toda la GUI: el gestor de pestañas comparte el token
+    // CSRF global en lugar de mantener el suyo propio.
+    $ISSABEL_TABS_TOKEN = issabelCsrf::token();
     $smarty->assign('ISSABEL_MAX_TABS', $ISSABEL_MAX_TABS);
     $smarty->assign('ISSABEL_TABS_TOKEN', $ISSABEL_TABS_TOKEN);
     $tabAssetFiles = array(

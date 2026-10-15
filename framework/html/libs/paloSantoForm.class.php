@@ -250,7 +250,9 @@ class paloForm
         }
         $this->smarty->assign("title", htmlentities($title, ENT_COMPAT, 'UTF-8'));
         $this->smarty->assign("mode", $this->modo);
-        return $this->smarty->fetch("file:$templateName");
+        // Protección CSRF: agrega el campo oculto al <form> de la plantilla si
+        // no lo trae ya (ver libs/issabelCsrf.class.php).
+        return issabelCsrf::injectField($this->smarty->fetch("file:$templateName"));
     }
 
     protected function _form_widget_TEXTAREA($bIngresoActivo, $varName, $varValue,

@@ -3,6 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+        <meta name="issabel-csrf-token" content="{$ISSABEL_CSRF_TOKEN}" />
         <title>Issabel</title>
     <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/bootstrap.css">
     <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/neon-core.css">
@@ -29,6 +30,7 @@
 	<script type='text/javascript' src="libs/js/base.js"></script>
         <script type='text/javascript' src="libs/js/sticky_note/sticky_note.js"></script>
         <script type='text/javascript' src="libs/js/iframe.js"></script>
+        <script type='text/javascript' src="libs/js/csrf.js"></script>
 
         {$HEADER}
     {$HEADER_MODULES|default:''}

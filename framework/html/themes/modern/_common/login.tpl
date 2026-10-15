@@ -32,6 +32,7 @@
       {/if}
 
       <form method="post">
+        {$ISSABEL_CSRF_FIELD}
         <div class="mb-3">
           <label class="form-label" for="input_user">{$USERNAME}</label>
           <div class="input-group">

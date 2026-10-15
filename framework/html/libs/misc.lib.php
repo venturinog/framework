@@ -22,6 +22,11 @@
   $Id: misc.lib.php, Mon 23 Oct 2023 11:40:03 AM EDT, nicolas@issabel.com
 */
 
+// Helper CSRF global (ver libs/issabelCsrf.class.php y guía de formularios en
+// README.md). Se carga aquí para que paloForm y paloSantoGrid lo tengan
+// disponible sin depender del autoload.
+require_once(dirname(__FILE__).'/issabelCsrf.class.php');
+
 function recoger_valor($key, &$get, &$post, $default = NULL) {
     if (isset($post[$key])) return $post[$key];
     elseif (isset($get[$key])) return $get[$key];
@@ -490,6 +495,100 @@ function getParameter($parameter)
         return $_GET[$parameter];
     else
         return null;
+}
+
+/**
+ * Devuelve el token CSRF de la sesión actual (lo genera si falta).
+ *
+ * @return string
+ */
+function issabel_csrf_token()
+{
+    return issabelCsrf::token();
+}
+
+/**
+ * Devuelve el campo oculto <input type="hidden" name="issabel_csrf_token">.
+ * Imprimir esto dentro de cada <form> es la forma explícita de cumplir con la
+ * protección CSRF cuando la plantilla no pasa por paloForm ni paloSantoGrid.
+ *
+ * @return string
+ */
+function issabel_csrf_field()
+{
+    return issabelCsrf::field();
+}
+
+/**
+ * Valida el token CSRF recibido en la petición actual.
+ *
+ * @return bool
+ */
+function issabel_csrf_validate()
+{
+    return issabelCsrf::validate();
+}
+
+/**
+ * Guardián global de CSRF. Se invoca desde index.php antes de despachar el
+ * módulo, después de autenticar al usuario. En modo 'audit' registra las
+ * peticiones mutantes sin token válido; en modo 'enforce' además responde 403.
+ * No hace nada en modo 'off'.
+ */
+function issabel_csrf_guard()
+{
+    $mode = issabelCsrf::mode();
+    if ($mode === 'off') return;
+    if (!issabelCsrf::needsValidation() || issabelCsrf::isExempt()) return;
+
+    $hadToken = (issabelCsrf::requestToken() !== '');
+    if (issabelCsrf::validate()) return;
+
+    $menu = isset($_GET['menu']) ? $_GET['menu']
+        : (isset($_SESSION['menu']) ? $_SESSION['menu'] : '');
+    $details = sprintf('%s %s (menu=%s, user=%s, token=%s, remote=%s)',
+        isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET',
+        isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '',
+        ($menu === '' ? '-' : $menu),
+        (isset($_SESSION['issabel_user']) ? $_SESSION['issabel_user'] : '-'),
+        ($hadToken ? 'present-invalid' : 'missing'),
+        isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '-');
+
+    if ($mode === 'audit') {
+        if (function_exists('writeLOG')) writeLOG('audit.log', 'CSRF-AUDIT '.$details);
+        return;
+    }
+
+    if (function_exists('writeLOG')) writeLOG('audit.log', 'CSRF-REJECT '.$details);
+    issabel_csrf_reject();
+}
+
+/**
+ * Responde 403 a una petición rechazada por CSRF. Usa JSON cuando la petición
+ * es AJAX o se sirve en modo raw, y una página HTML simple en el resto de los
+ * casos.
+ */
+function issabel_csrf_reject()
+{
+    $message = _tr('The request was rejected because its security token is missing or invalid. Reload the page and try again.');
+    $isJson = (isset($_GET['rawmode']) && $_GET['rawmode'] === 'yes')
+        || (isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+
+    if (function_exists('http_response_code')) http_response_code(403);
+    else header('HTTP/1.1 403 Forbidden');
+
+    if ($isJson) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(array('status' => 'ERROR', 'error' => 'csrf_rejected', 'message' => $message));
+    } else {
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>403</title></head>'
+            .'<body><h1>403 Forbidden</h1><p>'.htmlspecialchars($message, ENT_COMPAT, 'UTF-8')
+            .'</p></body></html>';
+    }
+    exit;
 }
 
 /**

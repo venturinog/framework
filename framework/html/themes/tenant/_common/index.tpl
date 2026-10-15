@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="issabel-csrf-token" content="{$ISSABEL_CSRF_TOKEN}" />
     <title>Issabel</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic">
@@ -27,6 +28,7 @@
     <script src="libs/js/base.js"></script>
     <script src="libs/js/sticky_note/sticky_note.js"></script>
     <script src="libs/js/iframe.js"></script>
+    <script src="libs/js/csrf.js"></script>
 
     {$HEADER}
     {$HEADER_MODULES|default:''}

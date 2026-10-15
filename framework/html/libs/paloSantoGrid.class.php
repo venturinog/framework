@@ -22,6 +22,10 @@
   +----------------------------------------------------------------------+
   $Id: paloSantoGrid.class.php, Thu 20 May 2021 08:24:36 AM EDT, nicolas@issabel.com
 */
+// Helper CSRF global: la grilla agrega el campo oculto al <form> de la
+// plantilla (ver libs/issabelCsrf.class.php).
+require_once(dirname(__FILE__).'/issabelCsrf.class.php');
+
 class paloSantoGrid {
 
     private $title;
@@ -690,7 +694,9 @@ class paloSantoGrid {
         $this->smarty->assign("MORE_OPTIONS"      , _tr("More Options"));
         $this->smarty->assign("DOWNLOAD_GRID"     , _tr("Download"));
 
-        return $this->smarty->fetch($this->tplFile);
+        // Protección CSRF: agrega el campo oculto al <form> de la grilla si la
+        // plantilla no lo trae ya.
+        return issabelCsrf::injectField($this->smarty->fetch($this->tplFile));
     }
 
     function showFilter($htmlFilter,$as_options=false)

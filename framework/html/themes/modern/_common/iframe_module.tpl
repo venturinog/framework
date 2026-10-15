@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="issabel-csrf-token" content="{$ISSABEL_CSRF_TOKEN}">
   <script>
     (function () {
       try {
@@ -18,6 +19,7 @@
   {$HEADER_LIBS_JQUERY}
   <script src="{$WEBPATH}libs/js/base.js"></script>
   <script src="{$WEBPATH}libs/js/iframe.js"></script>
+  <script src="{$WEBPATH}libs/js/csrf.js"></script>
   {$HEADER}
   {$HEADER_MODULES|default:''}
   <script src="{$WEBPATH}themes/{$THEMENAME}/js/tabs-bridge.js?v={$ISSABEL_TABS_ASSET_VERSIONS.tabsBridgeJs}"></script>
