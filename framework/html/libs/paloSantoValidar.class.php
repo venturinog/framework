@@ -209,11 +209,39 @@ class PaloValidar
                     }
                 }
                 break;
+            case "ipv6":
+                if($this->estaVacio($variable)) {
+                    $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_1;
+                } else {
+                    if(filter_var($variable, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+                        if($nombre_variable!="just_test") {
+                            $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_2;
+                        }
+                    } else {
+                        $return = true;
+                    }
+                }
+                break;
+            case "ipv6/mask":
+                if($this->estaVacio($variable)) {
+                    $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_1;
+                } else {
+                    $partes = explode("/", $variable, 2);
+                    if(count($partes) != 2
+                        || filter_var($partes[0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false
+                        || !ctype_digit($partes[1]) || intval($partes[1]) < 0 || intval($partes[1]) > 128) {
+                        if($nombre_variable!="just_test") {
+                            $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_2;
+                        }
+                    } else {
+                        $return = true;
+                    }
+                }
+                break;
             case "numeric":
                 if($this->estaVacio($variable)) {
                     if($nombre_variable!="just_test") {
-                        $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_1;
-                    }
+                        $this->arrErrores[$nombre_variable]['mensaje'] = PALOVALIDAR_MSG_ERROR_1;                    }
                 } else {
                     if(!preg_match("/^[[:digit:]]+$/i", $variable)) {
                         if($nombre_variable!="just_test") {
