@@ -445,6 +445,24 @@ body.iss-collapsed .iss-sidebar { display: none; }
 /* In-line (checkbox con texto, radios one-per-row ya definidos arriba) */
 .iss-inline-field { display: flex; align-items: center; gap: 8px; }
 
+/* Valor de sólo lectura: modo vista de los formularios, donde no se muestran
+ * los controles sino el valor como texto. */
+.iss-field__value { font-size: .875rem; color: var(--iss-text); line-height: 1.35; word-break: break-word; }
+.iss-field__value--empty { color: var(--iss-text-muted); }
+
+/* Revelado de secciones al entrar en modo edición: fade + leve deslizamiento,
+ * escalonado por hijo. Se desactiva si el usuario prefiere menos movimiento. */
+@keyframes iss-reveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.iss-reveal > * { animation: iss-reveal .28s ease-out both; }
+.iss-reveal > *:nth-child(2) { animation-delay: .06s; }
+.iss-reveal > *:nth-child(3) { animation-delay: .12s; }
+@media (prefers-reduced-motion: reduce) {
+  .iss-reveal > * { animation: none; }
+}
+
 @media (max-width: 575px) {
   .iss-form__buttons { margin-left: 0; }
 }
