@@ -566,6 +566,23 @@ if (isset($_SESSION['issabel_user']) &&
         $smarty->assign("ANIMATE_NOTIFICATION", "");
     }
 
+    // Aviso global de un cambio de red pendiente de confirmar (NETWORKtodo.md §4.6).
+    // El helper netconfig publica un estado sin datos sensibles en un fichero
+    // legible; aquí solo se lee para avisar en cualquier página (dashboard
+    // incluido). Las acciones Confirmar/Revertir viven en el módulo, que además
+    // comprueba el permiso.
+    $smarty->assign("ISSABEL_PENDING_NETWORK", "");
+    $networkPendingFile = "/var/lib/issabel/netconfig-rollback/status.json";
+    if (is_readable($networkPendingFile)) {
+        $netStatus = json_decode(@file_get_contents($networkPendingFile), TRUE);
+        if (is_array($netStatus) && isset($netStatus['expires']) && $netStatus['expires'] > time()) {
+            $smarty->assign("ISSABEL_PENDING_NETWORK",
+                sprintf(_tr('Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.'),
+                    gmdate('i:s', $netStatus['expires'] - time())));
+            $smarty->assign("ISSABEL_PENDING_NETWORK_LINK", _tr('Network Parameters'));
+        }
+    }
+
     $selectedMenu = getParameter('menu');
     $rawmode = getParameter('rawmode');
     $tabsEnabled = isset($arrConf['mainTheme']) && $arrConf['mainTheme'] === 'modern';

@@ -48,6 +48,12 @@
                         <div class="div_msg_errors_content" {if empty($mb_title)}style="margin-left: 0;"{/if}>{$mb_message}</div>
                     </div>
                     {/if}
+                    {if !empty($ISSABEL_PENDING_NETWORK)}
+                    <div id="issabel_pending_network" style="border:1px solid #d9a000;background:#fff6d9;padding:8px 12px;margin:8px 0;">
+                        <i class="fa fa-exclamation-triangle"></i> {$ISSABEL_PENDING_NETWORK}
+                        <a href="?menu=network">{$ISSABEL_PENDING_NETWORK_LINK}</a>
+                    </div>
+                    {/if}
                     {$CONTENT}
                 </div>
             </div>

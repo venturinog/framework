@@ -266,6 +266,8 @@ $arrLang=array(
 'The language will fully apply the next time you reload the page.' => 'The language will fully apply the next time you reload the page.',
 'Dashboard' => 'Dashboard',
 'Retry' => 'Retry',
-'The request was rejected because its security token is missing or invalid. Reload the page and try again.' => 'The request was rejected because its security token is missing or invalid. Reload the page and try again.'
+'The request was rejected because its security token is missing or invalid. Reload the page and try again.' => 'The request was rejected because its security token is missing or invalid. Reload the page and try again.',
+'Network Parameters' => 'Network Parameters',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.'
 );
 ?>

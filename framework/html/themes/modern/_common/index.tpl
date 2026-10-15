@@ -42,6 +42,13 @@
     </div>
     {/if}
 
+    {if !empty($ISSABEL_PENDING_NETWORK)}
+    <div class="iss-alert-warning" id="issabel_pending_network" style="border:1px solid #d9a000;background:#fff6d9;padding:8px 12px;margin:8px 12px;">
+        <i class="ti ti-alert-triangle"></i> {$ISSABEL_PENDING_NETWORK}
+        <a href="?menu=network">{$ISSABEL_PENDING_NETWORK_LINK}</a>
+    </div>
+    {/if}
+
     <div id="iss-tabpanes" class="iss-tabpanes" hidden></div>
     </div><!-- /.iss-content (abierto en _menu.tpl) -->
 

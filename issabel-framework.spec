@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 39
+Release: 40
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-40
+- Show a global notice (all themes) when a network change is pending
+  confirmation, read from /var/lib/issabel/netconfig-rollback/status.json, so the
+  admin sees it right after logging in on any page (dashboard included).
+- CSRF: treat the network module read-only navigation actions (editInterfase,
+  route_new, route_edit) as non-mutating to avoid false positives in audit.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-39
 - Add a global CSRF helper (libs/issabelCsrf.class.php) with a single token per
   session, shared with the tab manager. paloForm and paloSantoGrid inject the
