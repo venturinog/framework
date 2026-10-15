@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 47
+Release: 48
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-48
+- close-on-exec.pl: stop building a shell command line. The previous release
+  quoted every argument, which also quoted the leading LC_MESSAGES=C environment
+  assignment and made the shell try to run a program named 'LC_MESSAGES=C'
+  ('command not found'), breaking every helper call from the GUI. Export the
+  variable with $ENV and exec the program directly, so no argument needs quoting
+  at all.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-47
 - close-on-exec.pl: quote every argument instead of only the ones containing a
   space. An argument with shell metacharacters but no spaces (such as the JSON

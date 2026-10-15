@@ -20,17 +20,10 @@ foreach $s (@l) {
 }
 POSIX::setsid();
 
-unshift @ARGV, 'LC_MESSAGES=C';
-# Entrecomillar SIEMPRE los argumentos. La version anterior solo lo hacia con
-# los que contenian un espacio, asi que un argumento con metacaracteres del
-# shell pero sin espacios (p. ej. el JSON de 'netconfig --apply --change')
-# llegaba destrozado: el shell le quitaba las comillas dobles y expandia las
-# llaves por las comas, partiendo el JSON en varios argumentos.
-sub sh_quote {
-	my $s = shift;
-	$s =~ s/'/'\\''/g;
-	return "'".$s."'";
-}
-my @finalcmd = map { sh_quote($_) } @ARGV;
-$cmd = join(" ",@finalcmd);
-exec $cmd;
+# LC_MESSAGES=C es una variable de entorno, no un comando: se exporta y se
+# ejecuta el programa directamente, sin pasar por el shell. Asi ningun argumento
+# necesita entrecomillado y los argumentos estructurados (p. ej. el JSON de
+# 'netconfig --apply --change') llegan intactos.
+$ENV{LC_MESSAGES} = 'C';
+exec { $ARGV[0] } @ARGV;
+die("No se pudo ejecutar $ARGV[0]: $!\n");
