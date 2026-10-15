@@ -21,6 +21,16 @@ foreach $s (@l) {
 POSIX::setsid();
 
 unshift @ARGV, 'LC_MESSAGES=C';
-my @finalcmd = map { $_ =~ / / ? "'".$_."'" : $_ } @ARGV;
+# Entrecomillar SIEMPRE los argumentos. La version anterior solo lo hacia con
+# los que contenian un espacio, asi que un argumento con metacaracteres del
+# shell pero sin espacios (p. ej. el JSON de 'netconfig --apply --change')
+# llegaba destrozado: el shell le quitaba las comillas dobles y expandia las
+# llaves por las comas, partiendo el JSON en varios argumentos.
+sub sh_quote {
+	my $s = shift;
+	$s =~ s/'/'\\''/g;
+	return "'".$s."'";
+}
+my @finalcmd = map { sh_quote($_) } @ARGV;
 $cmd = join(" ",@finalcmd);
 exec $cmd;

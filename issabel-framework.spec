@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 46
+Release: 47
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-47
+- close-on-exec.pl: quote every argument instead of only the ones containing a
+  space. An argument with shell metacharacters but no spaces (such as the JSON
+  passed to 'netconfig --apply --change' by Network Parameters) was mangled by
+  the shell, which stripped the double quotes and brace-expanded the payload,
+  so the helper always failed with 'Invalid JSON' and the GUI could not apply
+  any staged change set.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-46
 - Modern theme: add the .iss-formgrid--readonly modifier so read-only summaries
   render labels as a small uppercase grey micro-label, visually distinct from the
