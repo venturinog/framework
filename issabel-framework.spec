@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 43
+Release: 44
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -308,6 +308,9 @@ fi
 # Para q se actualice smarty (tpl updates)
 rm -rf /var/www/html/var/templates_c/*
 
+# Pick up PHP code/php.d changes from this update without a manual restart.
+systemctl reload php-fpm &>/dev/null || :
+
 # Patch issabel.ini to work around %config(noreplace) in previous versions
 sed --in-place "s,/tmp,/var/lib/php/session-asterisk,g" /etc/php.d/issabel.ini
 if [ $1 -eq 1 ]; then #install
@@ -434,6 +437,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-44
+- Keep PHP code changes from RPM updates visible without a manual restart:
+  force opcache.validate_timestamps=1 / revalidate_freq=0 in /etc/php.d/issabel.ini
+  and reload php-fpm in %post (httpd restart alone does not refresh php-fpm).
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-43
 - Point the pending network change notice to network_parameters instead of the
   parent network menu, so the link opens the module with the right breadcrumb.
