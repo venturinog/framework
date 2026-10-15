@@ -64,6 +64,8 @@ class issabelCsrf
     private static $readOnlyActions = array(
         'list', 'show', 'view', 'display', 'get', 'read', 'search',
         'index', 'default',
+        // Navegaciones de solo lectura del módulo de red (abren formularios).
+        'editinterfase', 'route_new', 'route_edit',
     );
 
     /**
