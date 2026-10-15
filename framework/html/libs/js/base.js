@@ -300,6 +300,10 @@ $(document).ready(function(){
         var title = (typeof LblRegister !== 'undefined') ? LblRegister : $('#lblRegisterCm').val();
         showPopupCloudLogin(title, 540, 405);
     });
+
+    // Cierre alternativo del popup: clic en la mascara o tecla Escape.
+    $('.neo-modal-issabel-popup-blockmask').click(function() { hideModalPopUP(); });
+    $(document).keyup(function(e) { if (e.key === 'Escape') hideModalPopUP(); });
 });
 
 //Si se presiona enter se hace un submit al formulario para que se aplica el filtro

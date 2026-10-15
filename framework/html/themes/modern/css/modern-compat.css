@@ -214,6 +214,39 @@ div.dt-button-info h2 { background: var(--iss-surface-2) !important; color: var(
 .facebox-content, .facebox .content { color: var(--iss-text); }
 .facebox .loading { background: var(--iss-surface); }
 
+/* --- Popup modal del framework (base.js ShowModalPopUP / hideModalPopUP) ---
+   Los temas legacy lo vestian desde su styles.css; el tema Modern no definia
+   estas clases, asi que el popup salia sin fondo, sin mascara y sin cierre.
+   base.js setea width/height inline sobre la mascara y top/left/width/height
+   sobre el box, por eso solo se fijan aqui el posicionamiento y el aspecto. */
+.neo-modal-issabel-popup-blockmask {
+  position: absolute; top: 0; left: 0; z-index: 10100;
+  background: #000; display: none;
+}
+.neo-modal-issabel-popup-box {
+  position: fixed; z-index: 10200; display: none;
+  padding: 20px 25px;
+  background: var(--iss-surface);
+  color: var(--iss-text);
+  border: 1px solid var(--iss-border);
+  border-radius: var(--iss-radius);
+  box-shadow: 0 24px 60px rgba(16, 24, 40, .35);
+}
+.neo-modal-issabel-popup-title {
+  position: absolute; top: 0; left: 0; width: 100%;
+  padding: 12px 40px 0; text-align: center;
+  font-weight: 600; color: var(--iss-text);
+}
+.neo-modal-issabel-popup-close {
+  position: absolute; top: 10px; right: 12px;
+  width: 28px; height: 28px; display: flex;
+  align-items: center; justify-content: center;
+  border-radius: 6px; cursor: pointer; font-size: 18px;
+  color: var(--iss-text-muted);
+}
+.neo-modal-issabel-popup-close:hover { background: var(--iss-surface-2); color: var(--iss-text); }
+.neo-modal-issabel-popup-content { position: relative; top: 20px; }
+
 /* --- jquery-filestyle (upload) --- */
 .jfilestyle .buttonText, .jfilestyle .buttonBefore, .jfilestyle .buttonAfter {
   background: var(--iss-surface-2); border: 1px solid var(--iss-border); color: var(--iss-text);

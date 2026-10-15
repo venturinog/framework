@@ -62,7 +62,7 @@
 {* Popup box global *}
 <div class="neo-modal-issabel-popup-box">
     <div class="neo-modal-issabel-popup-title"></div>
-    <div class="neo-modal-issabel-popup-close"></div>
+    <div class="neo-modal-issabel-popup-close"><i class="ti ti-x"></i></div>
     <div class="neo-modal-issabel-popup-content"></div>
 </div>
 <div class="neo-modal-issabel-popup-blockmask"></div>

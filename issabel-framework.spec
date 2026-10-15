@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 48
+Release: 49
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,18 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-49
+- Modern theme: make the cloud registration popup that the legacy themes show
+  after login work again. The theme never rendered the 'a.register_link' item in
+  the user menu, so base.js had nothing to click, and it did not define the
+  LblRegister global; base.js now falls back to the lblRegisterCm hidden input
+  when the global is missing. The framework modal (.neo-modal-issabel-popup-*)
+  also had no styles in this theme, so the popup came up with no backdrop, no
+  panel and no visible close button, leaving the GUI unusable; it is now styled
+  from modern-compat.css with the theme tokens, the close button draws a Tabler
+  icon, and the dialog can also be dismissed by clicking the backdrop or pressing
+  Escape.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-48
 - close-on-exec.pl: stop building a shell command line. The previous release
   quoted every argument, which also quoted the leading LC_MESSAGES=C environment
