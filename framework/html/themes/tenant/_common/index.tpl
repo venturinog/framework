@@ -51,7 +51,7 @@
                     {if !empty($ISSABEL_PENDING_NETWORK)}
                     <div id="issabel_pending_network" style="border:1px solid #d9a000;background:#fff6d9;padding:8px 12px;margin:8px 0;">
                         <i class="fa fa-exclamation-triangle"></i> {$ISSABEL_PENDING_NETWORK}
-                        <a href="?menu=network">{$ISSABEL_PENDING_NETWORK_LINK}</a>
+                        <a href="?menu=network_parameters">{$ISSABEL_PENDING_NETWORK_LINK}</a>
                     </div>
                     {/if}
                     {$CONTENT}
