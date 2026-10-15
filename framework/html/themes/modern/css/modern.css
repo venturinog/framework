@@ -450,6 +450,16 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-field__value { font-size: .875rem; color: var(--iss-text); line-height: 1.35; word-break: break-word; }
 .iss-field__value--empty { color: var(--iss-text-muted); }
 
+/* Resumen de sólo lectura (modo vista): etiqueta como micro-label en gris para
+ * separarla del dato, que queda en tamaño normal. */
+.iss-formgrid--readonly .iss-field__label {
+  font-size: .6875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .045em; color: var(--iss-text-muted);
+}
+.iss-formgrid--readonly .iss-field__value {
+  font-size: .9375rem; font-weight: 500; font-variant-numeric: tabular-nums;
+}
+
 /* Revelado de secciones al entrar en modo edición: fade + leve deslizamiento,
  * escalonado por hijo. Se desactiva si el usuario prefiere menos movimiento. */
 @keyframes iss-reveal {
