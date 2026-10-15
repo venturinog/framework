@@ -189,6 +189,8 @@ $arrLang=array(
 "You have not permissions to access to Flash Operator Panel. Please contact your administrator." => "You have not permissions to access to Flash Operator Panel. Please contact your administrator.",
 "Issabel Website" => "Issabel Website",
 "Advice" => "Advice",
-'Beta Channel'=>'Beta Channel'
+'Beta Channel'=>'Beta Channel',
+'Network Parameters' => 'Parametri de rețea',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Există modificări de rețea în așteptarea confirmării. Dacă nu sunt confirmate în %s, vor fi anulate automat.',
 );
 ?>

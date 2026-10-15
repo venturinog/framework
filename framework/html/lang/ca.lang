@@ -188,6 +188,8 @@ a tot el mon.",
 "You have not permissions to access to Flash Operator Panel. Please contact your administrator." => "You have not permissions to access to Flash Operator Panel. Please contact your administrator.",
 "Issabel Website" => "Web d'Issabel",
 "Advice" => "Advice",
-'Beta Channel'=>'Beta Channel'
+'Beta Channel'=>'Beta Channel',
+'Network Parameters' => 'Paràmetres de Xarxa',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Hi ha canvis de xarxa pendents de confirmació. Si no es confirmen en els propers %s, es revertiran automàticament.',
 );
 ?>

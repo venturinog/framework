@@ -321,7 +321,7 @@ $arrLang=array(
 "Summary"  => "Сводка",
 "Issabel Website" => "Сайт Изабель",
 "Missed Calls"  => "Пропущенные Вызовы",
-'Beta Channel'=>'Beta Channel'
-
+'Beta Channel'=>'Beta Channel',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Изменения сети ожидают подтверждения. Если их не подтвердить в течение %s, они будут автоматически отменены.',
 );
 ?>

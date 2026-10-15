@@ -332,7 +332,8 @@ $arrLang=array(
 "Flash Operator Panel" => "Anlık İzleme",
 "Issabel Website" => "Issabel'in web sitesi",
 "My Extension" => "Dahilim",
-'Beta Channel'=>'Beta Channel'
-
+'Beta Channel'=>'Beta Channel',
+'Network Parameters' => 'Ağ Parametreleri',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Ağ değişiklikleri onay bekliyor. %s içinde onaylanmazsa otomatik olarak geri alınacak.',
 );
 ?>

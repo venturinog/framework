@@ -341,6 +341,7 @@ $arrLang=array(
 "Incoming calls monitoring" => "Monitoramento de Ligações de Entrada",
 "Issabel Website" => "Site Issabel",
 "Campaign monitoring" => "Monitoramento de Campanhas",
-'Beta Channel'=>'Beta Channel'
+'Beta Channel'=>'Beta Channel',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Há alterações de rede aguardando confirmação. Se não forem confirmadas nos próximos %s, serão revertidas automaticamente.',
 );
 ?>

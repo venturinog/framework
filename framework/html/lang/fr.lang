@@ -263,6 +263,7 @@ $arrLang=array(
 "Weak Keys" => "Clés faibles",
 'Issabel Website' => "Site Internet d'Issabel",
 "Advanced Settings" => "Paramètres avancés",
-'Beta Channel'=>'Beta Channel'
+'Beta Channel'=>'Beta Channel',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Des modifications réseau sont en attente de confirmation. Si elles ne sont pas confirmées dans les %s, elles seront annulées automatiquement.',
 );
 ?>

@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 41
+Release: 42
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -434,6 +434,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-42
+- Translate the pending network change notice and "Network Parameters" to all
+  shipped languages.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-41
 - paloSantoValidar: add "ipv6" (single address) and "ipv6/mask" (address/prefix)
   validation types, for the IPv6 fields in Network Parameters.

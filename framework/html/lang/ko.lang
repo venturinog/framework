@@ -183,6 +183,8 @@ $arrLang=array(
 "You have not permissions to access to Flash Operator Panel. Please contact your administrator." => "You have not permissions to access to Flash Operator Panel. Please contact your administrator.",
 "Issabel Website" => "이사벨 웹사이트",
 "Advice" => "Advice",
-'Beta Channel'=>'Beta Channel'
+'Beta Channel'=>'Beta Channel',
+'Network Parameters' => '네트워크 매개변수',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => '확인 대기 중인 네트워크 변경이 있습니다. %s 내에 확인하지 않으면 자동으로 되돌려집니다.',
 );
 ?>

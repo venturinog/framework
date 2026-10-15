@@ -289,5 +289,7 @@ $arrLang=array(
 "Operator" => "Оператор",
 "Traslates saved succetiful" => "Переклад успішно збережено",
 "The selected menu is not valid." => "Вибране меню не є дійсним.",
+'Network Parameters' => 'Параметри мережі',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Зміни мережі очікують підтвердження. Якщо їх не підтвердити протягом %s, вони будуть скасовані автоматично.',
 );
 ?>

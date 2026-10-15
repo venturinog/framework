@@ -396,6 +396,7 @@ $arrLang=array(
 'Changing the language will reload all open tabs and discard unsaved changes. Continue?' => 'Cambiar el idioma recargará todas las solapas abiertas y descartará los cambios sin guardar. ¿Deseas continuar?',
 'The language will fully apply the next time you reload the page.' => 'El idioma se aplicará del todo la próxima vez que recargues la página.',
 'Dashboard' => 'Panel de control',
-'Retry' => 'Reintentar'
+'Retry' => 'Reintentar',
+'Network changes are pending confirmation. If not confirmed in the next %s, they will be reverted automatically.' => 'Hay cambios de red pendientes de confirmación. Si no se confirman en los próximos %s, se revertirán automáticamente.',
 );
 ?>
