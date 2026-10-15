@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 49
+Release: 52
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,19 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-52
+- Modern theme: style the disabled state of the legacy .button control, so a
+  button blocked while an action is in progress is clearly visible.
+
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-51
+- Modern theme: add the .iss-cursor blinking caret and the .iss-console--pending
+  state so modules can show a waiting indicator inside a command console.
+
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-50
+- Modern theme: add the .iss-console primitive for command output (ping,
+  traceroute, logs). It uses a fixed dark palette so the text stays readable in
+  both light and dark modes, where Tabler's pre styling made it unreadable.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-49
 - Modern theme: make the cloud registration popup that the legacy themes show
   after login work again. The theme never rendered the 'a.register_link' item in

@@ -96,6 +96,18 @@ body.iss-body { background: var(--iss-body-bg); }
   outline: 0;
   box-shadow: 0 0 0 3px var(--iss-primary-soft);
 }
+/* Deshabilitado: se usa para bloquear un botón mientras una acción está en
+ * curso (p.ej. un submit que aún no ha navegado). */
+.button:disabled, input.button:disabled, a.button:disabled,
+.button.disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.button:disabled:hover, input.button:disabled:hover, a.button:disabled:hover {
+  background: var(--iss-surface);
+  box-shadow: none;
+}
 .button i { font-size: 14px; line-height: 1; }
 
 /* Variantes explícitas (algunos módulos ya las usan) */
@@ -476,6 +488,25 @@ body.iss-collapsed .iss-sidebar { display: none; }
 @media (max-width: 575px) {
   .iss-form__buttons { margin-left: 0; }
 }
+
+/* Consola de salida de comandos (ping, traceroute, logs): paleta oscura fija
+ * para que el texto sea legible tanto en tema claro como oscuro. El documento
+ * interno va en un iframe, así que trae su propia paleta; esta clase pinta el
+ * marco y el fondo por si la consola se usa con contenido propio. */
+.iss-console { background: #0d1117; color: #e6edf3; border: 1px solid var(--iss-border); border-radius: var(--iss-radius); overflow: hidden; }
+.iss-console iframe, .iss-console pre { display: block; width: 100%; margin: 0; border: 0; background: transparent; color: inherit; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+/* Estado de espera: la consola todavía no tiene salida (p.ej. mientras corre
+ * ping/traceroute). Reserva algo de alto para que no colapse. */
+.iss-console--pending { padding: 12px; min-height: 64px; }
+
+/* Cursor de espera/terminal: caret que titila. Se usa solo o dentro de
+ * .iss-console mientras llega la salida de un comando. */
+@keyframes iss-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.iss-cursor { display: inline-block; width: .6em; height: 1.05em; margin-left: 2px;
+  vertical-align: text-bottom; background: currentColor;
+  animation: iss-blink 1s step-end infinite; }
+.iss-console .iss-cursor { color: #e6edf3; }
+@media (prefers-reduced-motion: reduce) { .iss-cursor { animation: none; opacity: 1; } }
 
 /* ------------------------------ Responsive --------------------------- */
 @media (min-width: 992px) { body.iss-collapsed .iss-sidebar { display: none; } }
