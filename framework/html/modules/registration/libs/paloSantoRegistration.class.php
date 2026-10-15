@@ -269,14 +269,14 @@ class paloSantoRegistration {
             break; 
             case "yes-inc":
                 $info['label'] = _tr("Incomplete registration");
-                $info['color'] = "yellow";
+                $info['color'] = "#b8860b";
                 $key = file_get_contents("/etc/issabel.key");
                 $info['sid']   = trim($key);
                 break;
             case "no":
             default:
                 $info['label'] = _tr("Register Server");
-                $info['color'] = "#FFFF00";
+                $info['color'] = "#b8860b";
                 $info['sid']   = "";
         }
  
