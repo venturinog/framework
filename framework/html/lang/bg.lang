@@ -121,6 +121,7 @@ $arrLang=array(
 "Instant Messaging" => "Мигновенни Съобщения",
 "Shutdown" => "Изключване",
 "Dashboard" => "Табло",
+"Health Center" => "Център за състояние",
 "Network Parameters" => "Параметри на Мрежата",
 "DHCP Server" => "DHCP Сървър",
 "Groups" => "Групи",

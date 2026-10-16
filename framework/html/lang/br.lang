@@ -237,6 +237,7 @@ $arrLang=array(
 "Reports" => "Relatórios",
 "CDR Report" => "Relatório de Ligações",
 "Dashboard" => "Painel",
+"Health Center" => "Centro de saúde",
 "Dashboard Applet Admin" => "Gerenciar Applet",
 "Shutdown" => "Desligar",
 "Channels Usage" => "Uso de Canais",

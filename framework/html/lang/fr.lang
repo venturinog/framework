@@ -149,6 +149,7 @@ $arrLang=array(
 "ECCP Users" => "Utilisateurs ECCP",
 "Callback Extensions" => "Extensions de Callback",
 "Dashboard" => "Tableau de bord",
+"Health Center" => "Centre de santé",
 "Dashboard Applet Admin" => "Paramètres du tableau de bord",
 "Network" => "Réseau",
 "Shutdown" => "Arrêt Machine",

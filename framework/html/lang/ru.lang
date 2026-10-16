@@ -200,6 +200,7 @@ $arrLang=array(
 
 /*Dashboard*/
 "Dashboard" => "Панель Состояния",
+"Health Center" => "Центр состояния",
 "Dashboard Applet Admin" => "Настройка Панели Состояния",
 
 /*Network*/

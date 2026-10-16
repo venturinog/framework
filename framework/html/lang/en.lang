@@ -79,6 +79,7 @@ $arrLang=array(
 
 /*start menu*/
 "System"=>"System",
+"Health Center"=>"Health Center",
 "System Info"=>"System Info",
 "User Management"=>"User Management",
 "Users"=>"Users",
