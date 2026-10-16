@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 55
+Release: 56
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,15 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-56
+- Group Permissions: replace the jQuery UI expand/collapse and checkbox icons
+  with the theme kit. Branch nodes now use a Tabler chevron (ti-chevron-down
+  expanded, ti-chevron-right collapsed) on a btn-icon ghost button, and the
+  resource and custom-privilege checkboxes use the native form-check-input, so
+  the selected/unselected state comes from Tabler instead of a decorated
+  button. This drops the last jQuery UI .button() usage in the module and adds
+  aria-expanded/aria-label for accessibility.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-55
 - Users, Groups and Group Permissions: align the pages with the module style
   guide. Per-field server validation mapped by field name (not label) with
