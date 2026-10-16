@@ -24,6 +24,12 @@ global $arrLangModule;
 $arrLangModule=array(
 "Show" => "Show",
 "Apply" => "Save Selected as Accessible",
+"Available" => "Available",
+"Enabled" => "Enabled",
+"Cannot count resources" => "Cannot count resources",
+"Cannot load resource IDs" => "Cannot load resource IDs",
+"Cannot add enabled resources" => "Cannot add enabled resources",
+"Cannot remove disabled resources" => "Cannot remove disabled resources",
 "Resource" => "Resource",
 "Group Permission" => "Group Permissions",
 "Group" => "Group",

@@ -42,11 +42,11 @@ function _moduleContent(&$smarty, $module_name)
 
     $pDB = new paloDB($arrConf['issabel_dsn']['acl']);
     if (!empty($pDB->errMsg)) {
-        return "ERROR DE DB: $pDB->errMsg <br>";
+        return _tr('Database connection error').": $pDB->errMsg <br>";
     }
     $pACL = new paloACL($pDB);
     if (!empty($pACL->errMsg)) {
-        return "ERROR DE ACL: $pACL->errMsg <br>";
+        return _tr('ACL connection error').": $pACL->errMsg <br>";
     }
 
     // Enumerar los plugines de datos de usuario
@@ -58,6 +58,12 @@ function _moduleContent(&$smarty, $module_name)
                 load_language_module("$module_name/plugins/$p");
             $plugins['paloUserPlugin_'.$p] = "modules/$module_name/plugins/$p/index.php";
         }
+    }
+
+    // Cancelar el alta/edición devuelve al listado sin guardar.
+    if (isset($_POST['cancel'])) {
+        Header('Location: '.userlistReturnURL($module_name));
+        return '';
     }
 
     $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'list';
@@ -72,6 +78,24 @@ function _moduleContent(&$smarty, $module_name)
     default:
         return listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins);
     }
+}
+
+/**
+ * URL de retorno al listado. Conserva el contexto del iframe de pestañas
+ * (rawmode/iss_instance/iss_tab) para que el framework cargue el listado dentro
+ * de la pestaña en lugar de tener que reconstruir el contexto desde el Referer.
+ */
+function userlistReturnURL($module_name)
+{
+    $params = array('menu' => $module_name);
+    if (getParameter('rawmode') === 'iframe') {
+        $params['rawmode'] = 'iframe';
+        $inst = getParameter('iss_instance');
+        if (!is_null($inst) && $inst !== '') $params['iss_instance'] = $inst;
+        $tab = getParameter('iss_tab');
+        if (!is_null($tab) && $tab !== '') $params['iss_tab'] = $tab;
+    }
+    return '?'.http_build_query($params);
 }
 
 function listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins)
@@ -184,7 +208,7 @@ function createUser($pACL, $smarty, $module_name, $local_templates_dir, $plugins
             'mb_title'      =>  _tr('ERROR'),
             'mb_message'    =>  _tr('userNoAllowed'),
         ));
-        return listUsers($smarty, $module_name, $local_templates_dir);
+        return listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins);
     }
     return createEditUser($pACL, $smarty, $module_name, $local_templates_dir, NULL, TRUE, $plugins);
 }
@@ -286,21 +310,39 @@ function createEditUser($pACL, $smarty, $module_name, $local_templates_dir, $id_
     foreach ($pobj as $p) $arrFormElements = array_merge($arrFormElements,
         $p->addFormElements($privileged));
 
+    // Validación del servidor (autoritativa) por campo, mapeada por nombre y
+    // no por etiqueta. Los plugins siguen apoyándose en paloForm como backstop.
+    $errors = array();
+    if (isset($_POST['save'])) {
+        $errors = validateUserForm($_POST, is_null($id_user));
+    }
+
+    // Marcar los campos con error con is-invalid, conservando form-control.
+    foreach (array('name', 'password1', 'password2') as $f) {
+        if (!isset($errors[$f])) continue;
+        if (!isset($arrFormElements[$f]['INPUT_EXTRA_PARAM']) || !is_array($arrFormElements[$f]['INPUT_EXTRA_PARAM']))
+            $arrFormElements[$f]['INPUT_EXTRA_PARAM'] = array();
+        $cls = isset($arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'])
+            ? $arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'].' ' : 'form-control ';
+        $arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'] = $cls.'is-invalid';
+    }
+
     $oForm = new paloForm($smarty, $arrFormElements);
     if (!is_null($id_user)) $oForm->setEditMode();
 
+    $smarty->assign('USER_ERRORS', array_merge(
+        array('name' => '', 'password1' => '', 'password2' => ''), $errors));
+    $smarty->assign('is_new_user', is_null($id_user) ? 'yes' : 'no');
+
     if (isset($_POST['save'])) {
-        if (!$oForm->validateForm($_POST)) {
+        if (count($errors) > 0) {
+            // Errores por campo ya marcados: se re-renderiza el formulario.
+        } elseif (!$oForm->validateForm($_POST)) {
+            // Backstop para campos aportados por los plugins.
             $smarty->assign(array(
                 "mb_title"  =>  _tr("Validation Error"),
                 "mb_message"=>  "<b>"._tr('The following fields contain errors').":</b><br/>".
                     implode(', ', array_keys($oForm->arrErroresValidacion)),
-            ));
-        } elseif ((is_null($id_user) && empty($_POST['password1'])) ||
-            ($_POST['password1'] != $_POST['password2'])) {
-            $smarty->assign(array(
-                "mb_title"  =>  _tr("Validation Error"),
-                "mb_message"=>  _tr("The passwords are empty or don't match"),
             ));
         } else {
             $bPluginError = FALSE;
@@ -367,13 +409,20 @@ function createEditUser($pACL, $smarty, $module_name, $local_templates_dir, $id_
                     'mb_title'  =>  'ERROR',
                     'mb_message'=>  $pACL->errMsg,
                 ));
+                // Un fallo de plugin puede llegar sin mensaje; no dejarlo mudo.
+                if ($bPluginError && empty($smarty->getTemplateVars('mb_message'))) {
+                    $smarty->assign(array(
+                        'mb_title'  =>  _tr('ERROR'),
+                        'mb_message'=>  _tr('The user could not be saved completely'),
+                    ));
+                }
                 // TODO: rollback
             } else {
                 // TODO: commit
                 if ($_REQUEST['action'] == 'edit_userExtension') {
                     $smarty->assign('userExtension_success', 1);
                 } else {
-                    Header('Location: ?menu='.$module_name);
+                    Header('Location: '.userlistReturnURL($module_name));
                     return '';
                 }
             }
@@ -433,6 +482,37 @@ function createFormFields($arrGrupos)
             "VALIDATION_TYPE"        => "text",
             "VALIDATION_EXTRA_PARAM" => ""),
     );
+}
+
+/**
+ * Valida el formulario de usuario y devuelve los errores por campo (clave =
+ * nombre del campo). No valida el grupo: el SELECT siempre trae una opción
+ * seleccionada.
+ */
+function validateUserForm($post, $isNew)
+{
+    $errors = array();
+
+    $name = isset($post['name']) ? trim($post['name']) : '';
+    if ($name === '') {
+        $errors['name'] = sprintf(_tr('%s is required'), _tr('Login'));
+    }
+
+    $p1 = isset($post['password1']) ? (string)$post['password1'] : '';
+    $p2 = isset($post['password2']) ? (string)$post['password2'] : '';
+    // En edición el valor de relleno es '********'; no es una clave real.
+    $placeholder = ($p1 === '********' && $p2 === '********');
+
+    if ($isNew && $p1 === '') {
+        $errors['password1'] = sprintf(_tr('%s is required'), _tr('Password'));
+    }
+    if ($isNew && $p2 === '') {
+        $errors['password2'] = sprintf(_tr('%s is required'), _tr('Retype password'));
+    } elseif (!$placeholder && $p1 !== $p2) {
+        $errors['password2'] = _tr("The passwords are empty or don't match");
+    }
+
+    return $errors;
 }
 
 // Abstracción de privilegio por módulo hasta implementar (Elastix bug #1100).

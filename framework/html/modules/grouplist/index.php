@@ -46,13 +46,13 @@ function _moduleContent(&$smarty, $module_name)
 
 
     if(!empty($pDB->errMsg)) {
-        echo "ERROR DE DB: $pDB->errMsg <br>";
+        echo _tr('Database connection error').": $pDB->errMsg <br>";
     }
 
     $arrData = array();
     $pACL = new paloACL($pDB);
     if(!empty($pACL->errMsg)) {
-        echo "ERROR DE ACL: $pACL->errMsg <br>";
+        echo _tr('ACL connection error').": $pACL->errMsg <br>";
     }
 
     $arrFormElements = array("description" => array("LABEL"                  => _tr("Description"),
@@ -85,6 +85,7 @@ function _moduleContent(&$smarty, $module_name)
         include_once("libs/paloSantoForm.class.php");
         $arrFillGroup['group']       = '';
         $arrFillGroup['description'] = '';
+        $smarty->assign('GROUP_ERRORS', array('group' => '', 'description' => ''));
         $oForm = new paloForm($smarty, $arrFormElements);
         $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("New Group"),$arrFillGroup);
     } else if(isset($_POST['edit'])) {
@@ -121,15 +122,20 @@ function _moduleContent(&$smarty, $module_name)
 
             $oForm->setEditMode();
             $smarty->assign("id_group", htmlspecialchars($_POST['id_group'], ENT_COMPAT, 'UTF-8'));
+            $smarty->assign('GROUP_ERRORS', array('group' => '', 'description' => ''));
             $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr('Edit Group')." \"" . $arrFillGroup['group'] . "\"", $arrFillGroup);
         }
     } else if(isset($_POST['submit_save_group'])) {
 
         include_once("libs/paloSantoForm.class.php");
 
+        $errors = validateGroupForm($_POST);
+        markGroupFormErrors($arrFormElements, $errors);
         $oForm = new paloForm($smarty, $arrFormElements);
+        $smarty->assign('GROUP_ERRORS', array_merge(
+            array('group' => '', 'description' => ''), $errors));
 
-        if($oForm->validateForm($_POST)) {
+        if(count($errors) == 0) {
             // Exito, puedo procesar los datos ahora.
             $pACL = new paloACL($pDB);
 
@@ -140,21 +146,13 @@ function _moduleContent(&$smarty, $module_name)
 
             if(!empty($pACL->errMsg)) {
                 // Ocurrio algun error aqui
-                $smarty->assign("mb_message", "ERROR: $pACL->errMsg");
+                $smarty->assign("mb_message", _tr('ERROR').": $pACL->errMsg");
                 $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("New Group"), $_POST);
             } else {
                 header("Location: ?menu=grouplist");
             }
         } else {
-            // Error
-            $smarty->assign("mb_title", _tr("Validation Error"));
-            $arrErrores=$oForm->arrErroresValidacion;
-            $strErrorMsg = "<b>"._tr('The following fields contain errors').":</b><br>";
-            foreach($arrErrores as $k=>$v) {
-                $strErrorMsg .= "$k, ";
-            }
-            $strErrorMsg .= "";
-            $smarty->assign("mb_message", $strErrorMsg);
+            // Errores por campo ya marcados: se re-renderiza el formulario.
             $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("New Group"), $_POST);
         }
 
@@ -169,10 +167,14 @@ function _moduleContent(&$smarty, $module_name)
             $description = $arrGroup[0][2];
 
             include_once("libs/paloSantoForm.class.php");
+            $errors = validateGroupForm($_POST);
+            markGroupFormErrors($arrFormElements, $errors);
             $oForm = new paloForm($smarty, $arrFormElements);
 
             $oForm->setEditMode();
-            if($oForm->validateForm($_POST)) {
+            $smarty->assign('GROUP_ERRORS', array_merge(
+                array('group' => '', 'description' => ''), $errors));
+            if(count($errors) == 0) {
 
                 // Exito, puedo procesar los datos ahora.
                 $pACL = new paloACL($pDB);
@@ -180,22 +182,13 @@ function _moduleContent(&$smarty, $module_name)
                 if(!$pACL->updateGroup($_POST['id_group'], $_POST['group'],$_POST['description']))
                 {
                     // Ocurrio algun error aqui
-                    $smarty->assign("mb_message", "ERROR: $pACL->errMsg");
+                    $smarty->assign("mb_message", _tr('ERROR').": $pACL->errMsg");
                     $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("Edit Group"), $_POST);
                 } else {
                     header("Location: ?menu=grouplist");
                 }
             } else {
-                // Manejo de Error
-                $smarty->assign("mb_title", _tr("Validation Error"));
-                $arrErrores=$oForm->arrErroresValidacion;
-                $strErrorMsg = "<b>"._tr('The following fields contain errors').":</b><br>";
-                foreach($arrErrores as $k=>$v) {
-                    $strErrorMsg .= "$k, ";
-                }
-                $strErrorMsg .= "";
-                $smarty->assign("mb_message", $strErrorMsg);
-
+                // Errores por campo ya marcados: se re-renderiza el formulario.
                 $arrFillGroup['group']       = $_POST['group'];
                 $arrFillGroup['description'] = $_POST['description'];
                 $smarty->assign("id_group", htmlspecialchars($_POST['id_group'], ENT_COMPAT, 'UTF-8'));
@@ -236,6 +229,9 @@ function _moduleContent(&$smarty, $module_name)
             $arrTmp['description']  = $arrGroup[0][2];
 
             $smarty->assign("id_group", htmlspecialchars($_GET['id'], ENT_COMPAT, 'UTF-8'));
+            $smarty->assign('GROUP_VIEW', array(
+                'group'       => $arrGroup[0][1],
+                'description' => $arrGroup[0][2]));
             $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("View Group"), $arrTmp); // hay que pasar el arreglo
         }
     } else {
@@ -307,5 +303,33 @@ function _moduleContent(&$smarty, $module_name)
         $contenidoModulo = $oGrid->fetchGrid($arrGrid, $arrData);
     }
     return $contenidoModulo;
+}
+
+/**
+ * Valida el formulario de grupo y devuelve los errores por campo.
+ */
+function validateGroupForm($post)
+{
+    $errors = array();
+    if (!isset($post['group']) || trim($post['group']) === '')
+        $errors['group'] = sprintf(_tr('%s is required'), _tr('Group'));
+    if (!isset($post['description']) || trim($post['description']) === '')
+        $errors['description'] = sprintf(_tr('%s is required'), _tr('Description'));
+    return $errors;
+}
+
+/**
+ * Marca con is-invalid los campos con error, conservando form-control.
+ */
+function markGroupFormErrors(&$arrFormElements, $errors)
+{
+    foreach (array('group', 'description') as $f) {
+        if (!isset($errors[$f])) continue;
+        if (!isset($arrFormElements[$f]['INPUT_EXTRA_PARAM']) || !is_array($arrFormElements[$f]['INPUT_EXTRA_PARAM']))
+            $arrFormElements[$f]['INPUT_EXTRA_PARAM'] = array();
+        $cls = isset($arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'])
+            ? $arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'].' ' : 'form-control ';
+        $arrFormElements[$f]['INPUT_EXTRA_PARAM']['class'] = $cls.'is-invalid';
+    }
 }
 ?>
