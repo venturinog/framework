@@ -66,6 +66,11 @@ class issabelCsrf
         'index', 'default',
         // Navegaciones de solo lectura del módulo de red (abren formularios).
         'editinterfase', 'route_new', 'route_edit',
+        // Navegaciones de solo lectura de usuarios y permisos: abren el
+        // formulario de edición/alta pero no guardan nada (el POST es el que
+        // muta). Sin esto, un GET con action=edit genera ruido CSRF-AUDIT y
+        // bajo modo enforce bloquearía la apertura del formulario.
+        'new', 'edit', 'edituserextension', 'assigncustom',
     );
 
     /**
