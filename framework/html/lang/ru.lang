@@ -213,9 +213,6 @@ $arrLang=array(
 /*Shutdown*/
 "Shutdown" => "Выключение",
 
-/*Hardware Detector*/
-"Hardware Detector" => "Обнаружение Оборудования",
-
 /*Updates*/
 "Updates" => "Обновления",
 "Repositories" => "Репозитории",

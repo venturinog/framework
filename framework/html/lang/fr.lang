@@ -223,7 +223,6 @@ $arrLang=array(
 "Fax Viewer" => "Visualisation de Fax",
 "Email Template" => "Modèle d'Email",
 "Asterisk File Editor" => "Editeur de fichiers Asterisk",
-"Hardware Detector" => "Détection Matériel",
 "operator" => "Opérateur",
 "File install.php doesn't exist in module file" => "File install.php doesn't exist in module file",
 "Webmin" => "Webmin",

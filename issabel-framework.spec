@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 61
+Release: 62
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-62
+- Menu: drop the "Hardware Detector" name from the supported languages. The
+  module it referred to was removed from issabel-system 6.0.0-55.
+
 * Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-61
 - Menu: translate the "Health Center" menu name in the languages the Health
   module ships (en, es, bg, br, fa, fr, ru), so the module registered by

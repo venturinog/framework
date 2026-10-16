@@ -257,7 +257,6 @@ $arrLang=array(
 "DHCP Client List" => "Lista de Clientes DHCP",
 "Assign IP Address to Host" => "Asignar Dirección IP a Host",
 "Shutdown"  => "Apagar",
-"Hardware Detector"  => "Detector de Hardware",
 "Updates"  => "Actualizaciones",
 "Repositories"  => "Repositorios",
 "Packages"  => "Paquetes",

@@ -177,7 +177,6 @@ $arrLang=array(
 "Health Center" => "مرکز سلامت",
 "Network" => "تنظیمات شبکه",
 "Shutdown" => "کنترل سرور",
-"Hardware Detector" => "یافتن سخت افزار",
 "Updates" => "به روز رسانی",
 "Backup/Restore" => "پشتيبان گيري",
 "Calendar" => "تقويم",

@@ -187,7 +187,6 @@ $arrLang=array(
 "Reboot" => "Sunucuyu Yeniden Başlat",
 "Proceed..." => "Komutu Çalıştır...",
 
-"Hardware Detector" => "Sistem Kontrol",
 "Updates" => "Sistemi Güncelle",
 
 "Reports Break" => "Mola Süreleri",

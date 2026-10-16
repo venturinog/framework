@@ -250,7 +250,6 @@ $arrLang=array(
 "Settings" => "Configurações",
 "Updates" => "Atualizações",
 "Backup/Restore" => "Backup/Restauração",
-"Hardware Detector" => "Detector de Placa",
 "DHCP Server" => "Servidor DHCP",
 "DHCP Client List" => "Lista de Clientes DHCP",
 "Assign IP Address to Host" => "Atribuir Endereço IP para Host",
