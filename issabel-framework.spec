@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 56
+Release: 59
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -193,7 +193,7 @@ touch       $RPM_BUILD_ROOT/var/log/issabel/audit.log
 mkdir -p /usr/share/issabel/module_installer/%{name}-%{version}-%{release}/
 touch /usr/share/issabel/module_installer/%{name}-%{version}-%{release}/preversion_framework.info
 if [ $1 -eq 2 ]; then
-    rpm -q --queryformat='%{VERSION}-%{RELEASE}' %{name} > /usr/share/issabel/module_installer/%{name}-%{version}-%{release}/preversion_framework.info
+    rpm -q --queryformat='%%{VERSION}-%%{RELEASE}' %{name} > /usr/share/issabel/module_installer/%{name}-%{version}-%{release}/preversion_framework.info
 fi
 
 # if not exist add the asterisk group
@@ -262,7 +262,7 @@ sed --in-place "s,da893kasdfam43k29akdkfaFFlsdfhj23rasdf,$RANDKEY,g" /var/www/ht
 
 if [ $1 -eq 1 ]; then #install
     # The installer database
-    issabelversion=`rpm -q --queryformat='%{VERSION}-%{RELEASE}' issabel`
+    issabelversion=`rpm -q --queryformat='%%{VERSION}-%%{RELEASE}' issabel`
     verifyVersion=`echo $issabelversion | grep -oE "^[0-9]+(\.[0-9]+){1,2}-[0-9]+$"`
     if [ "$verifyVersion" == "" ]; then
 	issabel-dbprocess "install" "$pathModule/setup/db"
@@ -437,6 +437,27 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-59
+- Escape the rpm queryformat used to record the pre-version on upgrade.
+  The VERSION and RELEASE macros were expanded at build time, so %pre always
+  wrote the new version and issabel-dbprocess skipped every version_sql
+  migration. They are now escaped so rpm expands them at run time.
+
+* Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-58
+- Vendor Chart.js 4.5.1 in the modern theme (js/chart.umd.min.js) so any module
+  can use one shared MIT charting library instead of bundling its own copy.
+- Add the sibling assets needed for the reports/dashboard charts:
+  chartjs-plugin-datalabels 2.2.0, moment 2.30.1 and chartjs-adapter-moment
+  1.0.0, plus a small issabel-charts.js helper that applies the theme colours
+  (light/dark) to the Chart.js defaults.
+- Keep the upstream license texts under themes/modern/vendor-licenses/.
+
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-57
+- Group Permissions: make the expand/collapse toggles more prominent with an
+  outlined eye-catching button and a larger chevron (fs-5), and align the
+  resource and custom-privilege checkboxes with the row text by dropping the
+  empty label and using align-middle.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-56
 - Group Permissions: replace the jQuery UI expand/collapse and checkbox icons
   with the theme kit. Branch nodes now use a Tabler chevron (ti-chevron-down
