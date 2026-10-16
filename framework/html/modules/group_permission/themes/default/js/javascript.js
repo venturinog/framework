@@ -1,48 +1,17 @@
 $(document).ready(function() {
-    // Acción para el botón de expandir y colapsar
-    $('button.resource-branch-manip').button({
-        icons: {
-            primary: 'ui-icon-minusthick'
-        },
-        text: false
-    }).click(function(event) {
+    // Botón de expandir/colapsar de los nodos con hijos. El icono refleja el
+    // estado: chevron abajo = expandido, chevron derecha = colapsado.
+    $('button.resource-branch-manip').click(function(event) {
         event.preventDefault();
         var tr_button = $(this).parents('tr').first();
-        if ($(this).children('span').hasClass('ui-icon-minusthick')) {
+        if ($(this).find('i').hasClass('ti-chevron-down')) {
             collapseChildren(tr_button);
         } else {
             expandChildren(tr_button);
         }
     });
 
-    $('input[type=checkbox][name="resource_access[]"], input[type=checkbox][name="privileges[]"]').each(function(index, element) {
-        // Decorar los checkbox según cómo estén seteados
-        $(this).button({
-            icons: {
-                primary: $(this).is(':checked') ? 'ui-icon-check' : 'ui-icon-blank'
-            },
-            text: false
-        });
-    });
-    $('input[type=checkbox][name="privileges[]"]').click(function(event) {
-        // Actualizar el icono según el nuevo estado
-        $(this).button({
-            icons: {
-                primary: $(this).is(':checked') ? 'ui-icon-check' : 'ui-icon-blank'
-            },
-            text: false
-        });
-    });
-
     $('input[type=checkbox][name="resource_access[]"]').click(function(event) {
-        // Actualizar el icono según el nuevo estado
-        $(this).button({
-            icons: {
-                primary: $(this).is(':checked') ? 'ui-icon-check' : 'ui-icon-blank'
-            },
-            text: false
-        });
-
         // Actualizar la cuenta de módulos activos
         var curmodule_id = $(this).parent('td').parent('tr').find('input[name=id]').val();
         var parentmodule_id;
@@ -64,9 +33,10 @@ function expandChildren(tr_button)
     $('input[name=idparent][value='+resource_id+']').parent('td').parent('tr').each(function () {
         $(this).show();
     });
-    tr_button.find('button > span')
-        .removeClass('ui-icon-plusthick')
-        .addClass('ui-icon-minusthick');
+    tr_button.find('button > i')
+        .removeClass('ti-chevron-right')
+        .addClass('ti-chevron-down');
+    tr_button.find('button').attr('aria-expanded', 'true');
 }
 
 function collapseChildren(tr_button)
@@ -77,9 +47,10 @@ function collapseChildren(tr_button)
         $(this).hide();
     });
 
-    tr_button.find('button > span')
-        .removeClass('ui-icon-minusthick')
-        .addClass('ui-icon-plusthick');
+    tr_button.find('button > i')
+        .removeClass('ti-chevron-down')
+        .addClass('ti-chevron-right');
+    tr_button.find('button').attr('aria-expanded', 'false');
 }
 
 function updateEnabledCount(curmodule_id)
