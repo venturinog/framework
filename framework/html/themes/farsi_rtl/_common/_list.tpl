@@ -172,15 +172,6 @@
                 </tr>
             {/if}
         </tbody>
-            {if $numData > 3}
-        <tfoot>
-                <tr>
-                    {section name=columnNum loop=$numColumns start=0 step=1}
-                    <th>{$header[$smarty.section.columnNum.index].name}&nbsp;</th>
-                    {/section}
-                </tr>
-        </tfoot>
-            {/if}
         </table>
     {*</div>*}
 
