@@ -66,9 +66,9 @@ class paloSantoNavGrid extends paloSantoNavigationBase
         $total = $enabled = 0;
 
         $buttontag = '<button type="button" '
-            .'class="btn btn-sm btn-icon btn-ghost-secondary resource-branch-manip level-'.($nlevel+1).'" '
+            .'class="btn btn-sm btn-icon btn-outline-secondary resource-branch-manip level-'.($nlevel+1).'" '
             .'aria-expanded="true">'
-            .'<i class="ti ti-chevron-down"></i></button>';
+            .'<i class="ti ti-chevron-down fs-5"></i></button>';
         $idparenttag = is_null($idparent)
             ? ''
             : '<input type="hidden" name="idparent" value="'.$idparent.'" />';
@@ -78,14 +78,13 @@ class paloSantoNavGrid extends paloSantoNavigationBase
                 ? 'disabled="disabled"' : '';
             $checktag = '<input '.
                 'type="checkbox" '.
-                'class="form-check-input" '.
+                'class="form-check-input align-middle" '.
                 'id="'.$idcheck.'" '.
                 'name="resource_access[]" '.
                 'value="'.$children[$key]['id'].'" '.
                 'aria-label="'.htmlspecialchars(_tr($children[$key]['Name']), ENT_COMPAT, 'UTF-8').'" '.
                 $disabledattr.
-                (in_array('access', $children[$key]['actions']) ? 'checked' : '').' />'.
-                '<label class="form-check-label" for="'.$idcheck.'">&nbsp;</label>';
+                (in_array('access', $children[$key]['actions']) ? 'checked' : '').' />';
             $idtag = $idparenttag.
                 '<input type="hidden" name="id" value="'.$children[$key]['id'].'"/>';
             $tupla = array(
@@ -400,9 +399,9 @@ function assignCustomPrivileges($smarty, $module_name, $local_templates_dir)
     foreach ($privlist as $tupla) {
         $idcheck = 'resource-privilege-'.$tupla['privilege'];
         $arrData[] = array(
-            '<input type="checkbox" class="form-check-input" name="privileges[]" id="'.$idcheck.'" value="'.$tupla['id'].'" '.
+            '<input type="checkbox" class="form-check-input align-middle" name="privileges[]" id="'.$idcheck.'" value="'.$tupla['id'].'" '.
                 'aria-label="'.htmlentities($tupla['privilege'], ENT_COMPAT, 'UTF-8').'" '.
-                (isset($currpriv[$tupla['id']]) ? 'checked' : '').' /><label class="form-check-label" for="'.$idcheck.'">&nbsp;</label>',
+                (isset($currpriv[$tupla['id']]) ? 'checked' : '').' />',
             htmlentities($tupla['privilege'], ENT_COMPAT, 'UTF-8'),
             htmlentities($tupla['desc_privilege'], ENT_COMPAT, 'UTF-8'),
         );
