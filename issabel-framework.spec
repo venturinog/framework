@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 54
+Release: 55
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,34 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-55
+- Users, Groups and Group Permissions: align the pages with the module style
+  guide. Per-field server validation mapped by field name (not label) with
+  is-invalid/form-control preserved and invalid-feedback in the templates, plus
+  client-side feedback wrapped in {literal} with Cancel exempt. Groups view mode
+  now renders plain text (readonly grid) instead of disabled inputs, and both
+  forms gained the iss-reveal entry animation. Group Permissions filter uses the
+  theme card grid, and the missing _tr() strings were registered in en.lang/es.lang.
+- userlist: fix listUsers() call missing arguments in the no-permission branch
+  (fatal in PHP 8), and translate the hardcoded Spanish DB/ACL bootstrap errors.
+- CSRF: declare the read-only GET navigations (new, edit, edit_userExtension,
+  assigncustom) so they no longer pollute audit.log and do not break under
+  enforce mode.
+- userlist: make the Save and Cancel buttons of the user form return to the
+  listing. Cancel was never handled and simply re-rendered the form, and the
+  post-save redirect dropped the tabs iframe context (rawmode/iss_instance) so
+  the listing was not restored in the tab. A return URL helper keeps that
+  context, and a plugin failure without a message now surfaces a generic one.
+- Users and Groups forms: switch the field feedback to live validation. Fields
+  now turn green as soon as they are valid while typing, the stale is-invalid
+  from a previous submit is cleared, and an empty field only turns red after it
+  loses focus (or on submit). The password mismatch is highlighted live on the
+  confirm field.
+- Grid: drop the <tfoot> that repeated the column headers at the bottom of the
+  table when a list had more than three rows; it showed up as a stray last row
+  (for example, a fourth group). Removed in the modern, tenant and farsi_rtl
+  list templates.
+
 * Thu Oct 15 2026 Issabel Foundation <info@issabel.org> - 6.0.0-54
 - Registration: add the Tabler 'contract' icon to the register link in the modern
   theme user menu. base.js and the registration module rewrote the whole anchor
