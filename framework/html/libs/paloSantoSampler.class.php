@@ -168,4 +168,70 @@ SQL_GRAPH_LINES;
         }
         return true;
     }
+
+    // -----------------------------------------------------------------
+    //  Agregados de largo plazo (samples_rollup). Ver DASHBOARDtodo.md §15.
+    // -----------------------------------------------------------------
+
+    const ROLLUP_HOURLY = 3600;
+    const ROLLUP_DAILY  = 86400;
+
+    /**
+     * Upsert incremental del bucket (hora o día) de una línea. Mantiene avg,
+     * vmin, vmax y cnt en marcha, así que no depende de las muestras crudas.
+     *
+     * @param int $resolution  3600 (hora) o 86400 (día)
+     */
+    function upsertRollup($idLine, $resolution, $timestamp, $value)
+    {
+        $this->errMsg='';
+        if (is_null($this->_db)) return false;
+        $resolution = (int)$resolution;
+        if ($resolution <= 0) { $this->errMsg = 'invalid resolution'; return false; }
+        $bucket = ((int)floor($timestamp / $resolution)) * $resolution;
+
+        $query = 'INSERT INTO samples_rollup (id_line, resolution, bucket_ts, avg, vmin, vmax, cnt)
+                  VALUES (?, ?, ?, ?, ?, ?, 1)
+                  ON CONFLICT(id_line, resolution, bucket_ts) DO UPDATE SET
+                      avg  = ((avg * cnt) + excluded.avg) / (cnt + 1),
+                      vmin = MIN(vmin, excluded.vmin),
+                      vmax = MAX(vmax, excluded.vmax),
+                      cnt  = cnt + 1';
+        $bExito = $this->_db->genQuery($query,
+            array($idLine, $resolution, $bucket, $value, $value, $value));
+        if (!$bExito) { $this->errMsg = $this->_db->errMsg; return false; }
+        return true;
+    }
+
+    /**
+     * Lectura de agregados de una línea en un rango.
+     * @return array  [{timestamp, value, vmin, vmax, cnt}]
+     */
+    function getRollup($idLine, $resolution, $from, $to)
+    {
+        $this->errMsg='';
+        $query = 'SELECT bucket_ts AS timestamp, avg AS value, vmin, vmax, cnt
+                  FROM samples_rollup
+                  WHERE id_line = ? AND resolution = ? AND bucket_ts >= ? AND bucket_ts <= ?
+                  ORDER BY bucket_ts';
+        $arrayResult = $this->_db->fetchTable($query, TRUE,
+            array($idLine, (int)$resolution, $from, $to));
+        if (!$arrayResult) {
+            $this->errMsg = $this->_db->errMsg;
+            return array();
+        }
+        return $arrayResult;
+    }
+
+    /** Borra los buckets de una resolución anteriores al timestamp indicado. */
+    function deleteRollupsBefore($resolution, $timestamp)
+    {
+        $this->errMsg='';
+        if (empty($timestamp)) return false;
+        $bExito = $this->_db->genQuery(
+            'DELETE FROM samples_rollup WHERE resolution = ? AND bucket_ts <= ?',
+            array((int)$resolution, $timestamp));
+        if (!$bExito) { $this->errMsg = $this->_db->errMsg; return false; }
+        return true;
+    }
 }

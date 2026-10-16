@@ -101,4 +101,26 @@ $oSampler->insertSample(9, $timestamp, $counter_channels_local);
 // Delete old data
 $timestampLimiteBorrarData = $timestamp - 26 * (60 * 60);
 $oSampler->deleteDataBeforeThisTimestamp($timestampLimiteBorrarData);
+
+// Agregados de largo plazo: se actualiza el bucket de la hora y del día actuales
+// (así las tendencias de 7/30 días no dependen del crudo, que solo dura 26 h).
+$arrRollup = array(
+    1 => $simCalls,
+    2 => $cpuUsage,
+    3 => $memUsage,
+    4 => $counter_channels_total,
+    5 => $counter_channels_dahdi,
+    6 => $counter_channels_sip,
+    7 => $counter_channels_iax,
+    8 => $counter_channels_h323,
+    9 => $counter_channels_local,
+);
+foreach ($arrRollup as $idLine => $valor) {
+    $oSampler->upsertRollup($idLine, paloSampler::ROLLUP_HOURLY, $timestamp, $valor);
+    $oSampler->upsertRollup($idLine, paloSampler::ROLLUP_DAILY,  $timestamp, $valor);
+}
+
+// Poda de agregados: 90 días por hora, 2 años por día.
+$oSampler->deleteRollupsBefore(paloSampler::ROLLUP_HOURLY, $timestamp - 90 * 86400);
+$oSampler->deleteRollupsBefore(paloSampler::ROLLUP_DAILY,  $timestamp - 730 * 86400);
 ?>

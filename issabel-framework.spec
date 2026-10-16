@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 59
+Release: 60
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-60
+- Sampler: add hourly and daily aggregates (samples_rollup) so long-term trends
+  (7/30 days) can be shown without keeping months of raw 5-minute samples.
+  sampler.php now upserts the current hour/day bucket and prunes the aggregates
+  (hourly ~90 days, daily ~2 years), while raw samples keep their ~26 h window.
+
 * Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-59
 - Escape the rpm queryformat used to record the pre-version on upgrade.
   The VERSION and RELEASE macros were expanded at build time, so %pre always
