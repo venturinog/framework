@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 66
+Release: 67
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-67
+- Theme: let the alert primitive hold the dismiss button. The dismiss
+  helper is placed at the corner, so the alert has to be the positioned
+  ancestor, like the legacy alert variant already was.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-66
 - Language: add the "The operation could not be completed." key to the
   global language files. The message is generic and two modules needed it.

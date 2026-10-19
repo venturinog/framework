@@ -334,7 +334,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 /* .iss-alert es la familia: base + un modificador de severidad. El texto
    usa el "-fg" de cada variante, no --iss-text, para que el tinte y el
    texto conserven su contraste en claro y en oscuro. */
-.iss-alert { margin: 0 0 12px; padding: 10px 14px; border: 1px solid transparent; border-radius: var(--iss-radius); background: var(--iss-surface); color: var(--iss-text); }
+.iss-alert { margin: 0 0 12px; padding: 10px 14px; border: 1px solid transparent; border-radius: var(--iss-radius); background: var(--iss-surface); color: var(--iss-text); position: relative; }
 .iss-alert--error { background: var(--iss-alert-error-bg); border-color: var(--iss-alert-error-border); color: var(--iss-alert-error-fg); }
 .iss-alert--success { background: var(--iss-alert-success-bg); border-color: var(--iss-alert-success-border); color: var(--iss-alert-success-fg); }
 .iss-alert--warning { background: var(--iss-alert-warning-bg); border-color: var(--iss-alert-warning-border); color: var(--iss-alert-warning-fg); }
