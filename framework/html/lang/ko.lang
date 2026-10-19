@@ -42,6 +42,7 @@ $arrLang=array(
 "The following fields contain errors"=>"다음 필드는 에러을 나타냅니다.",
 "Save"=>"저장",
 "Required field"=>"요구된 필드",
+"The operation could not be completed." => "작업을 완료할 수 없습니다.",
 "%s is required" => "%s은(는) 필수입니다",
 "%s is invalid" => "%s이(가) 유효하지 않습니다",
 "Apply changes"=>"수정사항 적용",

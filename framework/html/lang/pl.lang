@@ -46,6 +46,7 @@ $arrLang=array(
 "The following fields contain errors"=>"Następujące pola zawierają błędy",
 "Save"=>"Zachowaj",
 "Required field"=>"Wymagane pole",
+"The operation could not be completed." => "Nie udało się ukończyć operacji.",
 "%s is required" => "%s jest wymagane",
 "%s is invalid" => "%s jest nieprawidłowe",
 "Apply changes"=>"Zastosuj wykonane zmiany",

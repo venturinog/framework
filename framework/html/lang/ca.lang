@@ -60,6 +60,7 @@ $arrLang=array(
 "The following fields contain errors"=>"Els següents camps contenen errors",
 "Save"=>"Guardar",
 "Required field"=>"Camp requerit",
+"The operation could not be completed." => "No s'ha pogut completar l'operació.",
 "%s is required" => "%s és obligatori",
 "%s is invalid" => "%s no és vàlid",
 "Apply changes"=>"Guardar els canvis",

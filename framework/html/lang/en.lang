@@ -57,6 +57,7 @@ $arrLang=array(
 
 
 "Required field" => "Required field",
+"The operation could not be completed." => "The operation could not be completed.",
 "%s is required" => "%s is required",
 "%s is invalid" => "%s is invalid",
 "Cancel" => "Cancel",

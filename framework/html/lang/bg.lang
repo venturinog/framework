@@ -46,6 +46,7 @@ $arrLang=array(
 "Change" => "Промени",
 "Title" => "Име",
 "Required field" => "Задължителни полета",
+"The operation could not be completed." => "Операцията не можа да бъде завършена.",
 "%s is required" => "%s е задължително",
 "%s is invalid" => "%s е невалидно",
 "Cancel" => "Отказ",

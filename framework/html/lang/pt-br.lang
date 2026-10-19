@@ -45,6 +45,7 @@ $arrLang=array(
 "Save"=>"Salvar",
 "Edit Network Parameters"=>"Editar Config. de Rede",
 "Required field"=>"Campo Requerido",
+"The operation could not be completed." => "Não foi possível concluir a operação.",
 "%s is required" => "%s é obrigatório",
 "%s is invalid" => "%s é inválido",
 "Apply changes"=>"Aplicar Modificações",

@@ -46,6 +46,7 @@ $arrLang=array(
 "The following fields contain errors"=>"Slijedeće polje sadržava pogreške",
 "Save"=>"Snimi",
 "Required field"=>"Obvezatno polje",
+"The operation could not be completed." => "Radnju nije bilo moguće dovršiti.",
 "%s is required" => "%s je obavezno",
 "%s is invalid" => "%s nije ispravno",
 "Apply changes"=>"Primjeni izmjene",

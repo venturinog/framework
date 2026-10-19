@@ -58,6 +58,7 @@ $arrLang=array(
  
  
 "Required field" => "Gerekli alan",
+"The operation could not be completed." => "İşlem tamamlanamadı.",
 "%s is required" => "%s zorunludur",
 "%s is invalid" => "%s geçersizdir",
 "Cancel" => "İptal",

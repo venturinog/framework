@@ -44,6 +44,7 @@ $arrLang=array(
 "Save"=>"保存",
 "Edit Network Parameters"=>"ネットワークパラメータの編集",
 "Required field"=>"必須フィールド",
+"The operation could not be completed." => "操作を完了できませんでした。",
 "%s is required" => "%s は必須です",
 "%s is invalid" => "%s が無効です",
 "Apply changes"=>"変更の適用",

@@ -46,6 +46,7 @@ $arrLang=array(
 "The following fields contain errors" => "Наступні поля містять помилки",
 "Save" => "Зберегти",
 "Required field" => "Обов'язкове поле",
+"The operation could not be completed." => "Не вдалося завершити операцію.",
 "%s is required" => "%s обовʼязково",
 "%s is invalid" => "%s невірно",
 "Apply changes" => "Застосувати Зміни",

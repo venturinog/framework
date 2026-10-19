@@ -47,6 +47,7 @@ $arrLang=array(
 "The following fields contain errors" => "Τα ακόλουθα πεδία περιέχουν λάθη",
 "Save" => "Αποθήκευση",
 "Required field" => "Απαιτούμενα Πεδία",
+"The operation could not be completed." => "Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας.",
 "%s is required" => "%s είναι υποχρεωτικό",
 "%s is invalid" => "%s δεν είναι έγκυρο",
 "Apply changes" => "Εφαρμογή Αλλαγών",

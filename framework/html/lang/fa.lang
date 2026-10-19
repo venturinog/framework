@@ -57,6 +57,7 @@ $arrLang=array(
 "Load Module" => "بارگزاري ماژول",
 
 "Required field" => "فيلد مورد نياز",
+"The operation could not be completed." => "عملیات تکمیل نشد.",
 "%s is required" => "%s الزامی است",
 "%s is invalid" => "%s نامعتبر است",
 "Cancel" => "انصراف",

@@ -42,6 +42,7 @@ $arrLang=array(
 "The following fields contain errors" => "Следующие поля содержат ошибки",
 "Save" => "Сохранить",
 "Required field" => "Обязательное поле",
+"The operation could not be completed." => "Не удалось завершить операцию.",
 "%s is required" => "%s обязательно",
 "%s is invalid" => "%s неверно",
 "Apply changes" => "Применить изменения",
