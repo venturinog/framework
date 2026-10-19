@@ -30,6 +30,28 @@
   --iss-text-dim: color-mix(in oklab, var(--tblr-body-color) 52%, transparent);
   --iss-brand-ink: var(--iss-primary);
 
+  /* Avisos: tinte + borde + texto. El "-fg" va aparte del fondo porque el
+     texto dentro de un tinte necesita su propio contraste, no el de la
+     superficie (si no, en modo oscuro queda claro sobre claro). */
+  --iss-alert-error-bg: #fff5f5;
+  --iss-alert-error-border: #ffc9c9;
+  --iss-alert-error-fg: var(--iss-text);
+  --iss-alert-success-bg: #f0fdf4;
+  --iss-alert-success-border: #bbf7d0;
+  --iss-alert-success-fg: var(--iss-text);
+  --iss-alert-warning-bg: #fff6d9;
+  --iss-alert-warning-border: #f0d489;
+  --iss-alert-warning-fg: var(--iss-text);
+  --iss-alert-info-bg: #eff6ff;
+  --iss-alert-info-border: #bfdbfe;
+  --iss-alert-info-fg: var(--iss-text);
+
+  /* Severidad: bordes y puntos de estado (Health Center, muestreos) */
+  --iss-sev-ok: #2fb344;
+  --iss-sev-warning: #f59f00;
+  --iss-sev-critical: #d63939;
+  --iss-sev-unknown: var(--tblr-secondary-color, #74838f);
+
   /* Recolorear Tabler/Bootstrap a la marca */
   --bs-primary: #572364;
   --bs-primary-rgb: 87, 35, 100;
@@ -42,6 +64,21 @@
 
 [data-bs-theme="dark"] {
   --iss-brand-ink: #c8a6ec;
+
+  /* Avisos: tintes oscuros con el texto claro del tema */
+  --iss-alert-error-bg: #2a1a1a;
+  --iss-alert-error-border: #5a2a2a;
+  --iss-alert-success-bg: #10231a;
+  --iss-alert-success-border: #1f5133;
+  --iss-alert-warning-bg: #2a2210;
+  --iss-alert-warning-border: #5a4a1a;
+  --iss-alert-info-bg: #101c2a;
+  --iss-alert-info-border: #1f3a5a;
+
+  /* Severidad: los tonos medios del modo claro se apagan sobre fondo oscuro */
+  --iss-sev-ok: #4ade80;
+  --iss-sev-warning: #fbbf24;
+  --iss-sev-critical: #f87171;
 }
 
 /* ------------------------------ Base --------------------------------- */
@@ -293,8 +330,25 @@ body.iss-collapsed .iss-sidebar { display: none; }
 /* ------------------------------ Content ------------------------------ */
 .iss-content { padding: 22px 24px 40px; flex: 1 1 auto; }
 
-.iss-alert-error { margin: 16px 24px 0; background: #fff5f5; border: 1px solid #ffc9c9; border-radius: var(--iss-radius); padding: 12px 16px; position: relative; }
-[data-bs-theme="dark"] .iss-alert-error { background: #2a1a1a; border-color: #5a2a2a; }
+/* ------------------------------ Avisos ------------------------------- */
+/* .iss-alert es la familia: base + un modificador de severidad. El texto
+   usa el "-fg" de cada variante, no --iss-text, para que el tinte y el
+   texto conserven su contraste en claro y en oscuro. */
+.iss-alert { margin: 0 0 12px; padding: 10px 14px; border: 1px solid transparent; border-radius: var(--iss-radius); background: var(--iss-surface); color: var(--iss-text); }
+.iss-alert--error { background: var(--iss-alert-error-bg); border-color: var(--iss-alert-error-border); color: var(--iss-alert-error-fg); }
+.iss-alert--success { background: var(--iss-alert-success-bg); border-color: var(--iss-alert-success-border); color: var(--iss-alert-success-fg); }
+.iss-alert--warning { background: var(--iss-alert-warning-bg); border-color: var(--iss-alert-warning-border); color: var(--iss-alert-warning-fg); }
+.iss-alert--info { background: var(--iss-alert-info-bg); border-color: var(--iss-alert-info-border); color: var(--iss-alert-info-fg); }
+.iss-alert__title { font-weight: 600; margin-bottom: 4px; }
+.iss-alert__content { }
+.iss-alert__list { margin: 6px 0 0 18px; padding: 0; }
+.iss-alert__dismiss { position: absolute; top: 8px; right: 10px; cursor: pointer; }
+
+/* Variante heredada: la usa el banner superior del shell (_common/index.tpl).
+   Se conserva su margen propio; no la migres a .iss-alert sin revisar. */
+.iss-alert-error { margin: 16px 24px 0; background: var(--iss-alert-error-bg); border: 1px solid var(--iss-alert-error-border); border-radius: var(--iss-radius); padding: 12px 16px; position: relative; color: var(--iss-alert-error-fg); }
+.iss-alert-error__title { font-weight: 600; margin-bottom: 4px; }
+.iss-alert-error__content { }
 .iss-alert-error__dismiss { position: absolute; top: 8px; right: 10px; cursor: pointer; }
 
 .iss-footer { margin-top: auto; padding: 14px 24px; color: var(--iss-text-dim); font-size: 12.5px; border-top: 1px solid var(--iss-border); }

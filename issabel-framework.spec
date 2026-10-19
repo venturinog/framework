@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 62
+Release: 63
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,19 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-63
+- Theme: add the alert primitives to the Modern theme. The family is
+  .iss-alert plus the .iss-alert--error, --success, --warning and --info
+  modifiers, with __title, __content, __list and __dismiss helpers. Each
+  variant has its own background, border and foreground tokens, so a tinted
+  alert keeps its contrast in light and in dark mode; the old .iss-alert-error
+  kept a hardcoded light background and turned into light text on a light
+  background when the theme switched to dark.
+- Theme: define .iss-alert-error__title and .iss-alert-error__content, which
+  the network parameters module already used but the stylesheet never had.
+- Theme: add the severity tokens (--iss-sev-ok, --iss-sev-warning,
+  --iss-sev-critical, --iss-sev-unknown) for score borders and status dots.
+
 * Fri Oct 16 2026 Issabel Foundation <info@issabel.org> - 6.0.0-62
 - Menu: drop the "Hardware Detector" name from the supported languages. The
   module it referred to was removed from issabel-system 6.0.0-55.
