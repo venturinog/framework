@@ -32,6 +32,7 @@ require_once "$documentRoot/libs/misc.lib.php";
 require_once "$documentRoot/configs/default.conf.php";
 require_once "$documentRoot/libs/paloSantoJSON.class.php";
 require_once "$documentRoot/libs/paloSantoACL.class.php";
+require_once "$documentRoot/libs/issabelCsrf.class.php";
 
 load_default_timezone();
 
@@ -58,10 +59,12 @@ if(!empty($pACL->errMsg)){
 
 session_name("issabelSession");
 session_start();
+$bSesion = FALSE;
 if (isset($_SESSION['issabel_user']) && isset($_SESSION['issabel_pass'])) {
     $auth_user = $_SESSION['issabel_user'];
     $auth_md5pass = $_SESSION['issabel_pass'];
     $_SERVER['PHP_AUTH_USER'] = $_SESSION['issabel_user'];
+    $bSesion = TRUE;
 } elseif (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
     $auth_user = $_SERVER['PHP_AUTH_USER'];
     $auth_md5pass = md5($_SERVER['PHP_AUTH_PW']);
@@ -83,6 +86,40 @@ if(!$pACL->authenticateUser($auth_user, $auth_md5pass)){
     exit;
 }
 /*************End of authentication*******************************************/
+
+/*
+ * Protección CSRF.
+ *
+ * Sólo se exige token en las peticiones autenticadas con la sesión del
+ * navegador: es la credencial que viaja sola (la cookie) y la que puede
+ * usar otro sitio para actuar en nombre del usuario. Las peticiones con
+ * autenticación Basic son clientes de API, que mandan su credencial a
+ * propósito y no quedan expuestos a esto.
+ *
+ * El token llega en la cabecera X-Issabel-CSRF-Token que el navegador
+ * añade a todo AJAX de jQuery (libs/js/csrf.js), o en el campo del
+ * formulario con el mismo nombre.
+ */
+if ($bSesion) {
+    $sModo = issabelCsrf::mode();
+    if ($sModo !== 'off' && issabelCsrf::needsValidation() && !issabelCsrf::isExempt()) {
+        if (!issabelCsrf::validate()) {
+            if ($sModo === 'audit') {
+                if (function_exists('writeLOG')) {
+                    writeLOG('audit.log', 'CSRF-AUDIT REST '.$_SERVER['REQUEST_METHOD'].' '
+                        .$_SERVER['REQUEST_URI'].' (user='.$auth_user.')');
+                }
+            } else {
+                header('HTTP/1.1 403 Forbidden');
+                $json->set_status("ERROR");
+                $json->set_error("csrf_rejected");
+                $json->set_message(_tr('The request was rejected because its security token is missing or invalid. Reload the page and try again.'));
+                echo $json->createJSON();
+                exit;
+            }
+        }
+    }
+}
 
 //Verifico si se ha pasado una ruta hacia un recurso
 if(!isset($_SERVER["PATH_INFO"])){

@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 67
+Release: 68
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,15 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-68
+- Validate the CSRF token in the REST entry point. The entry point
+  authenticated the user but never checked the token, which the browser
+  already sends with every jQuery request, so another site could create,
+  change or delete calendar events with the session of the user. The token
+  is only required for the session authenticated requests: the Basic
+  authentication ones are API clients, which send their credential on
+  purpose.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-67
 - Theme: let the alert primitive hold the dismiss button. The dismiss
   helper is placed at the corner, so the alert has to be the positioned
