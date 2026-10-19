@@ -425,6 +425,7 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-grid { background: transparent; border-radius: var(--iss-radius); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
 .iss-grid__toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; background: var(--iss-surface); border: 1px solid var(--iss-border); border-bottom: 0; border-radius: var(--iss-radius) var(--iss-radius) 0 0; }
 .iss-grid__combo { display: flex; gap: 6px; align-items: center; }
+.iss-grid__combo-label { font-size: 12.5px; color: var(--iss-text-muted); white-space: nowrap; }
 .iss-grid__nav { display: flex; align-items: center; gap: 6px; color: var(--iss-text-muted); font-size: 13px; }
 .iss-page-input { width: 46px; text-align: center; border: 1px solid var(--iss-border); border-radius: 6px; padding: 3px 6px; background: var(--iss-surface); color: var(--iss-text); }
 .iss-navigation-arrow-active { color: var(--iss-brand-ink); text-decoration: none; }

@@ -25,6 +25,8 @@
                 </div>
             {elseif $accion.type eq 'combo'}
                 <div class="iss-grid__combo">
+                    {* La etiqueta se descartaba: sólo se usaba como value del botón, que es un icono sin texto *}
+                    {if !empty($accion.alt)}<label class="iss-grid__combo-label" for="{$accion.name}">{$accion.alt}</label>{/if}
                     <select name="{$accion.name}" id="{$accion.name}" class="form-select form-select-sm" {if !empty($accion.onchange)} onchange="{$accion.onchange}" {/if}>
                         {if !empty($accion.selected)}
                             {html_options options=$accion.arrOptions selected=$accion.selected}
@@ -33,7 +35,7 @@
                         {/if}
                     </select>
                     {if !empty($accion.task)}
-                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary"><i class="ti ti-search"></i></button>
+                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary" aria-label="{$accion.alt}"><i class="ti ti-search"></i></button>
                     {/if}
                 </div>
             {elseif $accion.type eq 'html'}

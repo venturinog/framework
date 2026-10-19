@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 68
+Release: 69
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-69
+- Show the label of the grid combo boxes. The label was passed as the value
+  of the submit button, which is an icon without text, so it never reached
+  the screen: the automatic backup and the automatic deletion of the backup
+  page were two selects with no idea of what they did. The text was already
+  there and already translated, only the grid was dropping it. The icon
+  button also gets an accessible name, which it did not have.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-68
 - Validate the CSRF token in the REST entry point. The entry point
   authenticated the user but never checked the token, which the browser
