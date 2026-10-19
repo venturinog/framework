@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 64
+Release: 65
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-65
+- Form: let a field definition add a class to the select widget. The widget
+  hardcoded the "form-select" class and ignored the input extra parameters,
+  because in that widget they hold the list of options, so a select could
+  not be marked as invalid.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-64
 - Language: add the "%s is required" and "%s is invalid" keys to the global
   language files. Six modules carried their own copy of the two keys, so a

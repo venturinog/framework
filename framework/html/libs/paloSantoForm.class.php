@@ -453,6 +453,11 @@ class paloForm
                 $sAttrMultiple = 'multiple="multiple"';
                 $sNombreSelect .= '[]';
             }
+            // Clase adicional (por ejemplo "is-invalid"). El <select> no usa
+            // INPUT_EXTRA_PARAM para los atributos, porque en ese widget es
+            // la lista de opciones.
+            $sClass = 'form-select';
+            if (isset($arrVars['CLASS']) && $arrVars['CLASS'] != '') $sClass .= ' '.$arrVars['CLASS'];
 
             if (count($listaOpts) <> count($listaOpts, COUNT_RECURSIVE)) {
                 $opciones="";
@@ -466,9 +471,10 @@ class paloForm
             }
 
             $strInput = sprintf(
-                '<select name="%s" id="%s" class="form-select" %s %s %s>%s</select>',
+                '<select name="%s" id="%s" class="%s" %s %s %s>%s</select>',
                 $sNombreSelect,
                 $sNombreSelect,
+                $sClass,
                 $sAttrMultiple,
                 (isset($arrVars['SIZE']) && $arrVars['SIZE'] != '')
                     ? sprintf('size="%s"', htmlentities($arrVars['SIZE'], ENT_COMPAT, 'UTF-8'))
