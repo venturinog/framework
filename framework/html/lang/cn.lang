@@ -41,6 +41,8 @@ $arrLang=array(
 "The following fields contain errors"=>"以下项目有误",
 "Save"=>"保存",
 "Required field"=>"必填项",
+"%s is required" => "%s 为必填项",
+"%s is invalid" => "%s 无效",
 "Apply changes"=>"改变生效",
 "Cancel"=>"取消",
 

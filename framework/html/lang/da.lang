@@ -45,6 +45,8 @@ $arrLang=array(
 "The following fields contain errors"=>"Følgende felter indeholder fejl",
 "Save"=>"Gem",
 "Required field"=>"Feltet skal udfyldes",
+"%s is required" => "%s er påkrævet",
+"%s is invalid" => "%s er ugyldig",
 "Apply changes"=>"Opdater systemet med de tilføjede ændringer",
 "Cancel"=>"Annuller",
 

@@ -57,6 +57,8 @@ $arrLang=array(
 "Load Module" => "بارگزاري ماژول",
 
 "Required field" => "فيلد مورد نياز",
+"%s is required" => "%s الزامی است",
+"%s is invalid" => "%s نامعتبر است",
 "Cancel" => "انصراف",
 "Apply changes" => "ثبت تغييرات",
 "Save" => "ذخيره",

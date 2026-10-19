@@ -54,6 +54,8 @@ $arrLang=array(
 
 
 "Required field" => "Campo obrigatório",
+"%s is required" => "%s é obrigatório",
+"%s is invalid" => "%s é inválido",
 "Cancel" => "Cancelar",
 "Apply changes" => "Aplicar alterações",
 "Save" => "Salvar",

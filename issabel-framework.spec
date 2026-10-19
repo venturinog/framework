@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 63
+Release: 64
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-64
+- Language: add the "%s is required" and "%s is invalid" keys to the global
+  language files. Six modules carried their own copy of the two keys, so a
+  module that validated a field had to add them again to be able to say which
+  field was wrong. The global file is the single source now.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-63
 - Theme: add the alert primitives to the Modern theme. The family is
   .iss-alert plus the .iss-alert--error, --success, --warning and --info

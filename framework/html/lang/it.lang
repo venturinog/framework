@@ -46,6 +46,8 @@ $arrLang=array(
 "The following fields contain errors" => "I seguenti campi contengono errori",
 "Save" => "Salva",
 "Required field" => "Campi Obbligatori",
+"%s is required" => "%s è obbligatorio",
+"%s is invalid" => "%s non è valido",
 "Apply changes" => "Applica le modifiche",
 "Cancel" => "Annulla",
 

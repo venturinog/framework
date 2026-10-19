@@ -58,6 +58,8 @@ $arrLang=array(
  
  
 "Required field" => "Gerekli alan",
+"%s is required" => "%s zorunludur",
+"%s is invalid" => "%s geçersizdir",
 "Cancel" => "İptal",
 "Apply changes" => "Değişiklikleri uygula",
 "Save" => "Kaydet",

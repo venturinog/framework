@@ -25,7 +25,6 @@ global $arrLangModule;
 $arrLangModule = array(
     "Create New User" => "Create New User",
     "Main Fields" => "Main Fields",
-    "%s is required" => "%s is required",
     "Database connection error" => "Database connection error",
     "ACL connection error" => "ACL connection error",
     "The user could not be saved completely" => "The user could not be saved completely",

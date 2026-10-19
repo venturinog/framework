@@ -41,6 +41,8 @@ $arrLang=array(
 "The following fields contain errors"=>"Följande fält innehåller fel",
 "Save"=>"Spara",
 "Required field"=>"Obligatoriskt fält",
+"%s is required" => "%s krävs",
+"%s is invalid" => "%s är ogiltigt",
 "Apply changes"=>"Tillämpa ändringar",
 "Cancel"=>"Avbryt",
 

@@ -22,7 +22,6 @@
   $Id: es.lang,v 1.7 2007/09/05 00:36:42 gcarrillo Exp $ */
 global $arrLangModule;
 $arrLangModule=array(
-"%s is required" => "%s es obligatorio",
 "Database connection error" => "Error de conexión a la base de datos",
 "ACL connection error" => "Error de conexión a la ACL",
 "Groups"=>"Grupos",

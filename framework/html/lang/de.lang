@@ -42,6 +42,8 @@ $arrLang=array(
 "The following fields contain errors"=>"folgende Felder enthalten Fehler",
 "Save"=>"Speichern",
 "Required field"=>"erforderliche Felder",
+"%s is required" => "%s ist erforderlich",
+"%s is invalid" => "%s ist ungültig",
 "Apply changes"=>"Anwenden",
 "Cancel"=>"Abbrechen",
 

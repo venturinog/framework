@@ -49,6 +49,8 @@ $arrLang=array(
 "The following fields contain errors" => "A következő mezők hibásak",
 "Save" => "Mentés",
 "Required field" => "Szükséges mező",
+"%s is required" => "%s kötelező",
+"%s is invalid" => "%s érvénytelen",
 "Apply changes" => "Módosítások alkalmazása",
 "Cancel" => "Mégsem",
 
