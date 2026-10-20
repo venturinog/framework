@@ -577,7 +577,7 @@ class paloForm
             $arrVars['INPUT_EXTRA_PARAM']['TIMELIB'] == 'bootstrap-datetimepicker') {
             $strInput = <<<DATETIME_PICKER_FIELD
 <div class="input-group date form_datetime" nowrap>
-    <input size="16" type="text" name="{$varName_escaped}" value="{$varValue_escaped}" class="form-control datepicker-input" readonly>
+    <input type="text" name="{$varName_escaped}" value="{$varValue_escaped}" class="form-control datepicker-input" readonly>
     <span class="input-group-text datepicker-button"><i class="ti ti-calendar"></i></span>
 </div>
 <script type="text/javascript">

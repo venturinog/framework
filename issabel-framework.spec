@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 72
+Release: 73
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-73
+- Remove the size attribute of the date and time field. It made the input take
+  its intrinsic width inside the input group, so the button of the calendar
+  fell to the line below.
+
 * Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-72
 - Remove the jQuery Migrate 1.2.1 script. It was written for jQuery 1.8 and
   below, it printed a warning on every page that was served in quirks mode,
