@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 73
+Release: 74
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,15 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-74
+- Raise the specificity of the jQuery UI rules of the Modern theme. The
+  jQuery UI theme defines .ui-widget-content, .ui-widget-header and the
+  .ui-state-* with the same specificity, so the order of the stylesheets
+  decided which one won: the dialog and the date picker came out with the
+  light colours of jQuery UI in the dark mode. The rules now win whatever
+  the order is, which also covers the pages that do not load the stylesheets
+  of the theme in the same order.
+
 * Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-73
 - Remove the size attribute of the date and time field. It made the input take
   its intrinsic width inside the input group, so the button of the calendar

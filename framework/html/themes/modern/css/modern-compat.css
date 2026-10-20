@@ -127,22 +127,26 @@
    Se re-mapean a los tokens del tema (claro/oscuro) sin tocar los módulos.
    ========================================================================= */
 
-/* --- jQuery UI (datepicker / dialog / widgets) --- */
+/* --- jQuery UI (datepicker / dialog / widgets) ---
+   El tema de jQuery UI define .ui-widget-content, .ui-widget-header y los
+   .ui-state-* con la misma especificidad que estas reglas, asi que el orden
+   de carga decidia cual ganaba. Estas van con la especificidad subida para
+   ganar siempre, en cualquier pagina y con cualquier orden. */
 .ui-widget { font-family: inherit; font-size: 1em; }
-.ui-widget-content { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); }
-.ui-widget-header { background: var(--iss-primary); color: #fff; border-color: var(--iss-primary); }
-.ui-state-default, .ui-widget-content .ui-state-default { background: var(--iss-surface-2); border-color: var(--iss-border); color: var(--iss-text); }
-.ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-hover { background: var(--iss-surface-2); border-color: var(--iss-ink); color: var(--iss-text); }
-.ui-state-active, .ui-widget-content .ui-state-active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
-.ui-state-highlight, .ui-widget-content .ui-state-highlight { background: var(--iss-primary-soft); border-color: var(--iss-primary-soft); color: var(--iss-ink); }
-.ui-datepicker { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); box-shadow: 0 10px 30px rgba(16, 24, 40, .22); padding: 6px; }
+.ui-widget.ui-widget-content { background: var(--iss-surface); color: var(--iss-text); border-color: var(--iss-border); }
+.ui-widget.ui-widget-header { background: var(--iss-primary); color: #fff; border-color: var(--iss-primary); }
+.ui-widget .ui-state-default, .ui-widget.ui-widget-content .ui-state-default { background: var(--iss-surface-2); border-color: var(--iss-border); color: var(--iss-text); }
+.ui-widget .ui-state-hover, .ui-widget .ui-state-focus, .ui-widget.ui-widget-content .ui-state-hover { background: var(--iss-surface-2); border-color: var(--iss-ink); color: var(--iss-text); }
+.ui-widget .ui-state-active, .ui-widget.ui-widget-content .ui-state-active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
+.ui-widget .ui-state-highlight, .ui-widget.ui-widget-content .ui-state-highlight { background: var(--iss-primary-soft); border-color: var(--iss-primary-soft); color: var(--iss-ink); }
+.ui-datepicker.ui-widget { background: var(--iss-surface); border: 1px solid var(--iss-border); border-radius: var(--iss-radius); box-shadow: 0 10px 30px rgba(16, 24, 40, .22); padding: 6px; }
 .ui-datepicker .ui-datepicker-header { background: var(--iss-surface-2); color: var(--iss-text); border: 0; }
 .ui-datepicker .ui-datepicker-title, .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next { color: var(--iss-text); }
 .ui-datepicker td span, .ui-datepicker td a { color: var(--iss-text); text-align: center; }
 .ui-datepicker .ui-state-default { background: transparent; border: 0; }
 .ui-datepicker .ui-state-hover { background: var(--iss-surface-2); }
 .ui-datepicker .ui-state-active { background: var(--iss-primary); color: #fff; }
-.ui-dialog { background: var(--iss-surface); border-color: var(--iss-border); }
+.ui-dialog.ui-widget { background: var(--iss-surface); border-color: var(--iss-border); }
 .ui-dialog .ui-dialog-titlebar { background: var(--iss-surface-2); color: var(--iss-text); border-color: var(--iss-border); }
 .ui-dialog .ui-dialog-buttonpane { background: var(--iss-surface-2); border-color: var(--iss-border); }
 
