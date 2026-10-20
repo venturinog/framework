@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 69
+Release: 71
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,28 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-71
+- Load the jQuery UI stylesheet before the stylesheets of the Modern theme.
+  The theme remaps the jQuery UI widgets in modern-compat.css, but those
+  rules have the same specificity as the ones of the jQuery UI theme, so the
+  theme was loading last and won: the dialog and the date picker came out
+  with the light colours of jQuery UI in the dark mode.
+- Drop the FullCalendar rules of the compatibility layer. They were written
+  for the class names of FullCalendar v1 and v4, and the agenda module now
+  uses v6, which is themed with its own CSS variables.
+
+* Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-70
+- Remove the jQuery Migrate 1.2.1 script. It was written for jQuery 1.8 and
+  below, it printed a warning on every page that was served in quirks mode,
+  and the only API that the code still took from it was $.browser, which was
+  used by a duplicated copy of the blockUI plugin.
+- Remove the duplicated blockUI plugin of the registration module. The
+  framework already ships its own version in libs/js/jquery, and that is the
+  one the code uses.
+- Modern theme: drop the FullCalendar compatibility rules. They were written
+  for the class names of FullCalendar v1 and v4, and the agenda module now
+  uses v6, which is themed with its own CSS variables.
+
 * Mon Oct 19 2026 Issabel Foundation <info@issabel.org> - 6.0.0-69
 - Show the label of the grid combo boxes. The label was passed as the value
   of the submit button, which is an icon without text, so it never reached

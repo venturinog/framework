@@ -17,10 +17,14 @@
     })();
   </script>
 
+  {* El CSS de jQuery UI va antes que el del tema: el tema Modern lo
+     remapea en modern-compat.css, y para que esas reglas ganen tienen que
+     cargarse despues. *}
+  {$HEADER_LIBS_JQUERY}
+
   {include file="_common/_head_assets.tpl"}
   <link rel="stylesheet" href="{$WEBPATH}themes/{$THEMENAME}/css/tabs.css?v={$ISSABEL_TABS_ASSET_VERSIONS.tabsCss}">
 
-  {$HEADER_LIBS_JQUERY}
   <script src="libs/js/base.js"></script>
   <script src="libs/js/iframe.js"></script>
   <script src="libs/js/csrf.js"></script>
