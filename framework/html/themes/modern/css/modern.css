@@ -551,6 +551,14 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-chart--tall { height: 420px; }
 .iss-chart--short { height: 220px; }
 
+/* Texto con color de severidad: registros de log, estados de un servicio, un
+ * enlace que avisa. Los tonos salen de los tokens --iss-sev-*, que ya cambian
+ * en modo oscuro, asi que el modulo no lleva ningun color escrito. */
+.iss-sev-ok { color: var(--iss-sev-ok); }
+.iss-sev-warning { color: var(--iss-sev-warning); }
+.iss-sev-critical { color: var(--iss-sev-critical); }
+.iss-sev-unknown { color: var(--iss-sev-unknown); }
+
 /* Consola de salida de comandos (ping, traceroute, logs): paleta oscura fija
  * para que el texto sea legible tanto en tema claro como oscuro. El documento
  * interno va en un iframe, así que trae su propia paleta; esta clase pinta el
