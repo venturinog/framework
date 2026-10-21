@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 79
+Release: 80
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-80
+- Drop the server side chart library. It required jpgraph, which does not
+  exist in Rocky Linux 10, and the last module that used it was the
+  destination distribution, which now draws its chart in the browser.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-79
 - Add the severity text classes to the Modern theme. The --iss-sev-*
   tokens were already there for the borders and the status dots, but
