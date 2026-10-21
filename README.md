@@ -64,6 +64,40 @@ The following requests are always exempt: the login and two-factor forms, the
 tab manager endpoint, the logout link and grid exports
 (`exportcsv`/`exportpdf`/`exportspreadsheet`).
 
+Charts
+----
+
+Chart.js is vendored once, in the theme, and modules must use that copy: never
+from a CDN and never from a copy inside the module.
+
+In `framework/html/themes/modern/js/`:
+
+* `chart.umd.min.js` — Chart.js 4.5.1 (MIT)
+* `chartjs-plugin-datalabels.min.js` — data labels plugin 2.2.0 (MIT)
+* `chartjs-adapter-moment.min.js` — date adapter, only for time scales (MIT)
+* `moment.min.js` — Moment.js, only for time scales (MIT)
+* `issabel-charts.js` — theme wrapper: applies the light/dark defaults and
+  exposes `IssabelCharts.colors()` and `IssabelCharts.palette(n)`
+
+Load them from the template of the view that draws the chart, not in the whole
+panel:
+
+```html
+<script src="{$WEBPATH}themes/{$THEMENAME}/js/chart.umd.min.js"></script>
+<script src="{$WEBPATH}themes/{$THEMENAME}/js/issabel-charts.js"></script>
+```
+
+The chart container needs a position and a height of its own, otherwise the
+canvas collapses or overflows the page. The theme provides the primitive:
+
+```html
+<div class="iss-chart"><canvas id="myChart"></canvas></div>
+```
+
+`iss-chart--tall` and `iss-chart--short` change the height. The categorical
+colours come from the theme tokens through `IssabelCharts.palette(n)`, so a
+module never writes a colour of its own.
+
 
 License
 ----

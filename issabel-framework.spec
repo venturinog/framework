@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 76
+Release: 77
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-77
+- Add the chart primitives to the Modern theme. The theme now provides
+  the .iss-chart container for Chart.js and IssabelCharts.palette(), which
+  reads the categorical colours from the theme tokens, so a module does not
+  have to carry a chart library or a colour of its own.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-76
 - Guard the theme list against a failed glob. glob() returns false on error
   and array_filter(false) is a fatal TypeError in PHP 8, which would leave

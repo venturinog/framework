@@ -57,8 +57,34 @@
             });
     }
 
+    /* Paleta categorica para graficas con varias series (torta, barras).
+     * Los colores se leen de las variables CSS del tema, de modo que el modulo
+     * no lleva ningun color escrito y la paleta sigue al tema. */
+    var PALETTE_TOKENS = [
+        '--iss-primary', '--tblr-blue', '--tblr-teal', '--tblr-orange',
+        '--tblr-pink', '--tblr-cyan', '--tblr-green', '--tblr-yellow',
+        '--tblr-indigo', '--tblr-purple', '--tblr-red', '--tblr-azure'
+    ];
+
+    function palette(count) {
+        var n = Math.max(1, parseInt(count, 10) || 1);
+        var styles = window.getComputedStyle(document.documentElement);
+        var colors = [];
+        for (var i = 0; i < PALETTE_TOKENS.length; i++) {
+            var value = styles.getPropertyValue(PALETTE_TOKENS[i]);
+            if (value) colors.push(value.trim());
+        }
+        /* Sin tokens resueltos (tema sin las variables) se usa el color de
+         * marca, que es el valor de --iss-primary en el tema Modern. */
+        if (colors.length === 0) colors.push('#572364');
+        var out = [];
+        for (var j = 0; j < n; j++) out.push(colors[j % colors.length]);
+        return out;
+    }
+
     window.IssabelCharts = {
         colors: colors,
+        palette: palette,
         applyTheme: applyTheme
     };
 })();

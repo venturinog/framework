@@ -544,6 +544,13 @@ body.iss-collapsed .iss-sidebar { display: none; }
   .iss-form__buttons { margin-left: 0; }
 }
 
+/* Contenedor de graficas (Chart.js). El lienzo necesita un contenedor con
+ * posicion relativa y altura propia: sin ellas, con maintainAspectRatio:false
+ * el grafico se aplasta o se sale de la pagina. */
+.iss-chart { position: relative; height: 320px; width: 100%; }
+.iss-chart--tall { height: 420px; }
+.iss-chart--short { height: 220px; }
+
 /* Consola de salida de comandos (ping, traceroute, logs): paleta oscura fija
  * para que el texto sea legible tanto en tema claro como oscuro. El documento
  * interno va en un iframe, así que trae su propia paleta; esta clase pinta el
