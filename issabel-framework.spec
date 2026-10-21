@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 75
+Release: 76
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-76
+- Guard the theme list against a failed glob. glob() returns false on error
+  and array_filter(false) is a fatal TypeError in PHP 8, which would leave
+  the theme selector unusable instead of reporting that no theme was found.
+
 * Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-75
 - Paint the module message inside the tab iframe. A module reported its
   result through mb_title and mb_message, which the full shell renders, but

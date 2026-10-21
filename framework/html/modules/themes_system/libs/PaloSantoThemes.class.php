@@ -75,7 +75,9 @@ class PaloSantoThemes
             }
         }
 
-        $r = array_map('basename', array_filter(glob("$dir/*"), '_getThemes_is_theme_dir_valid'));
+        $themes = glob("$dir/*");
+        if (!is_array($themes)) $themes = array();
+        $r = array_map('basename', array_filter($themes, '_getThemes_is_theme_dir_valid'));
         if (count($r) <= 0) {
             // Cómo está funcionando el GUI en estas condiciones?
             $this->errMsg = _tr("Themes not Found");
