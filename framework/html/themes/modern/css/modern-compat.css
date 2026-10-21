@@ -91,6 +91,20 @@
 .glyphicon-list-alt::before { content: "\f022"; }
 .glyphicon-list::before { content: "\f03a"; }
 .glyphicon-calendar::before { content: "\f073"; }
+.glyphicon-eye-open::before { content: "\f06e"; }
+.glyphicon-eye-closed::before { content: "\f070"; }
+.glyphicon-check::before { content: "\f00c"; }
+.glyphicon-ok::before { content: "\f00c"; }
+.glyphicon-unchecked::before { content: "\f0c8"; }
+.glyphicon-lock::before { content: "\f023"; }
+.glyphicon-plus::before { content: "\2b"; }
+.glyphicon-remove::before { content: "\f00d"; }
+.glyphicon-th::before { content: "\f00a"; }
+.glyphicon-time::before { content: "\f017"; }
+.glyphicon-chevron-left::before { content: "\f053"; }
+.glyphicon-chevron-right::before { content: "\f054"; }
+.glyphicon-arrow-left::before { content: "\f060"; }
+.glyphicon-arrow-right::before { content: "\f061"; }
 
 /* Listas y etiquetas inline BS3 */
 .list-inline { padding-left: 0; list-style: none; }

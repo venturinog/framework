@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 82
+Release: 81
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,14 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-81
+- Map the legacy glyphicons the modern theme does not carry. The theme
+  sent every unknown glyphicon to the question mark glyph, so the column
+  visibility, select all and select none buttons of the CDR report and of
+  the monitoring page showed a question mark instead of their icon. The
+  same happened to the lock of the first boot wizard and to the icons of
+  the extension module.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-82
 -- Stop the Apply button of the grid combo boxes from losing its label. The
   select took the whole width of the toolbar and the button was squeezed
