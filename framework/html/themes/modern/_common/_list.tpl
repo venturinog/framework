@@ -21,11 +21,11 @@
             {elseif $accion.type eq 'text'}
                 <div class="input-group input-group-sm iss-grid__text">
                     <input type="text" id="{$accion.name}" name="{$accion.name}" value="{$accion.value}" class="form-control" {if !empty($accion.onkeypress)} onkeypress="{$accion.onkeypress}" {/if} />
-                    <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-outline-primary"><i class="ti ti-search"></i></button>
+                    <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-outline-primary"><i class="ti ti-check"></i> {$GRID_APPLY}</button>
                 </div>
             {elseif $accion.type eq 'combo'}
                 <div class="iss-grid__combo">
-                    {* La etiqueta se descartaba: sólo se usaba como value del botón, que es un icono sin texto *}
+                    {* El rótulo se muestra junto al selector y además viaja como value del botón *}
                     {if !empty($accion.alt)}<label class="iss-grid__combo-label" for="{$accion.name}">{$accion.alt}</label>{/if}
                     <select name="{$accion.name}" id="{$accion.name}" class="form-select form-select-sm" {if !empty($accion.onchange)} onchange="{$accion.onchange}" {/if}>
                         {if !empty($accion.selected)}
@@ -35,7 +35,7 @@
                         {/if}
                     </select>
                     {if !empty($accion.task)}
-                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary" aria-label="{$accion.alt}"><i class="ti ti-search"></i></button>
+                        <button type="submit" name="{$accion.task}" value="{$accion.alt}" class="btn btn-sm btn-outline-primary"><i class="ti ti-check"></i> {$GRID_APPLY}</button>
                     {/if}
                 </div>
             {elseif $accion.type eq 'html'}

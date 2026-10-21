@@ -693,6 +693,10 @@ class paloSantoGrid {
         $this->smarty->assign("FILTER_GRID_HIDE"  , _tr("Hide Filter"));
         $this->smarty->assign("MORE_OPTIONS"      , _tr("More Options"));
         $this->smarty->assign("DOWNLOAD_GRID"     , _tr("Download"));
+        // Rótulo del botón que aplica el valor de un combo o de un campo de
+        // texto de la barra de herramientas. Antes era una lupa, que parecía
+        // un filtro en lugar de una acción.
+        $this->smarty->assign("GRID_APPLY"         , _tr("Apply changes"));
 
         // Protección CSRF: agrega el campo oculto al <form> de la grilla si la
         // plantilla no lo trae ya.
