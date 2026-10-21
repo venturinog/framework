@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 81
+Release: 82
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-82
+-- Stop the Apply button of the grid combo boxes from losing its label. The
+  select took the whole width of the toolbar and the button was squeezed
+  until the text was cut. The select now yields the space it does not need
+  and the combo wraps its lines, so the button stays whole with the longest
+  translation.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-81
 -- Give the grid toolbar combos a button that says what it does. The button
   that applies the value picked in a combo or in a text field was a

@@ -424,7 +424,12 @@ body.iss-collapsed .iss-sidebar { display: none; }
 /* ------------------------------ Grilla ------------------------------- */
 .iss-grid { background: transparent; border-radius: var(--iss-radius); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04); }
 .iss-grid__toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; background: var(--iss-surface); border: 1px solid var(--iss-border); border-bottom: 0; border-radius: var(--iss-radius) var(--iss-radius) 0 0; }
-.iss-grid__combo { display: flex; gap: 6px; align-items: center; }
+.iss-grid__combo { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; max-width: 100%; }
+/* El select cede el espacio sobrante al boton de aplicar, que no puede
+ * encogerse: si no, el texto del boton se corta (nowrap en .btn). El combo
+ * envuelve las lineas para que el boton baje entero en vez de salirse. */
+.iss-grid__combo .form-select { flex: 1 1 0; min-width: 0; max-width: 260px; }
+.iss-grid__combo .btn { flex-shrink: 0; }
 .iss-grid__combo-label { font-size: 12.5px; color: var(--iss-text-muted); white-space: nowrap; }
 .iss-grid__nav { display: flex; align-items: center; gap: 6px; color: var(--iss-text-muted); font-size: 13px; }
 .iss-page-input { width: 46px; text-align: center; border: 1px solid var(--iss-border); border-radius: 6px; padding: 3px 6px; background: var(--iss-surface); color: var(--iss-text); }
