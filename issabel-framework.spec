@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 74
+Release: 75
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,13 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-75
+- Paint the module message inside the tab iframe. A module reported its
+  result through mb_title and mb_message, which the full shell renders, but
+  with tabs enabled the module runs in its own iframe document: the message
+  was assigned and never seen. The iframe now renders the same notice as a
+  theme alert above the module content.
+
 * Tue Oct 20 2026 Issabel Foundation <info@issabel.org> - 6.0.0-74
 - Raise the specificity of the jQuery UI rules of the Modern theme. The
   jQuery UI theme defines .ui-widget-content, .ui-widget-header and the

@@ -29,6 +29,20 @@
 </head>
 <body class="iss-body iss-iframe-body">
   <input type="hidden" id="issabel_framework_module_id" value="{$ISSABEL_MODULE_ID|escape:html}">
+
+  {* Aviso del módulo. La shell completa (index.tpl) pinta mb_title/mb_message,
+     pero bajo el layout de pestañas el módulo vive en este iframe, que es un
+     documento aparte: sin esto el módulo asignaba el aviso y nunca se veía. *}
+  {if !empty($mb_message)}
+  <div class="iss-alert iss-alert--error" id="message_error">
+    {if !empty($mb_title)}
+    <div class="iss-alert__title">{$mb_title}</div>
+    {/if}
+    <div class="iss-alert__dismiss"><i class="ti ti-x" onclick="hide_message_error();"></i></div>
+    <div class="iss-alert__content">{$mb_message}</div>
+  </div>
+  {/if}
+
   {$CONTENT}
 </body>
 </html>
