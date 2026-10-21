@@ -71,6 +71,12 @@ class issabelCsrf
         // muta). Sin esto, un GET con action=edit genera ruido CSRF-AUDIT y
         // bajo modo enforce bloquearía la apertura del formulario.
         'new', 'edit', 'edituserextension', 'assigncustom',
+        // Verbos de solo lectura de los modulos de reportes: devuelven una
+        // imagen o una ventana con los datos del reporte, no guardan nada.
+        'grafic', 'grafic_queue', 'grafic_trunk', 'grafic_trunk2',
+        'image', 'graph', 'view_edit',
+        // Selector de numeros de telefono de la agenda: solo consulta.
+        'phone_numbers',
     );
 
     /**

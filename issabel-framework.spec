@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 77
+Release: 78
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-78
+- Declare the read-only report actions in the CSRF helper. The chart
+  and image requests of the report modules do not change any state, but
+  they carried an action that was not on the read-only list, so every page
+  load logged a CSRF-AUDIT entry and a mode of enforce would answer 403.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-77
 - Add the chart primitives to the Modern theme. The theme now provides
   the .iss-chart container for Chart.js and IssabelCharts.palette(), which
