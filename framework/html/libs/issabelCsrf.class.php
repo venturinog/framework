@@ -77,6 +77,9 @@ class issabelCsrf
         'image', 'graph', 'view_edit',
         // Selector de numeros de telefono de la agenda: solo consulta.
         'phone_numbers',
+        // Generador de codigos QR de My Extension: devuelve una imagen con la
+        // configuracion del softphone, no guarda nada.
+        'qrcode',
     );
 
     /**
