@@ -43,6 +43,17 @@
   </div>
   {/if}
 
+  {* Popup box global. ShowModalPopUP() de base.js opera sobre estos nodos,
+     y un modulo legacy que la llame desde dentro del iframe (addons, cloud
+     login del registro) quedaba en silencio porque la maqueta completa del
+     index.tpl si los trae y este documento del iframe, no. *}
+  <div class="neo-modal-issabel-popup-box">
+      <div class="neo-modal-issabel-popup-title"></div>
+      <div class="neo-modal-issabel-popup-close"><i class="ti ti-x"></i></div>
+      <div class="neo-modal-issabel-popup-content"></div>
+  </div>
+  <div class="neo-modal-issabel-popup-blockmask"></div>
+
   {$CONTENT}
 </body>
 </html>

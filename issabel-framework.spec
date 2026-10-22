@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 81
+Release: 83
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,18 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-83
+- Ship the global popup markup in the modules tab iframe. ShowModalPopUP()
+  from base.js drives the legacy popups (cloud login of the registration
+  module, and every module that calls it) through the
+  neo-modal-issabel-popup-* nodes. The full page of the modern theme had
+  them, but the iframe document of the tab layout did not, so any click
+  that opened one of those popups inside a module faded into empty nodes:
+  no error, no visual response. The iframe template now carries the same
+  nodes as the page shell.
+- Rebase the Release to 83: the grid combo button fixes were packaged as
+  6.0.0-82 while the spec kept Release 81, so the odd gap is consumed here.
+
 * Wed Oct 21 2026 Issabel Foundation <info@issabel.org> - 6.0.0-81
 - Map the legacy glyphicons the modern theme does not carry. The theme
   sent every unknown glyphicon to the question mark glyph, so the column
