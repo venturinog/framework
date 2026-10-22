@@ -100,7 +100,7 @@ function viewFormRegister($smarty, $module_name, $local_templates_dir, &$pDB, $a
     $smarty->assign("INFO_REGISTER", _tr("INFO_REGISTER"));
     $smarty->assign("REGISTER_RECOMMENDATION", _tr("By signing up you will be able to install addons and get professional support"));
     $smarty->assign("PATREON_LEGEND", _tr("Consider supporting the Issabel project on Patreon:"));
-    $smarty->assign("PATREON", "<a href='https://www.patreon.com/bePatron?u=25268006'><img src='modules/{$module_name}/images/patreon-small.png' height='40px' alt='Patreon.com/issabel' style='align:top;'></a>");
+    $smarty->assign("PATREON", "<a href='https://www.patreon.com/bePatron?u=25268006' target='_blank' rel='noopener'><img src='modules/{$module_name}/images/patreon-small.png' height='40px' alt='Patreon.com/issabel' style='align:top;'></a>");
 
     $user = isset($_SESSION['issabel_user']) ? $_SESSION['issabel_user'] : "";
 

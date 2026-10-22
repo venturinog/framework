@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 84
+Release: 85
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,20 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-85
+- Fix the Patreon block and the copyright note of the cloud login popup.
+  The Patreon legend had a position absolute variant centered at 50% of
+  the popup and the copyright note was pinned to its bottom, so both
+  escaped the content flow: at the modern theme heights the note landed
+  on top of the Patreon image instead of scrolling with the rest. Both
+  blocks now flow in place.
+- Grow the login popup to 450 px. 405 was the height the tenant theme
+  was tuned for; the modern controls run taller and the bottom of the
+  form was cut. All the popup login callers now agree on the same size.
+- Open the Patreon link in a new tab. Inside the popup the click
+  navigated the module iframe itself, leaving the GUI pointing at the
+  Patreon site.
+
 * Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-84
 - Open the cloud login popup at its designed size. The registration form was
   built for 540x405 (the size the menu register link and the signup button

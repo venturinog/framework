@@ -308,7 +308,7 @@ $(document).ready(function(){
         // Los temas legacy definen LblRegister en su _menu.tpl; el tema modern
         // no, y expone el label en el hidden input lblRegisterCm.
         var title = (typeof LblRegister !== 'undefined') ? LblRegister : $('#lblRegisterCm').val();
-        showPopupCloudLogin(title, 540, 405);
+        showPopupCloudLogin(title, 540, 450);
     });
 
     // Cierre alternativo del popup: clic en la mascara o tecla Escape.

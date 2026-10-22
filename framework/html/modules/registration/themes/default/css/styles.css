@@ -169,10 +169,10 @@ div.cloud-login-line {
 }
 div.cloud-footernote {
     font: 13px Verdana, Arial,Helvetica,sans-serif;
-    position:absolute;
+    position: relative;
+    margin-top: 10px;
     width:100%;
     text-align:center;
-    bottom: 5px;
     color:#909090;
 }
 .cloud-footernote a{
@@ -254,10 +254,7 @@ div.cloud-footernote {
 }
 
 .btn-shine {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
+  position: relative;
   color: #5600b3;
   background: linear-gradient(to right, #25004d 0, #f2e6ff 10%, #25004d 20%);
   background-position: 0;
