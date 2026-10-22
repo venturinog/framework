@@ -326,14 +326,24 @@ class paloForm
         if (!$bIngresoActivo) return $varValue_escaped;
         if (!is_array($arrVars['INPUT_EXTRA_PARAM'])) return '';
 
+        // Clase adicional (por ejemplo "is-invalid"). No se puede usar
+        // INPUT_EXTRA_PARAM para esto: en este widget es el mapa valor=>etiqueta.
+        $sClass = 'form-check-input';
+        if (isset($arrVars['CLASS']) && is_scalar($arrVars['CLASS']) &&
+            (string)$arrVars['CLASS'] !== '') {
+            $sClass .= ' '.(string)$arrVars['CLASS'];
+        }
+        $sClass = htmlentities($sClass, ENT_COMPAT, 'UTF-8');
+
         $listaRadio = array();
         $cntRadio = 1;
         foreach($arrVars['INPUT_EXTRA_PARAM'] as $radioValue => $radioLabel) {
             $listaRadio[] = sprintf(
                 '<div class="form-check">'.
-                '<input class="form-check-input" type="radio" id="%s" name="%s" value="%s" %s />'.
+                '<input class="%s" type="radio" id="%s" name="%s" value="%s" %s />'.
                 '<label class="form-check-label" for="%s">%s</label>'.
                 '</div>',
+                $sClass,
                 $varName_escaped.$cntRadio,
                 $varName_escaped,
                 htmlentities($radioValue, ENT_COMPAT, 'UTF-8'),
@@ -356,24 +366,22 @@ class paloForm
     {
 
         return $bIngresoActivo
-            ? sprintf('<input type="range" id="%s" name="%s" min="%s" max="%s" step="%s" value="%s" %s %s />',
+            ? sprintf('<input type="range" id="%s" name="%s" min="%s" max="%s" step="%s" value="%s" %s />',
                         $varName_escaped,
                         $varName_escaped,
                         isset($arrVars['MIN']) ? (int)$arrVars['MIN'] : 1,
                         isset($arrVars['MAX']) ? (int)$arrVars['MAX'] : 10,
                         isset($arrVars['STEP']) ? (int)$arrVars['STEP'] : 1,
                         $varValue_escaped,
-                        $attrstring,
-                        $varValue_escaped)
-            : sprintf('<input type="range" id="%s" name="%s" min="%s" max="%s" step="%s" value="%s" %s %s disabled />',
+                        $attrstring)
+            : sprintf('<input type="range" id="%s" name="%s" min="%s" max="%s" step="%s" value="%s" %s disabled />',
                         $varName_escaped,
                         $varName_escaped,
                         isset($arrVars['MIN']) ? (int)$arrVars['MIN'] : 1,
                         isset($arrVars['MAX']) ? (int)$arrVars['MAX'] : 10,
                         isset($arrVars['STEP']) ? (int)$arrVars['STEP'] : 1,
                         $varValue_escaped,
-                        $attrstring,
-                        $varValue_escaped);
+                        $attrstring);
     }
     /*
       END

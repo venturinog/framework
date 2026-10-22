@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 86
+Release: 87
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,15 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-87
+- Treat the QR generator action as read-only in issabelCsrf: it returns a PNG
+  with the softphone configuration and does not mutate anything, so under the
+  enforce mode a GET with action=qrcode was rejected with 403.
+- Let the radio widget take an extra class (CLASS), like the select widget, so
+  a module can mark its options as is-invalid without patching the widget.
+- Drop the duplicated value attribute of the range widget (it emitted the
+  value twice, which is invalid HTML).
+
 * Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-86
 - Turn the Patreon call to action of the cloud login popup into a compact
   one line link. It was a 150x150 image inside a form line fixed to 42
