@@ -100,7 +100,9 @@ function viewFormRegister($smarty, $module_name, $local_templates_dir, &$pDB, $a
     $smarty->assign("INFO_REGISTER", _tr("INFO_REGISTER"));
     $smarty->assign("REGISTER_RECOMMENDATION", _tr("By signing up you will be able to install addons and get professional support"));
     $smarty->assign("PATREON_LEGEND", _tr("Consider supporting the Issabel project on Patreon:"));
-    $smarty->assign("PATREON", "<a href='https://www.patreon.com/bePatron?u=25268006' target='_blank' rel='noopener'><img src='modules/{$module_name}/images/patreon-small.png' height='40px' alt='Patreon.com/issabel' style='align:top;'></a>");
+    // Boton de Patreon en una sola linea: la imagen de 150x150 desbordaba
+    // la linea de 42px de la plantilla y pisaba el copyright del popup.
+    $smarty->assign("PATREON", "<a href='https://www.patreon.com/bePatron?u=25268006' target='_blank' rel='noopener' style='display:inline-block;margin-top:6px;padding:3px 14px;border:1px solid #f96854;border-radius:999px;color:#f96854;font-weight:600;font-size:13px;text-decoration:none;'>&#9829; Patreon</a>");
 
     $user = isset($_SESSION['issabel_user']) ? $_SESSION['issabel_user'] : "";
 

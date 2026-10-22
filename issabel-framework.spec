@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 85
+Release: 86
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,15 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-86
+- Turn the Patreon call to action of the cloud login popup into a compact
+  one line link. It was a 150x150 image inside a form line fixed to 42
+  pixels, so the image painted over the line and its neighbours and
+  landed on top of the copyright note of the popup; the height attribute
+  of the tag could not win over the theme styles either. A small pill
+  link with inline styles keeps the same look in every theme and needs a
+  fraction of the vertical space.
+
 * Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-85
 - Fix the Patreon block and the copyright note of the cloud login popup.
   The Patreon legend had a position absolute variant centered at 50% of
