@@ -23,7 +23,7 @@ $(document).ready(function() {
 </script>
 
 <div onKeyPress="return checkSubmit(event)">
-<div id="moduleContainer" style="overflow-y:hidden;overflow-x:hidden">
+<div id="moduleContainer" style="overflow-y:auto;overflow-x:hidden">
     
     <div class="div_content_style" style="width:99%;margin:auto;">
     <div class="title_login_register">{$registration_server}</div>

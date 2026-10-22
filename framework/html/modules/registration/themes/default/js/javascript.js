@@ -223,7 +223,7 @@ function registrationEnd(msg)
         showLoading(msg);
 
         setTimeout(function(){
-            showPopupCloudLogin("",540,335)
+            showPopupCloudLogin("",540,405)
         }, 3000);
     }
 }

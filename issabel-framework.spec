@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 83
+Release: 84
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -437,6 +437,19 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-84
+- Open the cloud login popup at its designed size. The registration form was
+  built for 540x405 (the size the menu register link and the signup button
+  already use), but the legacy callers inside the registration module still
+  passed 540x335, leaving the bottom of the form below the box. With the
+  modern theme controls the form also runs taller, so callers were switched
+  to the designed height.
+- Let the registration popup scroll instead of overlapping. The popup
+  container used overflow-y hidden, so any surplus of content above the box
+  height collided with the elements behind it rather than scrolling. With
+  overflow-y auto, every caller keeps a readable popup no matter the size
+  it asks for, the theme, or the length of the translated strings.
+
 * Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-83
 - Ship the global popup markup in the modules tab iframe. ShowModalPopUP()
   from base.js drives the legacy popups (cloud login of the registration
