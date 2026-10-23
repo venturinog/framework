@@ -27,6 +27,11 @@
 // disponible sin depender del autoload.
 require_once(dirname(__FILE__).'/issabelCsrf.class.php');
 
+// Aviso de página del tema (ver issabelAlert.class.php). Los módulos lo usan
+// para conservar la variante del aviso (éxito/error/aviso/info) en la propia
+// página en lugar de depender de mb_message, que la shell pinta como error.
+require_once(dirname(__FILE__).'/issabelAlert.class.php');
+
 function recoger_valor($key, &$get, &$post, $default = NULL) {
     if (isset($post[$key])) return $post[$key];
     elseif (isset($get[$key])) return $get[$key];

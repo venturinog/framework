@@ -64,6 +64,46 @@ The following requests are always exempt: the login and two-factor forms, the
 tab manager endpoint, the logout link and grid exports
 (`exportcsv`/`exportpdf`/`exportspreadsheet`).
 
+Page alerts
+----
+
+`framework/html/libs/issabelAlert.class.php` renders the theme alert family with
+the right modifier (`iss-alert--error|success|warning|info`). Use it for
+page-level feedback instead of `mb_title`/`mb_message`: the iframe shell paints
+`mb_message` as an error, so success notices would look like failures.
+
+```php
+$smarty->assign('SECURITY_ALERT',
+    issabel_alert_html('success', _tr('Message'), _tr('Saved')));
+```
+
+```html
+{if $SECURITY_ALERT}{$SECURITY_ALERT}{/if}
+```
+
+The message is escaped by default. Pass `array('html' => true)` only for HTML
+built by the module, and escape every interpolated value yourself.
+
+Client-side validation
+----
+
+`framework/html/libs/js/issabel-validate.js` toggles `is-valid`/`is-invalid` on
+`input`/`blur` and blocks `submit` when a field does not match. The server must
+still revalidate.
+
+```html
+<script src="{$WEBPATH}libs/js/issabel-validate.js"></script>
+<script>
+{literal}
+IssabelValidate.attach(document.querySelector('form'), {
+    port: function (v) { return /^[0-9]{1,5}$/.test(v) && parseInt(v, 10) <= 65535; }
+});
+{/literal}
+</script>
+```
+
+The button whose `name` starts with `cancel` is exempt.
+
 Charts
 ----
 

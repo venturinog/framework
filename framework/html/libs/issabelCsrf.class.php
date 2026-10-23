@@ -80,6 +80,11 @@ class issabelCsrf
         // Generador de codigos QR de My Extension: devuelve una imagen con la
         // configuracion del softphone, no guarda nada.
         'qrcode',
+        // Consultas AJAX del editor de reglas de firewall: devuelven puertos,
+        // reglas o el estado de ejecucion, no mutan nada.
+        'getports', 'getrules', 'getrulesgeoip', 'getattacks', 'isexecute',
+        // Consultas de solo lectura del mapa GeoIP.
+        'blocked', 'pass', 'f2b', 'attacks', 'homecountry',
     );
 
     /**
