@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 87
+Release: 89
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -184,9 +184,11 @@ mv          $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/logrotate.d/*     
 # Los archivos de logrotate TIENEN que ser 0644 (http://bugs.elastix.org/view.php?id=2608)
 chmod 644 $RPM_BUILD_ROOT/etc/logrotate.d/*
 
-# File Issabel Access Audit log
+# Directorio del log de auditoria. El archivo audit.log no viaja en el
+# payload: se declara como ghost y se crea en %post (ver %files). Si se
+# empaqueta como archivo normal, cada upgrade lo reemplaza por el vacio y
+# borra el historial que muestra Security > Audit.
 mkdir -p    $RPM_BUILD_ROOT/var/log/issabel
-touch       $RPM_BUILD_ROOT/var/log/issabel/audit.log
 
 %pre
 #Para conocer la version de issabel antes de actualizar o instalar
@@ -231,6 +233,11 @@ fi
 systemctl enable mariadb || :
 systemctl enable httpd || :
 systemd-tmpfiles --create /usr/lib/tmpfiles.d/issabel-tabs.conf >/dev/null 2>&1 || :
+
+# Log de auditoria del framework (login, logout, CSRF, acciones auditadas).
+# No viaja en el paquete para no borrar el historial en cada upgrade.
+mkdir -p /var/log/issabel
+[ -e /var/log/issabel/audit.log ] || install -m 0640 -o asterisk -g asterisk /dev/null /var/log/issabel/audit.log
 
 mkdir -p /usr/share/fonts/truetype
 
@@ -376,7 +383,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-, asterisk, asterisk)
 /var/www/db
 /var/www/backup
-/var/log/issabel/audit.log
+# El log de auditoria es ghost: rpm no lo trae ni lo pisa en los upgrades, y
+# tampoco lo borra al desinstalar. Lo crea el %post si no existe.
+%dir %attr(0755, root, root) /var/log/issabel
+%ghost %attr(0640, asterisk, asterisk) /var/log/issabel/audit.log
 # %config(noreplace) /var/www/db/
 %defattr(-, root, root)
 /var/www/html/configs
@@ -437,6 +447,22 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Oct 23 2026 Issabel Foundation <info@issabel.org> - 6.0.0-89
+- Ship /var/log/issabel/audit.log as a ghost file and create it in %post
+  instead of packaging an empty regular file. Every framework upgrade
+  installed the empty payload over the log and wiped the audit history, so
+  Security > Audit showed no data until the next login.
+
+* Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-88
+- Add issabelAlert, the page-alert primitive of the Modern theme. Modules can
+  render success/warning/info notices without reusing mb_message, which the
+  iframe shell paints as an error.
+- Add libs/js/issabel-validate.js: client-side validation with is-valid /
+  is-invalid, submit blocked on failure and Cancel exempt. The server remains
+  authoritative.
+- Treat the firewall AJAX queries (getPorts, getRules, getRulesGEOIP,
+  getAttacks, isexecute) as read-only CSRF actions.
+
 * Thu Oct 22 2026 Issabel Foundation <info@issabel.org> - 6.0.0-87
 - Treat the QR generator action as read-only in issabelCsrf: it returns a PNG
   with the softphone configuration and does not mutate anything, so under the
