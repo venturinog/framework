@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 89
+Release: 90
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -447,6 +447,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Sat Oct 24 2026 Issabel Foundation <info@issabel.org> - 6.0.0-90
+- Reserve the label height in .iss-field so fields with an empty or missing
+  label (filter inputs, action buttons) align with labeled controls.
+
 * Fri Oct 23 2026 Issabel Foundation <info@issabel.org> - 6.0.0-89
 - Ship /var/log/issabel/audit.log as a ghost file and create it in %post
   instead of packaging an empty regular file. Every framework upgrade

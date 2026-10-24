@@ -500,11 +500,35 @@ body.iss-collapsed .iss-sidebar { display: none; }
   .iss-formgrid, .iss-formgrid--3col { grid-template-columns: 1fr; }
 }
 
-/* Campo individual: label arriba, control, texto de ayuda */
-.iss-field { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
-.iss-field__label { font-size: .8125rem; font-weight: 500; color: var(--iss-text); line-height: 1.35; }
+/* Campo individual: label arriba, control, texto de ayuda. La altura de la
+ * etiqueta se reserva también cuando está vacía, y los campos sin etiqueta
+ * (por ejemplo, un botón de acción o el segundo control de un filtro) reciben
+ * el mismo margen superior. Así los controles quedan alineados en la grilla. */
+.iss-field {
+    --iss-field-gap: .4rem;
+    --iss-field-label-height: calc(.8125rem * 1.35);
+    display: flex;
+    flex-direction: column;
+    gap: var(--iss-field-gap);
+    min-width: 0;
+}
+.iss-field__label {
+    min-height: var(--iss-field-label-height);
+    font-size: .8125rem;
+    font-weight: 500;
+    color: var(--iss-text);
+    line-height: 1.35;
+}
 .iss-field__label label { font-size: inherit; font-weight: inherit; color: inherit; margin: 0; }
 .iss-field__control { display: block; min-width: 0; }
+.iss-field__control:first-child {
+    margin-top: calc(var(--iss-field-label-height) + var(--iss-field-gap));
+}
+/* Un campo de acción sin label (p. ej. el botón "Search next" de un filtro)
+ * se alinea por abajo con los controles de la misma fila. */
+.iss-field:not(:has(.iss-field__label)):has(.button, button, input[type="submit"]) {
+    align-self: end;
+}
 .iss-field__control > .form-control, .iss-field__control > .form-select { width: 100%; max-width: 430px; }
 /* Octetos IPv4 (a.b.c.d): en fila y alineados, no apilados por .form-control */
 .iss-ip-octets { display: flex; align-items: center; flex-wrap: wrap; }
