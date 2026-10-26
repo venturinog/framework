@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 90
+Release: 91
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -447,6 +447,16 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 26 2026 Issabel Foundation <info@issabel.org> - 6.0.0-91
+- issabel-dbprocess: record engine, database and path as a SQL comment header
+  in every script deferred to /var/spool/issabel-mysqldbscripts, so firstboot
+  replays it with the right client instead of always using mysql. Feeding a
+  sqlite3 script to mysql failed and blocked the rest of the queue.
+- issabel-dbprocess: an update that finds its database missing now installs it
+  from the schema. Previously the update only emitted `USE db;`, failed and
+  queued again, so a module whose install was deferred never created its
+  database.
+
 * Sat Oct 24 2026 Issabel Foundation <info@issabel.org> - 6.0.0-90
 - Reserve the label height in .iss-field so fields with an empty or missing
   label (filter inputs, action buttons) align with labeled controls.
