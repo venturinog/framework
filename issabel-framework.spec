@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 92
+Release: 93
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -447,6 +447,11 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 27 2026 Issabel Foundation <info@issabel.org> - 6.0.0-93
+- Modern theme: the login split is sized by the animated logo again (Issabel 5
+  look) instead of half the screen, and the animation's icon is centered on the
+  triangle.
+
 * Mon Oct 26 2026 Issabel Foundation <info@issabel.org> - 6.0.0-92
 - Declare the Endpoint Configurator's read-only GET actions (download,
   scanstatus, configstatus, loadmodels, loadendpoints, loadstatus,

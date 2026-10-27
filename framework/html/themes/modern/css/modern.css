@@ -361,20 +361,23 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-theme-toggle .btn.active { background: var(--iss-primary); border-color: var(--iss-primary); color: #fff; }
 
 /* ------------------------------ Login -------------------------------- */
-/* Réplica del login de Issabel 5: mitad superior blanca con el logo animado
- * (Lottie) y el triángulo blanco centrado que se introduce en la mitad morada;
- * mitad inferior en el morado de marca de Issabel 6, con el formulario. */
+/* Réplica del login de Issabel 5: franja blanca arriba, del alto del logo animado
+ * (Lottie), que termina justo debajo de él con el triángulo blanco centrado que
+ * se introduce en el morado; el resto de la pantalla va en el morado de marca,
+ * con el formulario. */
 .iss-login { min-height: 100vh; display: flex; flex-direction: column; color-scheme: light; }
 
 .iss-login__hero {
-  flex: 1 1 50%;
-  min-height: 50vh;
+  flex: 0 0 auto;
+  min-height: 0;
+  padding: 24px 24px 30px;
   background: #ffffff;
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-/* Triángulo blanco centrado que muerde la mitad morada (25x13px, 13px dentro) */
+/* Triángulo blanco centrado que muerde la franja morada (25x13px, 13px dentro) */
 .iss-login__hero::after {
   content: "";
   position: absolute;
@@ -388,17 +391,17 @@ body.iss-collapsed .iss-sidebar { display: none; }
   border-color: #ffffff transparent transparent transparent;
   z-index: 2;
 }
-.iss-login__anim { width: 200px; height: 260px; }
+.iss-login__anim { width: 200px; height: 260px; display: grid; place-items: center; }
 .iss-login__logo { height: 54px; width: auto; display: block; margin: 0 auto; }
 
 .iss-login__panel {
-  flex: 1 1 50%;
-  min-height: 50vh;
+  flex: 1 0 auto;
+  min-height: 0;
   background: var(--iss-primary);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 34px 24px 46px;
+  padding: 40px 24px 40px;
   color: #ffffff;
 }
 .iss-login__card { width: 100%; max-width: 360px; }
@@ -416,9 +419,17 @@ body.iss-collapsed .iss-sidebar { display: none; }
 .iss-login__foot a:hover { text-decoration: underline; }
 
 @media (max-width: 575px) {
-  .iss-login__hero { min-height: 38vh; }
+  .iss-login__hero { padding: 20px 20px 24px; }
   .iss-login__anim { width: 160px; height: 208px; }
-  .iss-login__panel { min-height: auto; padding: 26px 20px 40px; }
+  .iss-login__panel { padding: 30px 20px 32px; }
+}
+
+/* Pantallas bajas: el logo se achica para que el formulario quede a la vista
+ * sin tener que hacer scroll. */
+@media (max-height: 640px) {
+  .iss-login__hero { padding-top: 16px; padding-bottom: 20px; }
+  .iss-login__anim { width: 150px; height: 195px; }
+  .iss-login__panel { padding-top: 28px; padding-bottom: 28px; }
 }
 
 /* ------------------------------ Grilla ------------------------------- */

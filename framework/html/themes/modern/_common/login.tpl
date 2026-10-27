@@ -14,15 +14,15 @@
 </head>
 <body class="iss-login {$BODYPARAMS}">
 
-  {* Mitad superior: blanca, con el logo animado (Lottie) y el triángulo
-     centrado que se introduce en la mitad morada (como Issabel 5). *}
+  {* Franja superior: blanca, del alto del logo animado (Lottie), con el
+     triángulo centrado que se introduce en el morado (como Issabel 5). *}
   <div class="iss-login__hero">
     <div id="animIssabel" class="iss-login__anim">
       <noscript><img src="{$WEBPATH}themes/{$THEMENAME}/images/issabel_logo_color.png" alt="Issabel" class="iss-login__logo"></noscript>
     </div>
   </div>
 
-  {* Mitad inferior: morado de marca, con el formulario. *}
+  {* Resto de la pantalla: morado de marca, con el formulario. *}
   <div class="iss-login__panel">
     <div class="iss-login__card">
       {if !empty($WELCOME)}<h1 class="iss-login__title">{$WELCOME}</h1>{/if}
