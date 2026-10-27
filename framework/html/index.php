@@ -326,6 +326,27 @@ if(!empty($pACL->errMsg)) {
 // Load smarty
 $smarty = getSmarty($arrConf['mainTheme'], $arrConf['basePath']);
 
+// Versión de los assets del tema para cache-busting. Se usa un hash del
+// contenido y no el mtime: rpmbuild normaliza las fechas del payload, así que
+// un rebuild del mismo día (o del mismo Release) dejaría el mismo valor y el
+// navegador seguiría sirviendo el CSS viejo. Con el hash, cualquier cambio de
+// contenido invalida la caché sin hard refresh.
+$themeAssetFiles = array(
+    '/css/modern.css',
+    '/css/modern-compat.css',
+    '/js/lottie.min.js',
+    '/images/animIssabel.json',
+    '/images/animIssabel-dark.json',
+);
+$themeAssetHash = '';
+foreach ($themeAssetFiles as $themeAssetPath) {
+    $themeAssetFile = $arrConf['basePath'].'/themes/'.$arrConf['mainTheme'].$themeAssetPath;
+    if (is_file($themeAssetFile)) {
+        $themeAssetHash .= sha1_file($themeAssetFile);
+    }
+}
+$smarty->assign('ISSABEL_THEME_ASSET_VERSION', $themeAssetHash === '' ? '0' : substr(sha1($themeAssetHash), 0, 12));
+
 $smarty->assign("ISSABEL_LICENSED", _tr("is licensed under"));
 $smarty->assign("LOGIN_INCORRECT",  '');
 
