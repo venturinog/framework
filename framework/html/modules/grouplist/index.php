@@ -21,6 +21,8 @@
   +----------------------------------------------------------------------+
   $Id: index.php, Mon 12 Jul 2021 04:34:51 PM EDT, nicolas@issabel.com
 */
+require_once 'libs/issabelAclAudit.class.php';
+
 function _moduleContent(&$smarty, $module_name)
 {
     include_once("libs/paloSantoDB.class.php");
@@ -142,7 +144,12 @@ function _moduleContent(&$smarty, $module_name)
             // Creo el Grupo
             $postgroup = htmlspecialchars($_POST['group']);
             $postdescription = htmlspecialchars($_POST['description']);
-            $pACL->createGroup($postgroup, $postdescription);
+            $ok = $pACL->createGroup($postgroup, $postdescription);
+            issabelAclAudit::log('group.create', $ok ? 'ok' : 'error', array(
+                'group'       => isset($_POST['group']) ? $_POST['group'] : '',
+                'description' => isset($_POST['description']) ? $_POST['description'] : '',
+                'msg'         => $ok ? '' : $pACL->errMsg,
+            ));
 
             if(!empty($pACL->errMsg)) {
                 // Ocurrio algun error aqui
@@ -179,7 +186,16 @@ function _moduleContent(&$smarty, $module_name)
                 // Exito, puedo procesar los datos ahora.
                 $pACL = new paloACL($pDB);
 
-                if(!$pACL->updateGroup($_POST['id_group'], $_POST['group'],$_POST['description']))
+                $ok = $pACL->updateGroup($_POST['id_group'], $_POST['group'],$_POST['description']);
+                $auditDetails = array(
+                    'id'    => $_POST['id_group'],
+                    'group' => isset($_POST['group']) ? $_POST['group'] : '',
+                );
+                if ($group != $auditDetails['group']) $auditDetails['old_group'] = $group;
+                issabelAclAudit::log('group.update', $ok ? 'ok' : 'error',
+                    $auditDetails + array('msg' => $ok ? '' : $pACL->errMsg));
+
+                if(!$ok)
                 {
                     // Ocurrio algun error aqui
                     $smarty->assign("mb_message", _tr('ERROR').": $pACL->errMsg");
@@ -235,15 +251,29 @@ function _moduleContent(&$smarty, $module_name)
             $contenidoModulo=$oForm->fetchForm("$local_templates_dir/grouplist.tpl", _tr("View Group"), $arrTmp); // hay que pasar el arreglo
         }
     } else {
-        if (isset($_POST['delete'])) {
-           //- TODO: Validar el id de group
-            if(isset($_POST['id_group']) && $_POST['id_group']=='1') {
+        if (isset($_POST['delete']) && isset($_POST['id_group'])) {
+            //- TODO: Validar el id de group
+            $id_target = (int)$_POST['id_group'];
+            $arrTargetGroup = $pACL->getGroups($id_target);
+            $auditTarget = array(
+                'id'    => $id_target,
+                'group' => (is_array($arrTargetGroup) && count($arrTargetGroup) > 0)
+                    ? $arrTargetGroup[0][1] : '',
+            );
+
+            if($_POST['id_group']=='1') {
                 // No se puede eliminar al grupo admin
                 $smarty->assign("mb_message", _tr("The administrator group cannot be deleted because is the default Issabel Group. You can delete any other group."));
+                issabelAclAudit::log('group.delete', 'error',
+                    $auditTarget + array('msg' => 'the administrator group cannot be deleted'));
             } else if ($pACL->HaveUsersTheGroup($_POST['id_group'])==TRUE){
                 $smarty->assign("mb_message", _tr("The Group have users assigned. You can delete any group that does not have any users assigned in it."));
+                issabelAclAudit::log('group.delete', 'error',
+                    $auditTarget + array('msg' => 'the group has users assigned'));
             } else {
-                $pACL->deleteGroup($_POST['id_group']);
+                $ok = $pACL->deleteGroup($_POST['id_group']);
+                issabelAclAudit::log('group.delete', $ok ? 'ok' : 'error',
+                    $auditTarget + array('msg' => $ok ? '' : $pACL->errMsg));
             }
         }
 

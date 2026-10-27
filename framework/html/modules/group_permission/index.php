@@ -25,6 +25,7 @@ require_once "libs/paloSantoForm.class.php";
 require_once "libs/paloSantoDB.class.php";
 require_once "libs/paloSantoMenu.class.php";
 require_once "libs/paloSantoNavigation.class.php";
+require_once "libs/issabelAclAudit.class.php";
 
 function _moduleContent(&$smarty, $module_name)
 {
@@ -290,6 +291,15 @@ function applyNewGroupPermissions($smarty, $id_group, $fullmenu, $is_admin)
     sort($modules_action_normalized);
     $modules_toremove = array_diff($modules_action_old, $modules_action_normalized);
     $modules_toadd = array_diff($modules_action_normalized, $modules_action_old);
+
+    // Datos de la línea de auditoría; el resultado se agrega en cada salida.
+    $auditGroup = $pACL->getGroupNameByid($id_group);
+    if ($auditGroup === NULL) $auditGroup = (string)$id_group;
+    $auditDetails = array(
+        'group'   => $auditGroup,
+        'added'   => array_values($modules_toadd),
+        'removed' => array_values($modules_toremove),
+    );
 /*
     file_put_contents('/tmp/debug_gperm.txt', "Permisos viejos    : ".implode(' ', $modules_action_old)."\n\n", FILE_APPEND);
     file_put_contents('/tmp/debug_gperm.txt', "Permisos nuevos (1): ".implode(' ', $modules_action_new)."\n\n", FILE_APPEND);
@@ -305,6 +315,8 @@ function applyNewGroupPermissions($smarty, $id_group, $fullmenu, $is_admin)
             'mb_title'    =>  _tr('Cannot count resources'),
             'mb_message'  =>  $pACL->errMsg,
         ));
+        issabelAclAudit::log('permissions.apply', 'error',
+            $auditDetails + array('msg' => $pACL->errMsg));
         return;
     }
     $list_resources = $pACL->getListResources($nres, 0, '');
@@ -313,6 +325,8 @@ function applyNewGroupPermissions($smarty, $id_group, $fullmenu, $is_admin)
             'mb_title'    =>  _tr('Cannot load resource IDs'),
             'mb_message'  =>  $pACL->errMsg,
         ));
+        issabelAclAudit::log('permissions.apply', 'error',
+            $auditDetails + array('msg' => $pACL->errMsg));
         return;
     }
     $resource_ids = array();
@@ -331,6 +345,8 @@ function applyNewGroupPermissions($smarty, $id_group, $fullmenu, $is_admin)
                 'mb_title'    =>  _tr('Cannot add enabled resources'),
                 'mb_message'  =>  $pACL->errMsg,
             ));
+            issabelAclAudit::log('permissions.apply', 'error',
+                $auditDetails + array('msg' => $pACL->errMsg));
             return;
         }
     }
@@ -341,8 +357,15 @@ function applyNewGroupPermissions($smarty, $id_group, $fullmenu, $is_admin)
                 'mb_title'    =>  _tr('Cannot remove disabled resources'),
                 'mb_message'  =>  $pACL->errMsg,
             ));
+            issabelAclAudit::log('permissions.apply', 'error',
+                $auditDetails + array('msg' => $pACL->errMsg));
             return;
         }
+    }
+
+    // Un "Apply" sin cambios no altera el ACL y no se registra.
+    if (count($modules_id_toadd) > 0 || count($modules_id_toremove) > 0) {
+        issabelAclAudit::log('permissions.apply', 'ok', $auditDetails);
     }
 }
 
@@ -371,6 +394,8 @@ function assignCustomPrivileges($smarty, $module_name, $local_templates_dir)
     // Guardar nuevo conjunto de privilegios
     if (isset($_POST['apply'])) {
         $bExito = TRUE;
+        $granted = array();
+        $revoked = array();
         $newpriv = array();
         if (isset($_POST['privileges']) && is_array($_POST['privileges']))
             $newpriv = $_POST['privileges'];
@@ -378,18 +403,37 @@ function assignCustomPrivileges($smarty, $module_name, $local_templates_dir)
             if (isset($currpriv[$tupla['id']]) && !in_array($tupla['id'], $newpriv)) {
                 // Privilegio a revocar
                 $bExito = $pACL->revokeModulePrivilege2Group($tupla['id'], $_REQUEST['id_group']);
+                if ($bExito) $revoked[] = $tupla['privilege'];
             } elseif (!isset($currpriv[$tupla['id']]) && in_array($tupla['id'], $newpriv)) {
                 // Privilegio a otorgar
                 $bExito = $pACL->grantModulePrivilege2Group($tupla['id'], $_REQUEST['id_group']);
+                if ($bExito) $granted[] = $tupla['privilege'];
             }
             if (!$bExito) break;
         }
+
+        // Datos de la línea de auditoría; el resultado se agrega abajo.
+        $auditGroup = $pACL->getGroupNameByid($_REQUEST['id_group']);
+        if ($auditGroup === NULL) $auditGroup = (string)$_REQUEST['id_group'];
+        $auditDetails = array(
+            'group'    => $auditGroup,
+            'resource' => $_REQUEST['resource'],
+            'granted'  => $granted,
+            'revoked'  => $revoked,
+        );
+
         if (!$bExito) {
             $smarty->assign(array(
                 'mb_title'    =>  _tr('Cannot update custom privileges'),
                 'mb_message'  =>  $pACL->errMsg,
             ));
+            issabelAclAudit::log('privileges.apply', 'error',
+                $auditDetails + array('msg' => $pACL->errMsg));
         } else {
+            // Un "Save" sin cambios no altera el ACL y no se registra.
+            if (count($granted) > 0 || count($revoked) > 0) {
+                issabelAclAudit::log('privileges.apply', 'ok', $auditDetails);
+            }
             Header('Location: ?menu='.$module_name.'&filter_group='.$_REQUEST['id_group']);
             return;
         }

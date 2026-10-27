@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 94
+Release: 95
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -447,6 +447,17 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Tue Oct 27 2026 Issabel Foundation <info@issabel.org> - 6.0.0-95
+- Audit ACL changes in /var/log/issabel/audit.log through the new
+  issabelAclAudit helper: user create/update/delete (userlist), group
+  create/update/delete (grouplist) and group permissions and custom
+  privileges (group_permission). Each line carries the acting user, the
+  target, the changed fields (never passwords) or the added/removed modules
+  and privileges, the result and the source IP. Denied attempts are recorded
+  too.
+- userlist: pass the plugins list to listUsers() in the editUser() denial
+  branch. It was still calling it with four arguments, a fatal error in PHP 8.
+
 * Tue Oct 27 2026 Issabel Foundation <info@issabel.org> - 6.0.0-94
 - Modern theme: the login page follows the light/dark preference (same
   issabel-theme key as modern.js) with a dark logo variant

@@ -84,6 +84,36 @@ $smarty->assign('SECURITY_ALERT',
 The message is escaped by default. Pass `array('html' => true)` only for HTML
 built by the module, and escape every interpolated value yourself.
 
+Audit log
+----
+
+`/var/log/issabel/audit.log` records who did what from where. One line per
+event, sanitised (no newlines, values truncated) because the `issabel-gui`
+fail2ban jail reads the same file.
+
+* `LOGIN` / `LOGOUT` — web interface sessions, including failures.
+* `NAVIGATION` — module visits.
+* `CSRF-AUDIT` / `CSRF-REJECT` — state-changing requests without a valid token.
+* `ACL` — changes to users, groups and permissions.
+* `FIREWALL` — firewall rules (see the `security` module).
+* `SHUTDOWN`, `HEALTH`, `UPDATES`, `ASTCLI`, `PBX` — other privileged actions.
+
+`ACL` lines are written by `framework/html/libs/issabelAclAudit.class.php` and
+look like this:
+
+```
+ACL admin: user.create login=jdoe id=7 group=operator result=ok from 10.0.0.5.
+ACL admin: user.update login=jdoe id=7 fields=description,password result=ok from 10.0.0.5.
+ACL admin: group.delete id=4 group=operators result=ok from 10.0.0.5.
+ACL admin: permissions.apply group=operator added=pbx,reports removed=system result=ok from 10.0.0.5.
+ACL admin: privileges.apply group=operator resource=userlist granted=create revoked=viewany result=ok from 10.0.0.5.
+```
+
+Events are `user.create|update|delete`, `group.create|update|delete`,
+`permissions.apply` and `privileges.apply`; `result=error` carries a short
+`msg`, and denied attempts are recorded as errors. Passwords are never logged,
+not even their hash: `user.update` only lists `password` inside `fields`.
+
 Client-side validation
 ----
 

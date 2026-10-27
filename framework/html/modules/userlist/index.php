@@ -23,6 +23,7 @@
 
 require_once('libs/paloSantoDB.class.php');
 require_once('libs/paloSantoACL.class.php');
+require_once('libs/issabelAclAudit.class.php');
 
 function _moduleContent(&$smarty, $module_name)
 {
@@ -121,21 +122,36 @@ function listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins)
 
     // Ejecutar borrado de usuario si está autorizado
     if (isset($_POST['delete']) && isset($_POST['id_user'])) {
+        $id_target = (int)$_POST['id_user'];
+        $arrTarget = $pACL->getUsers($id_target);
+        $auditTarget = array(
+            'id'    => $id_target,
+            'login' => (is_array($arrTarget) && count($arrTarget) > 0) ? $arrTarget[0][1] : '',
+        );
+
         if ($id_user_session == $_POST['id_user']) {
             $smarty->assign(array(
                 'mb_title'      =>  _tr('ERROR'),
                 'mb_message'    =>  _tr('Cannot delete current session user'),
             ));
+            issabelAclAudit::log('user.delete', 'error',
+                $auditTarget + array('msg' => 'cannot delete the current session user'));
         } elseif (!$bDeleteAnyUser) {
             $smarty->assign(array(
                 'mb_title'      =>  _tr('ERROR'),
                 'mb_message'    =>  _tr('userNoAllowed'),
             ));
+            issabelAclAudit::log('user.delete', 'error',
+                $auditTarget + array('msg' => 'not allowed'));
         } else if (!$pACL->deleteUser($_POST['id_user'])) {
             $smarty->assign(array(
                 'mb_title'      =>  _tr('ERROR'),
                 'mb_message'    =>  _tr('(internal) Failed to delete user').': '.$pACL->errMsg,
             ));
+            issabelAclAudit::log('user.delete', 'error',
+                $auditTarget + array('msg' => $pACL->errMsg));
+        } else {
+            issabelAclAudit::log('user.delete', 'ok', $auditTarget);
         }
     }
 
@@ -208,6 +224,9 @@ function createUser($pACL, $smarty, $module_name, $local_templates_dir, $plugins
             'mb_title'      =>  _tr('ERROR'),
             'mb_message'    =>  _tr('userNoAllowed'),
         ));
+        issabelAclAudit::log('user.create', 'error', array(
+            'login' => isset($_POST['name']) ? $_POST['name'] : '',
+            'msg'   => 'not allowed'));
         return listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins);
     }
     return createEditUser($pACL, $smarty, $module_name, $local_templates_dir, NULL, TRUE, $plugins);
@@ -228,7 +247,10 @@ function editUser($pACL, $smarty, $module_name, $local_templates_dir, $plugins)
             'mb_title'      =>  _tr('ERROR'),
             'mb_message'    =>  _tr('userNoAllowed'),
         ));
-        return listUsers($pACL, $smarty, $module_name, $local_templates_dir);
+        issabelAclAudit::log('user.update', 'error', array(
+            'id'  => $id_user,
+            'msg' => 'not allowed'));
+        return listUsers($pACL, $smarty, $module_name, $local_templates_dir, $plugins);
     }
     return createEditUser($pACL, $smarty, $module_name, $local_templates_dir, $id_user, $privileged, $plugins);
 }
@@ -347,6 +369,40 @@ function createEditUser($pACL, $smarty, $module_name, $local_templates_dir, $id_
         } else {
             $bPluginError = FALSE;
 
+            /* Auditoría: el evento y sus datos se arman antes de tocar el ACL,
+             * porque el alta asigna $id_user y la edición pisa $_POST con los
+             * valores del formulario. Nunca se registra la clave, sólo el hecho
+             * de que cambió. */
+            $auditEvent = is_null($id_user) ? 'user.create' : 'user.update';
+            $auditDetails = array('login' => isset($_POST['name']) ? $_POST['name'] : '');
+
+            // El SELECT del formulario envía el ID del grupo; la auditoría
+            // registra el nombre, que es el que se ve en la GUI.
+            $newGroupId = isset($_POST['group']) ? $_POST['group'] : '';
+            $newGroupName = $pACL->getGroupNameByid($newGroupId);
+            if ($newGroupName === NULL) $newGroupName = (string)$newGroupId;
+
+            if ($auditEvent == 'user.create') {
+                $auditDetails['group'] = $newGroupName;
+            } else {
+                $oldGroupName = $pACL->getGroupNameByid($userinfo['group']);
+                if ($oldGroupName === NULL) $oldGroupName = (string)$userinfo['group'];
+                $newDescription = isset($_POST['description']) ? $_POST['description'] : '';
+                $auditDetails['id'] = $id_user;
+                $auditDetails['fields'] = issabelAclAudit::changedFields(array(
+                    'name'        => ($userinfo['name'] != $auditDetails['login']),
+                    'description' => ($userinfo['description'] != $newDescription),
+                    'group'       => ($privileged && $userinfo['group'] != $newGroupId),
+                    'password'    => (!empty($_POST['password1']) && $_POST['password1'] != '********'),
+                ));
+                if ($userinfo['name'] != $auditDetails['login'])
+                    $auditDetails['new_login'] = $auditDetails['login'];
+                if ($privileged && $userinfo['group'] != $newGroupId) {
+                    $auditDetails['new_group'] = $newGroupName;
+                    $auditDetails['old_group'] = $oldGroupName;
+                }
+            }
+
             // TODO: beginTransaction
             if (is_null($id_user)) {
                 $r = $pACL->createUser($_POST['name'], $_POST['description'],
@@ -416,9 +472,13 @@ function createEditUser($pACL, $smarty, $module_name, $local_templates_dir, $id_
                         'mb_message'=>  _tr('The user could not be saved completely'),
                     ));
                 }
+                issabelAclAudit::log($auditEvent, 'error',
+                    $auditDetails + array('msg' => $pACL->errMsg));
                 // TODO: rollback
             } else {
                 // TODO: commit
+                $auditDetails['id'] = $id_user;
+                issabelAclAudit::log($auditEvent, 'ok', $auditDetails);
                 if ($_REQUEST['action'] == 'edit_userExtension') {
                     $smarty->assign('userExtension_success', 1);
                 } else {
