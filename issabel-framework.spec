@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 91
+Release: 92
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -447,6 +447,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Mon Oct 26 2026 Issabel Foundation <info@issabel.org> - 6.0.0-92
+- Declare the Endpoint Configurator's read-only GET actions (download,
+  scanstatus, configstatus, loadmodels, loadendpoints, loadstatus,
+  loadunassignedaccounts and getconfiglog) so they work under CSRF enforce
+  and stop writing CSRF-AUDIT entries while a scan is in progress.
+
 * Mon Oct 26 2026 Issabel Foundation <info@issabel.org> - 6.0.0-91
 - issabel-dbprocess: record engine, database and path as a SQL comment header
   in every script deferred to /var/spool/issabel-mysqldbscripts, so firstboot

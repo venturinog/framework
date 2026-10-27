@@ -85,6 +85,12 @@ class issabelCsrf
         'getports', 'getrules', 'getrulesgeoip', 'getattacks', 'isexecute',
         // Consultas de solo lectura del mapa GeoIP.
         'blocked', 'pass', 'f2b', 'attacks', 'homecountry',
+        // Endpoint Configurator: carga inicial, descargas y seguimiento del
+        // escaneo/configuracion. scanstatus y configstatus se piden con
+        // EventSource, que no puede enviar la cabecera del token; download es
+        // un enlace GET nativo. Ninguna de estas acciones modifica datos.
+        'loadmodels', 'loadendpoints', 'loadstatus', 'loadunassignedaccounts',
+        'getconfiglog', 'download', 'scanstatus', 'configstatus',
     );
 
     /**
