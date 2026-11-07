@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 95
+Release: 96
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -12,6 +12,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
 Requires(pre): /usr/sbin/chkconfig, /etc/sudoers, sudo
 Requires(pre): php, php-gd, php-xml, php-mysqlnd, php-pdo, php-soap
+# EL10 has no mod_php; httpd serves PHP through php-fpm.
+Requires: php-fpm
 Requires(pre): httpd, mariadb-server, chrony, mod_ssl
 Requires(pre): perl
 Requires: issabel-firstboot >= 5.0.0-2
@@ -232,6 +234,7 @@ fi
 #chkconfig --del gpm   &> /dev/null
 systemctl enable mariadb || :
 systemctl enable httpd || :
+systemctl enable php-fpm >/dev/null 2>&1 || :
 systemd-tmpfiles --create /usr/lib/tmpfiles.d/issabel-tabs.conf >/dev/null 2>&1 || :
 
 # Log de auditoria del framework (login, logout, CSRF, acciones auditadas).
@@ -315,8 +318,21 @@ fi
 # Para q se actualice smarty (tpl updates)
 rm -rf /var/www/html/var/templates_c/*
 
-# Pick up PHP code/php.d changes from this update without a manual restart.
-systemctl reload php-fpm &>/dev/null || :
+# EL10 has no mod_php: httpd proxies .php requests to php-fpm. The default
+# pool runs as apache and its socket ACL only allows apache/nginx, while httpd
+# runs as asterisk. Keep PHP on the same identity and session directory as
+# httpd, and let the asterisk user connect to the socket.
+if [ -f /etc/php-fpm.d/www.conf ]; then
+    sed -i \
+        -e 's/^user = apache/user = asterisk/' \
+        -e 's/^group = apache/group = asterisk/' \
+        -e 's/^listen.acl_users = apache,nginx/listen.acl_users = apache,nginx,asterisk/' \
+        -e 's|^php_value\[session.save_path\].*|php_value[session.save_path] = /var/lib/php/session-asterisk|' \
+        -e 's/^;clear_env = no/clear_env = no/' \
+        /etc/php-fpm.d/www.conf
+fi
+systemctl enable php-fpm >/dev/null 2>&1 || :
+systemctl reload php-fpm >/dev/null 2>&1 || systemctl restart php-fpm >/dev/null 2>&1 || :
 
 # Patch issabel.ini to work around %config(noreplace) in previous versions
 sed --in-place "s,/tmp,/var/lib/php/session-asterisk,g" /etc/php.d/issabel.ini
@@ -447,6 +463,12 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Nov 06 2026 Issabel Foundation <info@issabel.org> - 6.0.0-96
+- Require php-fpm: EL10 has no mod_php, so httpd proxies PHP through php-fpm.
+- Configure the php-fpm www pool to run as asterisk, allow asterisk on the
+  socket ACL, and use /var/lib/php/session-asterisk for sessions.
+- Enable php-fpm in %post and reload it so pool changes are applied.
+
 * Tue Oct 27 2026 Issabel Foundation <info@issabel.org> - 6.0.0-95
 - Audit ACL changes in /var/log/issabel/audit.log through the new
   issabelAclAudit helper: user create/update/delete (userlist), group
