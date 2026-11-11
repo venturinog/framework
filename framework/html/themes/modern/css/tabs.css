@@ -23,6 +23,7 @@
 .iss-tabbar::-webkit-scrollbar { display: none; }
 
 .iss-tabbar__item {
+  position: relative;
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -34,6 +35,9 @@
   border-radius: .55rem;
   background: var(--iss-surface-2);
   color: var(--iss-text-muted);
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .iss-tabbar__item.active {
@@ -54,7 +58,7 @@
   border: 0;
   background: transparent;
   color: inherit;
-  cursor: pointer;
+  cursor: grab;
 }
 
 .iss-tabbar__tab[aria-selected="true"] { font-weight: 600; }
@@ -82,6 +86,23 @@
 .iss-tabbar__close:hover,
 .iss-tabbar__add:hover { background: var(--iss-primary-soft); }
 .iss-tabbar__add { margin-left: 0; color: var(--iss-brand-ink); }
+
+/* Reordering: the dragged chip follows the pointer and the neighbours are
+   displaced with a FLIP transition (see flipNeighbours in tabs.js). */
+.iss-tabbar__item.is-dragging {
+  z-index: 3;
+  border-color: var(--iss-primary);
+  background: var(--iss-surface);
+  box-shadow: 0 .45rem 1.1rem rgba(0, 0, 0, .22);
+  will-change: transform;
+}
+.iss-tabbar__item.is-dragging .iss-tabbar__tab { cursor: grabbing; }
+.iss-tabbar__item.is-shifting { transition: transform .16s ease; }
+body.iss-tab-dragging { cursor: grabbing; }
+
+@media (prefers-reduced-motion: reduce) {
+  .iss-tabbar__item.is-shifting { transition: none; }
+}
 
 #iss-tabpanes {
   display: flex;

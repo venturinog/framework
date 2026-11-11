@@ -10,6 +10,24 @@
     var breadcrumbNav = document.getElementById('iss-active-breadcrumb');
     var shellPath = window.location.pathname;
 
+    var DRAG_THRESHOLD = 5;
+    var AUTO_SCROLL_EDGE = 28;
+    var AUTO_SCROLL_MAX = 18;
+    var drag = {
+        armed: false,
+        active: false,
+        item: null,
+        pointerId: null,
+        startX: 0,
+        startY: 0,
+        grabOffsetX: 0,
+        offsetX: 0,
+        lastClientX: 0,
+        raf: 0,
+        suppressClickUntil: 0,
+        order: null
+    };
+
     function newId() {
         var bytes = new Uint8Array(16);
         window.crypto.getRandomValues(bytes);
@@ -313,6 +331,7 @@
         state.tabs.forEach(function (tab) {
             var item = document.createElement('div');
             item.className = 'iss-tabbar__item';
+            item.dataset.tabId = tab.id;
             item.classList.toggle('active', Number(tab.id) === Number(state.activeTab));
 
             var button = document.createElement('button');
@@ -322,6 +341,8 @@
             button.dataset.tabId = tab.id;
             button.setAttribute('role', 'tab');
             button.setAttribute('aria-selected', Number(tab.id) === Number(state.activeTab) ? 'true' : 'false');
+            button.title = (config.messages && config.messages.dragHint) || 'Drag to reorder tabs';
+            button.setAttribute('aria-keyshortcuts', 'Alt+ArrowLeft Alt+ArrowRight');
 
             var label = document.createElement('span');
             label.className = 'iss-tabbar__label';
@@ -393,6 +414,10 @@
     }
 
     function renderState() {
+        // A drag owns the bar DOM: rebuilding it mid-gesture would detach the
+        // dragged node and lose its pointer capture. Deferred renders resume
+        // as soon as the gesture ends (see finishDrag).
+        if (drag.active) return;
         renderBar();
         renderPanes();
         broadcastTheme();
@@ -576,7 +601,322 @@
         if (menu) navigateModule(menu, state.activeTab).catch(function (error) { showError(error.message); });
     }
 
+    // ------------------------------------------------------------------
+    // Tab reordering (drag & drop + keyboard)
+    // ------------------------------------------------------------------
+
+    function tabItems() {
+        return Array.prototype.slice.call(tabbar.querySelectorAll('.iss-tabbar__item'));
+    }
+
+    function addTabButton() {
+        return tabbar.querySelector('.iss-tabbar__add');
+    }
+
+    function tabOrder() {
+        return tabItems().map(function (item) { return Number(item.dataset.tabId); });
+    }
+
+    // Reorder the in-memory registry by id. Never touches panes or iframes, so
+    // unsaved form state inside a tab survives a reorder untouched.
+    function applyLocalOrder(ids) {
+        var byId = Object.create(null);
+        state.tabs.forEach(function (tab) { byId[String(tab.id)] = tab; });
+        var next = [];
+        ids.forEach(function (id) {
+            var tab = byId[String(id)];
+            if (tab) next.push(tab);
+        });
+        if (next.length === state.tabs.length) state.tabs = next;
+    }
+
+    function setDragOffset(dx) {
+        drag.offsetX = dx;
+        if (drag.item) drag.item.style.transform = dx ? 'translateX(' + dx + 'px)' : '';
+    }
+
+    function dragLayoutLeft() {
+        if (!drag.item) return 0;
+        return drag.item.getBoundingClientRect().left - drag.offsetX;
+    }
+
+    function snapshotLefts() {
+        var lefts = Object.create(null);
+        tabItems().forEach(function (item) {
+            if (item === drag.item) return;
+            lefts[String(item.dataset.tabId)] = item.getBoundingClientRect().left;
+        });
+        return lefts;
+    }
+
+    // FLIP: animate neighbours from their previous to their new position so an
+    // insertion reads as a displacement instead of a jump.
+    function clearShifts() {
+        tabItems().forEach(function (item) {
+            if (item === drag.item || !item.style.transform) return;
+            item.classList.remove('is-shifting');
+            item.style.transform = '';
+        });
+    }
+
+    function flipNeighbours(lefts) {
+        tabItems().forEach(function (item) {
+            if (item === drag.item) return;
+            var before = lefts[String(item.dataset.tabId)];
+            if (typeof before !== 'number') return;
+            var delta = before - item.getBoundingClientRect().left;
+            if (!delta) return;
+            item.classList.remove('is-shifting');
+            item.style.transform = 'translateX(' + delta + 'px)';
+            void item.offsetWidth;
+            item.classList.add('is-shifting');
+            item.style.transform = '';
+        });
+    }
+
+    function moveDraggedTo(clientX) {
+        if (!drag.active || !drag.item) return;
+        var dragged = drag.item;
+        var reference = null;
+        var items = tabItems();
+        for (var i = 0; i < items.length; i++) {
+            if (items[i] === dragged) continue;
+            var rect = items[i].getBoundingClientRect();
+            if (clientX < rect.left + rect.width / 2) {
+                reference = items[i];
+                break;
+            }
+        }
+
+        var next = dragged.nextElementSibling;
+        if (reference === next) return;
+        if (reference === null && (next === null || next === addTabButton())) return;
+
+        var visualLeft = dragged.getBoundingClientRect().left;
+        clearShifts();
+        var lefts = snapshotLefts();
+        tabbar.insertBefore(dragged, reference || addTabButton() || null);
+        flipNeighbours(lefts);
+        setDragOffset(visualLeft - dragLayoutLeft());
+    }
+
+    function updateDrag(clientX) {
+        if (!drag.active || !drag.item) return;
+        drag.lastClientX = clientX;
+        setDragOffset((clientX - drag.grabOffsetX) - dragLayoutLeft());
+        moveDraggedTo(clientX);
+    }
+
+    function autoScrollStep() {
+        drag.raf = 0;
+        if (!drag.active) return;
+
+        var rect = tabbar.getBoundingClientRect();
+        var speed = 0;
+        if (tabbar.scrollWidth > tabbar.clientWidth) {
+            if (drag.lastClientX < rect.left + AUTO_SCROLL_EDGE) {
+                speed = -Math.min(AUTO_SCROLL_MAX,
+                    Math.ceil((rect.left + AUTO_SCROLL_EDGE - drag.lastClientX) / 3));
+            } else if (drag.lastClientX > rect.right - AUTO_SCROLL_EDGE) {
+                speed = Math.min(AUTO_SCROLL_MAX,
+                    Math.ceil((drag.lastClientX - (rect.right - AUTO_SCROLL_EDGE)) / 3));
+            }
+        }
+
+        if (speed) {
+            var before = tabbar.scrollLeft;
+            tabbar.scrollLeft += speed;
+            if (tabbar.scrollLeft !== before) updateDrag(drag.lastClientX);
+        }
+
+        drag.raf = window.requestAnimationFrame(autoScrollStep);
+    }
+
+    function startAutoScroll() {
+        if (!drag.raf) drag.raf = window.requestAnimationFrame(autoScrollStep);
+    }
+
+    function stopAutoScroll() {
+        if (drag.raf) window.cancelAnimationFrame(drag.raf);
+        drag.raf = 0;
+    }
+
+    function beginDrag() {
+        if (!drag.armed || drag.active || !drag.item) return;
+        drag.active = true;
+        drag.item.classList.add('is-dragging');
+        document.body.classList.add('iss-tab-dragging');
+        try { drag.item.setPointerCapture(drag.pointerId); } catch (e) {}
+        updateDrag(drag.lastClientX);
+        startAutoScroll();
+    }
+
+    function resetDrag() {
+        stopAutoScroll();
+        if (drag.item) {
+            drag.item.classList.remove('is-dragging');
+            drag.item.style.transform = '';
+        }
+        document.body.classList.remove('iss-tab-dragging');
+        drag.armed = false;
+        drag.active = false;
+        drag.item = null;
+        drag.pointerId = null;
+        drag.offsetX = 0;
+        drag.order = null;
+    }
+
+    function persistOrder(ids) {
+        request('reorder', { order: ids.join(',') }).then(function (response) {
+            if (response && response.reordered === false) {
+                // Stale permutation: adopt the authoritative registry instead of
+                // guessing. Panes are still untouched (no src change).
+                applyResponse(response);
+                return;
+            }
+            var next = stateFrom(response);
+            if (Array.isArray(next.tabs) && next.tabs.length === ids.length &&
+                next.tabs.every(function (tab, index) { return Number(tab.id) === ids[index]; })) {
+                state.tabs = next.tabs;
+                if (typeof next.activeTab !== 'undefined') state.activeTab = next.activeTab;
+            }
+        }).catch(function (error) {
+            var data = error && error.response;
+            if (data && data.reason === 'not_permutation' && data.state) {
+                // Expected when the registry changed under the gesture (a tab was
+                // created or closed meanwhile): resync silently, nothing is lost.
+                applyResponse(data);
+                return;
+            }
+            showError(error.message);
+            request('init').then(applyResponse).catch(function () {});
+        });
+    }
+
+    function finishDrag() {
+        var wasActive = drag.active;
+        var moved = false;
+        var ids = null;
+
+        if (wasActive) {
+            ids = tabOrder();
+            var before = drag.order || [];
+            moved = ids.length !== before.length || ids.some(function (id, index) {
+                return id !== before[index];
+            });
+            if (moved) applyLocalOrder(ids);
+            drag.suppressClickUntil = Date.now() + 350;
+        }
+
+        resetDrag();
+
+        if (wasActive) renderState();
+        if (moved) persistOrder(ids);
+    }
+
+    // A cancelled gesture must not persist: the registry still holds the old
+    // order, so a plain re-render restores the bar.
+    function cancelDrag() {
+        if (!drag.armed) return;
+        var wasActive = drag.active;
+        if (wasActive) drag.suppressClickUntil = Date.now() + 350;
+        resetDrag();
+        if (wasActive) renderState();
+    }
+
+    function announceTabPosition(index) {
+        var template = (config.messages && config.messages.movedToPosition) || 'Tab moved to position %s';
+        showNotice(template.replace('%s', String(index + 1)), 'info', 2000);
+    }
+
+    function focusTab(tabId) {
+        var button = tabbar.querySelector('.iss-tabbar__item[data-tab-id="' + tabId + '"] .iss-tabbar__tab');
+        if (button) button.focus();
+    }
+
+    function moveTabByKeyboard(tabId, step) {
+        var ids = tabOrder();
+        var index = ids.indexOf(Number(tabId));
+        var target = index + step;
+        if (index === -1 || target < 0 || target >= ids.length) return;
+
+        ids.splice(target, 0, ids.splice(index, 1)[0]);
+        applyLocalOrder(ids);
+        renderState();
+        focusTab(tabId);
+        announceTabPosition(target);
+        persistOrder(ids);
+    }
+
+    tabbar.addEventListener('pointerdown', function (event) {
+        if (!event.isPrimary || drag.active) return;
+        if (drag.armed) resetDrag();
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+
+        var target = event.target;
+        var item = target && target.closest ? target.closest('.iss-tabbar__item') : null;
+        if (!item || !item.dataset.tabId) return;
+        if (target.closest('.iss-tabbar__close, .iss-tabbar__add')) return;
+
+        drag.armed = true;
+        drag.active = false;
+        drag.item = item;
+        drag.pointerId = event.pointerId;
+        drag.startX = event.clientX;
+        drag.startY = event.clientY;
+        drag.grabOffsetX = event.clientX - item.getBoundingClientRect().left;
+        drag.lastClientX = event.clientX;
+        drag.offsetX = 0;
+        drag.order = tabOrder();
+    });
+
+    document.addEventListener('pointermove', function (event) {
+        if (!drag.armed || event.pointerId !== drag.pointerId) return;
+        drag.lastClientX = event.clientX;
+
+        if (!drag.active) {
+            var dx = Math.abs(event.clientX - drag.startX);
+            var dy = Math.abs(event.clientY - drag.startY);
+            if (dx < DRAG_THRESHOLD || dx < dy) return;
+            beginDrag();
+            return;
+        }
+
+        event.preventDefault();
+        updateDrag(event.clientX);
+    });
+
+    function endPointerDrag(event) {
+        if (!drag.armed) return;
+        if (event && typeof event.pointerId === 'number' && event.pointerId !== drag.pointerId) return;
+        finishDrag();
+    }
+
+    document.addEventListener('pointerup', endPointerDrag);
+    document.addEventListener('pointercancel', cancelDrag);
+    window.addEventListener('blur', cancelDrag);
+
+    tabbar.addEventListener('keydown', function (event) {
+        if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+        var target = event.target;
+        var button = target && target.closest ? target.closest('.iss-tabbar__tab') : null;
+        if (!button) return;
+
+        var rtl = window.getComputedStyle(tabbar).direction === 'rtl';
+        var step = ((event.key === 'ArrowRight') !== rtl) ? 1 : -1;
+        event.preventDefault();
+        moveTabByKeyboard(Number(button.dataset.tabId), step);
+    });
+
     tabbar.addEventListener('click', function (event) {
+        if (Date.now() < drag.suppressClickUntil) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
         var control = event.target.closest('[data-action]');
         if (!control) return;
         var action = control.dataset.action;

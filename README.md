@@ -84,6 +84,21 @@ $smarty->assign('SECURITY_ALERT',
 The message is escaped by default. Pass `array('html' => true)` only for HTML
 built by the module, and escape every interpolated value yourself.
 
+Tab bar
+-------
+
+The Modern theme keeps one in-app tab per module (up to `ISSABEL_MAX_TABS`,
+8 by default). Each tab hosts its own iframe, so switching tabs does not
+reload a module and unsaved forms stay mounted.
+
+* Reorder: drag a tab to another position, or focus it and press
+  `Alt+Left` / `Alt+Right`. The order belongs to the browser tab (the
+  `instanceId` kept in `sessionStorage`) and survives a page reload.
+* Reordering only permutes the registry: no iframe is reloaded, so a drag
+  never discards unsaved changes.
+* Navigating to a module that is already open focuses its tab instead of
+  opening a second one.
+
 Audit log
 ----
 

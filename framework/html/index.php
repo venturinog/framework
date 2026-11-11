@@ -154,6 +154,21 @@ function issabel_tabs_handle_request($pdbACL, $pACL, $idUser, $maxTabs, $csrfTok
                 $result = $tabs->close(isset($_POST['id']) ? $_POST['id'] : 0);
                 issabel_tabs_json_response($result['closed'] ? 200 : 409, $result);
 
+            case 'reorder':
+                $rawOrder = isset($_POST['order']) && is_string($_POST['order']) ? trim($_POST['order']) : '';
+                $orderedIds = array();
+                if ($rawOrder !== '') {
+                    foreach (explode(',', $rawOrder) as $oneId) {
+                        $oneId = trim($oneId);
+                        if ($oneId === '' || !ctype_digit($oneId)) {
+                            issabel_tabs_json_response(400, array('error' => 'invalid_order'));
+                        }
+                        $orderedIds[] = (int)$oneId;
+                    }
+                }
+                $result = $tabs->reorder($orderedIds);
+                issabel_tabs_json_response($result['reordered'] ? 200 : 409, $result);
+
             case 'update':
                 $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
                 $key = isset($_POST['key']) && is_string($_POST['key']) ? $_POST['key'] : '';
@@ -511,6 +526,8 @@ if (isset($_SESSION['issabel_user']) &&
             'closeTab' => _tr('Close %s'),
             'dismissNotice' => _tr('Dismiss tab notice'),
             'tab' => _tr('Tab'),
+            'dragHint' => _tr('Drag to reorder tabs'),
+            'movedToPosition' => _tr('Tab moved to position %s'),
             'module' => _tr('Module'),
             'moduleFrame' => _tr('Issabel module'),
             'closeUnsaved' => _tr('This tab has unsaved changes. Close it anyway?'),

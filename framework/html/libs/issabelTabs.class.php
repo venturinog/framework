@@ -209,6 +209,42 @@ class issabelTabs
         });
     }
 
+    /**
+     * Reorder the registry. The payload must be a permutation of the current
+     * tab ids: anything else means the client worked from a stale state and is
+     * rejected with the authoritative registry so it can resync.
+     */
+    public function reorder(array $orderedIds)
+    {
+        return $this->transaction(function (&$data) use ($orderedIds) {
+            $current = array();
+            foreach ($data['tabs'] as $tab) $current[] = (int)$tab['id'];
+
+            $requested = array();
+            foreach ($orderedIds as $id) {
+                if (!is_scalar($id)) {
+                    return array('reordered' => false, 'reason' => 'not_permutation', 'state' => $data);
+                }
+                $requested[] = (int)$id;
+            }
+
+            if (count($requested) !== count($current) ||
+                count(array_unique($requested)) !== count($requested) ||
+                array_diff($requested, $current) || array_diff($current, $requested)) {
+                return array('reordered' => false, 'reason' => 'not_permutation', 'state' => $data);
+            }
+
+            $byId = array();
+            foreach ($data['tabs'] as $tab) $byId[(int)$tab['id']] = $tab;
+
+            $tabs = array();
+            foreach ($requested as $id) $tabs[] = $byId[$id];
+            $data['tabs'] = $tabs;
+
+            return array('reordered' => true, 'state' => $data);
+        });
+    }
+
     public function jsonForClient()
     {
         $state = $this->getState();
