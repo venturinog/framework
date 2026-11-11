@@ -15,7 +15,7 @@ class issabelTabs
     private $storeDir;
     private $maxTabs;
 
-    public function __construct($sessionId, $instanceId, $storeDir = null, $maxTabs = 8)
+    public function __construct($sessionId, $instanceId, $storeDir = null, $maxTabs = 10)
     {
         if (!is_string($sessionId) || $sessionId === '') {
             throw new InvalidArgumentException('A session ID is required');

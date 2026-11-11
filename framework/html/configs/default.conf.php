@@ -40,7 +40,7 @@ $arrConf['mainTheme'] = load_theme($arrConf['basePath']."/"); //theme para la pa
 $arrConf['issabel_version'] = load_version_issabel($arrConf['basePath']."/"); //la version y le release del sistema Issabel
 $arrConf['defaultMenu'] = 'config';
 $arrConf['language'] = 'en';
-$arrConf['issabel_max_tabs'] = 8;
+$arrConf['issabel_max_tabs'] = 10;
 
 /* Protección CSRF global (ver libs/issabelCsrf.class.php y README.md).
  *

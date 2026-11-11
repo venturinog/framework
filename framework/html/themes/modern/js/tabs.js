@@ -13,6 +13,7 @@
     var DRAG_THRESHOLD = 5;
     var AUTO_SCROLL_EDGE = 28;
     var AUTO_SCROLL_MAX = 18;
+    var navScrollRaf = 0;
     var drag = {
         armed: false,
         active: false,
@@ -327,6 +328,9 @@
     }
 
     function renderBar() {
+        // Rebuilding the bar must not send the strip back to the start: a
+        // background tabinfo/dirtyChanged would otherwise scroll it away.
+        var scrollLeft = tabbar.scrollLeft;
         var fragment = document.createDocumentFragment();
         state.tabs.forEach(function (tab) {
             var item = document.createElement('div');
@@ -364,7 +368,7 @@
             fragment.appendChild(item);
         });
 
-        if (state.tabs.length < Number(config.max || 8)) {
+        if (state.tabs.length < Number(config.max || 10)) {
             var add = document.createElement('button');
             add.type = 'button';
             add.className = 'iss-tabbar__add';
@@ -375,6 +379,8 @@
         }
 
         tabbar.replaceChildren(fragment);
+        tabbar.scrollLeft = scrollLeft;
+        updateTabStripNav();
     }
 
     function ensurePane(tab) {
@@ -433,11 +439,13 @@
 
     function applyResponse(response) {
         var next = stateFrom(response);
+        var previousActive = Number(state.activeTab);
         if (Array.isArray(next.tabs)) {
             state.tabs = next.tabs;
             state.activeTab = next.activeTab;
         }
         renderState();
+        if (Number(state.activeTab) !== previousActive) revealActiveTab();
         loadActiveFrame();
     }
 
@@ -568,6 +576,7 @@
     function showInitError(message) {
         tabbar.hidden = true;
         tabpanes.hidden = true;
+        updateTabStripNav();
 
         var error = document.getElementById('iss-tabs-init-error');
         if (!error) {
@@ -600,6 +609,145 @@
         var menu = new URL(window.location.href).searchParams.get('menu');
         if (menu) navigateModule(menu, state.activeTab).catch(function (error) { showError(error.message); });
     }
+
+    // ------------------------------------------------------------------
+    // Tab strip navigation (arrows for overflowing titles)
+    // ------------------------------------------------------------------
+
+    var navPrev = document.getElementById('iss-tabbar-prev');
+    var navNext = document.getElementById('iss-tabbar-next');
+
+    function reduceMotion() {
+        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+
+    function navTargets() {
+        var targets = tabItems();
+        var add = addTabButton();
+        if (add) targets.push(add);
+        return targets;
+    }
+
+    // Overflow and edge state come from element rectangles, not from
+    // scrollLeft, so the same test works in LTR and RTL.
+    function tabStripState() {
+        if (!tabbar || tabbar.hidden || tabbar.scrollWidth - tabbar.clientWidth <= 1) {
+            return { overflow: false, atStart: true, atEnd: true };
+        }
+
+        var targets = navTargets();
+        if (!targets.length) return { overflow: false, atStart: true, atEnd: true };
+
+        var bar = tabbar.getBoundingClientRect();
+        var rtl = window.getComputedStyle(tabbar).direction === 'rtl';
+        var first = targets[0].getBoundingClientRect();
+        var last = targets[targets.length - 1].getBoundingClientRect();
+
+        return {
+            overflow: true,
+            atStart: rtl ? (first.right <= bar.right + 1) : (first.left >= bar.left - 1),
+            atEnd: rtl ? (last.left >= bar.left - 1) : (last.right <= bar.right + 1)
+        };
+    }
+
+    function updateTabStripNav() {
+        if (!navPrev || !navNext) return;
+        var strip = tabStripState();
+        navPrev.hidden = !strip.overflow;
+        navNext.hidden = !strip.overflow;
+        navPrev.disabled = !strip.overflow || strip.atStart;
+        navNext.disabled = !strip.overflow || strip.atEnd;
+    }
+
+    function fullVisibleRange() {
+        var bar = tabbar.getBoundingClientRect();
+        var first = -1;
+        var last = -1;
+        navTargets().forEach(function (item, index) {
+            var rect = item.getBoundingClientRect();
+            if (rect.left >= bar.left - 1 && rect.right <= bar.right + 1) {
+                if (first < 0) first = index;
+                last = index;
+            }
+        });
+        return { first: first, last: last };
+    }
+
+    // One click reveals exactly one more target (tab or the "+") in DOM order;
+    // scrollIntoView handles direction, clamping and RTL.
+    function scrollTabsByStep(step) {
+        var targets = navTargets();
+        if (!targets.length) return;
+
+        var range = fullVisibleRange();
+        var target;
+        if (step > 0) {
+            target = (range.last < 0) ? 0 : Math.min(range.last + 1, targets.length - 1);
+        } else {
+            target = (range.first < 0) ? targets.length - 1 : Math.max(range.first - 1, 0);
+        }
+
+        targets[target].scrollIntoView({
+            block: 'nearest',
+            inline: 'nearest',
+            behavior: reduceMotion() ? 'auto' : 'smooth'
+        });
+    }
+
+    function revealActiveTab() {
+        if (drag.active || tabbar.hidden) return;
+        var item = tabbar.querySelector('.iss-tabbar__item[data-tab-id="' + state.activeTab + '"]');
+        if (!item) return;
+        item.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    function initTabStripNav() {
+        if (!navPrev || !navNext) return;
+
+        var rtl = window.getComputedStyle(tabbar).direction === 'rtl';
+
+        var prevIcon = document.createElement('i');
+        prevIcon.className = 'ti ' + (rtl ? 'ti-chevron-right' : 'ti-chevron-left');
+        prevIcon.setAttribute('aria-hidden', 'true');
+        navPrev.appendChild(prevIcon);
+
+        var nextIcon = document.createElement('i');
+        nextIcon.className = 'ti ' + (rtl ? 'ti-chevron-left' : 'ti-chevron-right');
+        nextIcon.setAttribute('aria-hidden', 'true');
+        navNext.appendChild(nextIcon);
+
+        var prevLabel = (config.messages && config.messages.prevTabs) || 'Show previous tabs';
+        var nextLabel = (config.messages && config.messages.nextTabs) || 'Show next tabs';
+        navPrev.setAttribute('aria-label', prevLabel);
+        navPrev.title = prevLabel;
+        navNext.setAttribute('aria-label', nextLabel);
+        navNext.title = nextLabel;
+
+        navPrev.addEventListener('click', function () { scrollTabsByStep(-1); });
+        navNext.addEventListener('click', function () { scrollTabsByStep(1); });
+
+        tabbar.addEventListener('scroll', function () {
+            if (navScrollRaf) return;
+            navScrollRaf = window.requestAnimationFrame(function () {
+                navScrollRaf = 0;
+                updateTabStripNav();
+            });
+        }, { passive: true });
+
+        if ('ResizeObserver' in window) {
+            // Observe the topbar, not the strip: toggling the arrows changes
+            // the strip width, which would re-notify the observer.
+            new ResizeObserver(function () { updateTabStripNav(); })
+                .observe(tabbar.parentNode || tabbar);
+        } else {
+            window.addEventListener('resize', updateTabStripNav);
+        }
+
+        // Web fonts can change the tab widths after the first paint.
+        window.addEventListener('load', updateTabStripNav);
+    }
+
+    initTabStripNav();
 
     // ------------------------------------------------------------------
     // Tab reordering (drag & drop + keyboard)
@@ -1024,6 +1172,7 @@
             clearInitError();
             tabbar.hidden = false;
             tabpanes.hidden = false;
+            updateTabStripNav();
             loadActiveFrame();
             reloadPbxFramesAfterLanguageChange();
             initialNavigation();

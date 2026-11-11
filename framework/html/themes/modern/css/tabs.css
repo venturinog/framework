@@ -22,6 +22,12 @@
 }
 .iss-tabbar::-webkit-scrollbar { display: none; }
 
+/* Overflow arrows: outside the scroll container, so they stay put while the
+   strip scrolls. Hidden unless the titles overflow. */
+.iss-tabbar__nav { flex: 0 0 auto; padding: 6px; font-size: 18px; }
+.iss-tabbar__nav:disabled { opacity: .35; cursor: default; background: transparent; }
+.iss-tabbar__nav:focus-visible { outline: 2px solid var(--iss-primary); outline-offset: 2px; }
+
 .iss-tabbar__item {
   position: relative;
   display: inline-flex;

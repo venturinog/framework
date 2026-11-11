@@ -77,7 +77,9 @@
 
     <header class="iss-topbar">
         <button class="iss-topbar__burger" id="issBurger" type="button" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+        <button id="iss-tabbar-prev" type="button" class="iss-icon-btn iss-tabbar__nav iss-tabbar__nav--prev" hidden></button>
         <div id="iss-tabbar" class="iss-tabbar" hidden></div>
+        <button id="iss-tabbar-next" type="button" class="iss-icon-btn iss-tabbar__nav iss-tabbar__nav--next" hidden></button>
 
         <div class="iss-topbar__right">
             <!-- Notificaciones -->

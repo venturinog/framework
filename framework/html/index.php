@@ -500,7 +500,7 @@ if (isset($_SESSION['issabel_user']) &&
     issabel_csrf_guard();
 
     $ISSABEL_MAX_TABS = isset($arrConf['issabel_max_tabs'])
-        ? max(1, (int)$arrConf['issabel_max_tabs']) : 8;
+        ? max(1, (int)$arrConf['issabel_max_tabs']) : 10;
     // Un solo token para toda la GUI: el gestor de pestañas comparte el token
     // CSRF global en lugar de mantener el suyo propio.
     $ISSABEL_TABS_TOKEN = issabelCsrf::token();
@@ -528,6 +528,8 @@ if (isset($_SESSION['issabel_user']) &&
             'tab' => _tr('Tab'),
             'dragHint' => _tr('Drag to reorder tabs'),
             'movedToPosition' => _tr('Tab moved to position %s'),
+            'prevTabs' => _tr('Show previous tabs'),
+            'nextTabs' => _tr('Show next tabs'),
             'module' => _tr('Module'),
             'moduleFrame' => _tr('Issabel module'),
             'closeUnsaved' => _tr('This tab has unsaved changes. Close it anyway?'),
