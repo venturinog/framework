@@ -431,7 +431,7 @@ class paloSantoRegistration {
             $updtData[9] = 1;
 
             //3ero. Mantengo la base local actualizada, puede darse que desde la 
-            //administración del cloud.issabel.org haya cambiado.
+            //administración del cloud.issabel.ar haya cambiado.
             if (!$this->updateDataRegister($updtData)) {
                 $this->errMsg = "There are some problem with the local database. Information cannot be saved in database.";
             }   

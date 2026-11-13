@@ -51,7 +51,7 @@ $(document).ready(function() {
             </div>
             <div style="height:15px;" id="msnTextErr" align="center"></div>
             <div class="cloud-login-line" >
-                <a class="cloud-link_subscription" href="https://my.issabel.com/forgot.php" >{$FORGET_PASSWORD}</a>
+                <a class="cloud-link_subscription" href="https://my.issabel.ar/forgot.php" >{$FORGET_PASSWORD}</a>
                 </br>
                 {$REGISTER_RECOMMENDATION}
             </div>

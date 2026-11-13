@@ -385,7 +385,7 @@ class WSDLcreator
         // Create Document XML with namespace
         // xsd  for namespace (schema),  http://www.w3.org/2001/XMLSchema
         // soap for namespace (soap),    http://schemas.xmlsoap.org/wsdl/soap/
-        // elx  for namespace (issabel), ex. http://cloud.issabel.org/webservices/
+        // elx  for namespace (issabel), ex. http://cloud.issabel.ar/webservices/
         try{
             $doc  = new DOMDocument("1.0","UTF-8");
             $root = $doc->createElementNS($this->ns_wsdl,"{$this->prefix_ns_wsdl}:definitions");

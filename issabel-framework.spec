@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 98
+Release: 99
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -463,6 +463,10 @@ rm -rf $RPM_BUILD_ROOT
 %exclude /var/www/html/themes/modern
 
 %changelog
+* Fri Nov 13 2026 Issabel Foundation <info@issabel.org> - 6.0.0-99
+- Point the registration webservice namespace and the cloud login link to the
+  issabel.ar hosts.
+
 * Fri Nov 06 2026 Issabel Foundation <info@issabel.org> - 6.0.0-96
 - Require php-fpm: EL10 has no mod_php, so httpd proxies PHP through php-fpm.
 - Configure the php-fpm www pool to run as asterisk, allow asterisk on the

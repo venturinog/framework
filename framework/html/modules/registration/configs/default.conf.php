@@ -26,7 +26,7 @@
     $arrConfModule['module_name']       = 'registration';
     $arrConfModule['templates_dir']     = 'themes';
     $arrConfModule['dsn_conn_database'] = "sqlite3:///$arrConf[issabel_dbdir]/register.db";
-    $arrConfModule['url_webservice']    = "http://cloud.issabel.org/wsdl.php?type=wsdl&name=register";
+    $arrConfModule['url_webservice']    = "http://cloud.issabel.ar/wsdl.php?type=wsdl&name=register";
     
     $arrCountry = array();
     $arrCountry["Afghanistan"] = "Afghanistan";
