@@ -2,7 +2,7 @@
 Summary: Issabel is a Web based software to administrate a PBX based in open source programs, forked from Elastix
 Name:    issabel-framework
 Version: 6.0.0
-Release: 99
+Release: 100
 License: GPL
 Vendor: Issabel Foundation
 Group: Applications/System
@@ -133,8 +133,9 @@ mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/usr/lib/tmpfiles.d/issabel-tabs
 chmod 644 $RPM_BUILD_ROOT/usr/lib/tmpfiles.d/issabel-tabs.conf
 
 # ** Repos config ** #
-mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/yum.repos.d/Issabel.repo         $RPM_BUILD_ROOT/etc/yum.repos.d/
-mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/yum.repos.d/Issabel5.repo        $RPM_BUILD_ROOT/etc/yum.repos.d/
+mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/yum.repos.d/Issabel6.repo        $RPM_BUILD_ROOT/etc/yum.repos.d/
+mkdir -p $RPM_BUILD_ROOT/etc/pki/rpm-gpg
+install -m 0644 $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/pki/rpm-gpg/RPM-GPG-KEY-Issabel $RPM_BUILD_ROOT/etc/pki/rpm-gpg/
 
 # ** sudoers config ** #
 mv $RPM_BUILD_DIR/%{name}-%{version}/additionals/etc/sudoers                          $RPM_BUILD_ROOT/usr/share/issabel/
@@ -248,6 +249,15 @@ mkdir -p /usr/share/fonts/truetype
 cat   /usr/share/issabel/sudoers > /etc/sudoers.d/issabel
 rm -f /usr/share/issabel/sudoers
 rm -f /etc/yum.repos.d/elastix.repo
+
+# Issabel 4/5 repositories are no longer shipped in Issabel 6.  rpm does not
+# remove files dropped from %files on upgrade, so clean them up here.
+rm -f /etc/yum.repos.d/Issabel.repo /etc/yum.repos.d/Issabel5.repo
+
+# Trust the Issabel repository signing key shipped in this package.
+if [ -f /etc/pki/rpm-gpg/RPM-GPG-KEY-Issabel ]; then
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-Issabel || :
+fi
 
 # ** Change content of CentOS-Base.repo ** #
 if [ -e /etc/yum.repos.d/CentOS-Base.repo ] ; then
@@ -440,9 +450,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/cron.d/issabel.cron
 %config(noreplace) /etc/httpd/conf.d/issabel.conf
 %config(noreplace) /etc/php.d/issabel.ini
-/etc/yum.repos.d/Issabel.repo
-/etc/yum.repos.d/Issabel5.repo
-#%config(noreplace) /etc/yum.repos.d/Issabel.repo
+%config(noreplace) /etc/yum.repos.d/Issabel6.repo
+/etc/pki/rpm-gpg/RPM-GPG-KEY-Issabel
 %config(noreplace) /etc/logrotate.d/issabelAudit.logrotate
 %config /etc/httpd/conf.d/issabel-htaccess.conf
 /usr/lib/tmpfiles.d/issabel-tabs.conf

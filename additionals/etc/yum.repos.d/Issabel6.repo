@@ -1,0 +1,107 @@
+[issabel-6-alpha]
+name=Issabel 6 (alpha) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/alpha/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=300
+
+[issabel-6-alpha-noarch]
+name=Issabel 6 (alpha) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/alpha/noarch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=300
+
+[issabel-6-base]
+name=Issabel 6 (base) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/base/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-base-noarch]
+name=Issabel 6 (base) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/base/noarch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-updates]
+name=Issabel 6 (updates) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/updates/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-updates-noarch]
+name=Issabel 6 (updates) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/updates/noarch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-extras]
+name=Issabel 6 (extras) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/extras/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-extras-noarch]
+name=Issabel 6 (extras) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/extras/noarch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-beta]
+name=Issabel 6 (beta) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/beta/$basearch/
+enabled=0
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-beta-noarch]
+name=Issabel 6 (beta) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/beta/noarch/
+enabled=0
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-commercial]
+name=Issabel 6 (commercial) - $basearch
+baseurl=http://repo.issabel.ar/issabel/6/commercial/$basearch/
+enabled=0
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
+
+[issabel-6-commercial-noarch]
+name=Issabel 6 (commercial) - noarch
+baseurl=http://repo.issabel.ar/issabel/6/commercial/noarch/
+enabled=0
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=http://repo.issabel.ar/issabel/RPM-GPG-KEY-Issabel
+metadata_expire=3600
